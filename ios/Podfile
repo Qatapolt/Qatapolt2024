@@ -25,9 +25,9 @@ if linkage != nil
   use_frameworks! :linkage => linkage.to_sym
 end
 
-target 'MentorMe' do
+target 'Qatapolt' do
   config = use_native_modules!
-  pod 'FirebaseCore', :modular_headers => true
+  # pod 'FirebaseCore', :modular_headers => true
   # Flags change depending on the env values.
   flags = get_default_flags()
 
@@ -51,9 +51,9 @@ target 'MentorMe' do
   # pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
   # pod 'GoogleMaps'
 
-  pod 'GoogleUtilities', :modular_headers => true;
+  # pod 'GoogleUtilities', :modular_headers => true;
 
-  target 'MentorMeTests' do
+  target 'QatapoltTests' do
     inherit! :complete
     # Pods for testing
   end

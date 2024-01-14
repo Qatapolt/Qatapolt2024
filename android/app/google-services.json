@@ -1,40 +1,40 @@
 {
   "project_info": {
-    "project_number": "153444834280",
-    "project_id": "assemble-408917",
-    "storage_bucket": "assemble-408917.appspot.com"
+    "project_number": "146031539666",
+    "project_id": "qatapolt-2023",
+    "storage_bucket": "qatapolt-2023.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:153444834280:android:66c86f0de261842fa3625d",
+        "mobilesdk_app_id": "1:146031539666:android:a64f70535d2f212c3bc40b",
         "android_client_info": {
-          "package_name": "com.assemble"
+          "package_name": "com.qatapolt"
         }
       },
       "oauth_client": [
         {
-          "client_id": "153444834280-be509i52m49jlt7l0ds0ic9ucbg5lh0l.apps.googleusercontent.com",
+          "client_id": "146031539666-af919tcf2hnurrc67mhnesdji5kovtjo.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDseU3ktAAq9klichmeXXQB0-0bGdldyTU"
+          "current_key": "AIzaSyDJQjcJiTpN5RmkK5Z6cv2gHGleDRw-PYY"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "153444834280-be509i52m49jlt7l0ds0ic9ucbg5lh0l.apps.googleusercontent.com",
+              "client_id": "146031539666-1e0e06iqjc0n96s3sk1q8447bfn89n62.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "153444834280-lfs7alll1ltv8ehhr4j7d9uv9c509to1.apps.googleusercontent.com",
+              "client_id": "146031539666-05tq8ke86giocolt93souvh8n2paujfe.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "assemble"
+                "bundle_id": "org.reactjs.native.example.qatapolt"
               }
             }
           ]
