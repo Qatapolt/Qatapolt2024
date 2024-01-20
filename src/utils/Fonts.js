@@ -1,8 +1,10 @@
-export const SFCompact = {
-  normal: 'SF-Compact',
-  light: 'SF-Compact-Display-Light',
-  regular: 'SF-Compact-Display-Regular',
-  medium: 'SF-Compact-Display-Medium',
-  semiBold: 'SF-Compact-Display-Semibold',
-  bold: 'SF-Compact-Display-Bold',
+export const InterFont = {
+  light: 'Inter-Light',
+  bold: 'Inter-Bold',
+  medium: 'Inter-Medium',
+  regular: 'Inter-Regular',
+  semiBold: 'Inter-SemiBold',
+   SuezOne:"SuezOne-Regular"
+
 };
+

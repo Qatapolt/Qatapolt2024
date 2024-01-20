@@ -2,6 +2,6 @@ const constants = {
   SIGNUP: "SIGNUP",
   LOGIN: "LOGIN",
   LOGOUT: "LOGOUT",
-  SETTING: "SETTING",
+  SETTING:"SETTING",
 };
 export default constants;

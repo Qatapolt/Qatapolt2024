@@ -45,8 +45,10 @@ target 'Qatapolt' do
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
 
+  pod 'RNVectorIcons', :path => '../node_modules/react-native-vector-icons'
   permissions_path = '../node_modules/react-native-permissions/ios'
-
+  pod 'react-native-video', :path => '../node_modules/react-native-video'
+  pod 'Permission-Camera', :path => "#{permissions_path}/Camera/Permission-Camera.podspec"
   # pod 'Google-Maps-iOS-Utils'
   # pod 'Permission-Camera', :path => "#{permissions_path}/Camera"
   # pod 'GoogleMaps'

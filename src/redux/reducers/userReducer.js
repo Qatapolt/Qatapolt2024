@@ -1,13 +1,13 @@
-import { createSlice } from "@reduxjs/toolkit";
-import { RootState } from "../store";
+import {createSlice} from '@reduxjs/toolkit';
+import {RootState} from '../store';
 
 const initialState = {
   userData: {},
   otherUserData: {},
-  deepLinkPostId: "",
+  deepLinkPostId: '',
 };
 const authSlice = createSlice({
-  name: "user",
+  name: 'user',
   initialState,
   reducers: {
     setUserData: (state, action) => {
@@ -22,6 +22,6 @@ const authSlice = createSlice({
   },
 });
 
-export const { setUserData, setOtherUserData, setDeepLinkPostId } =
+export const {setUserData, setOtherUserData, setDeepLinkPostId} =
   authSlice.actions;
 export default authSlice.reducer;

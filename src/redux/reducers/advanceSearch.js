@@ -1,11 +1,11 @@
-import { createSlice } from "@reduxjs/toolkit";
+import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
   advanceSearchUser: [],
 };
 
 const searchSlice = createSlice({
-  name: "advanceSearch",
+  name: 'advanceSearch',
   initialState,
   reducers: {
     setAdvanceSearch: (state, action) => {
@@ -15,6 +15,6 @@ const searchSlice = createSlice({
   },
 });
 
-export const { setAdvanceSearch } = searchSlice.actions;
+export const {setAdvanceSearch} = searchSlice.actions;
 
 export default searchSlice.reducer;

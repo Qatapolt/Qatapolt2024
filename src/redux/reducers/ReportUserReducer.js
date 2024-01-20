@@ -1,14 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit";
+import {createSlice} from '@reduxjs/toolkit';
 
 const initialState = {
   reportUser: {
-    category: "",
-    reportedUserId: "",
+    category: '',
+    reportedUserId: '',
   },
 };
 
 const reportSlice = createSlice({
-  name: "report",
+  name: 'report',
   initialState,
   reducers: {
     setReportCategory: (state, action) => {
@@ -25,7 +25,7 @@ const reportSlice = createSlice({
   },
 });
 
-export const { setReportCategory, setEmptyReportedUser, setReportUserId } =
+export const {setReportCategory, setEmptyReportedUser, setReportUserId} =
   reportSlice.actions;
 
 export default reportSlice.reducer;

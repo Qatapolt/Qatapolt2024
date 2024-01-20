@@ -1,0 +1,1 @@
+export const  dynamicLink=`https://qatapoltsharepost.page.link/iDzQ`
