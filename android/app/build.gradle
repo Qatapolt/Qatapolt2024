@@ -75,9 +75,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.assemble"
+    namespace "com.qatapolt"
     defaultConfig {
-        applicationId "com.assemble"
+        applicationId "com.qatapolt"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -93,10 +93,10 @@ android {
             keyPassword 'android'
         }
         release {
-      storeFile file('assemble.keystore')
-      storePassword '12345678'
-      keyAlias '-alias assemble'
-      keyPassword '12345678'
+      storeFile file('qatapolt.keystore')
+      storePassword 'qatapolt'
+      keyAlias 'qatapolt'
+      keyPassword 'qatapolt'
     }
         release {
          if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
