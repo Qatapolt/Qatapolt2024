@@ -45,8 +45,6 @@ const MainStack = () => {
   const authState = useSelector(state => state.auth?.currentUser);
   const authBioVerified = useSelector(state => state.auth?.isBioVerified);
 
-  console.log("authState",authState)
-
   const [isBioVerified, setIsBioVerified] = useState(false)
 
 

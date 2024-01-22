@@ -144,11 +144,13 @@ const SportsNewsDetailHeader = item => {
           fontFamily={InterFont.semiBold}
           color={colors.green}
           fontSize={18}
+          letterSpacing={1}
         />
         <CustomText
           label={data?.publishedAt}
           fontSize={15}
           color={colors.inputGray}
+          letterSpacing={1}
         />
       </View>
     </SafeAreaView>

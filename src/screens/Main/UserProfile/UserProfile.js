@@ -650,7 +650,7 @@ const UserProfile = ({navigation, route}) => {
                 renderItem={RenderPostData}
                 nestedScrollEnabled
                 ListHeaderComponent={getHeader}
-                ListEmptyComponent={emptyListComponent}
+                // ListEmptyComponent={emptyListComponent}
                 // refreshControl={
                 //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 // }
@@ -676,7 +676,7 @@ const UserProfile = ({navigation, route}) => {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderHightLightData}
                 ListHeaderComponent={getHeader}
-                ListEmptyComponent={emptyListComponent}
+                // ListEmptyComponent={emptyListComponent}
                 // refreshControl={
                 //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 // }
@@ -700,7 +700,7 @@ const UserProfile = ({navigation, route}) => {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderStats}
                 ListHeaderComponent={getHeader}
-                ListEmptyComponent={emptyListComponent}
+                // ListEmptyComponent={emptyListComponent}
               />
             )}
           </View>

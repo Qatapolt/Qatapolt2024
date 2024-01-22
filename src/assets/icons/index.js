@@ -72,6 +72,8 @@ export const icons = {
   facebookLogo: require('./facebookLogo.jpeg'),
   unfillShare: require('./unfillShare.png'),
   fillShare: require('./fillShare.png'),
+  trophyIcon: require('./trophyIcon.png'),
+
 
 
 

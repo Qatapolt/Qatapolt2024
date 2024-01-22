@@ -466,15 +466,14 @@ const EditProfile = ({navigation, route}) => {
     }
     setModalVisible(false);
   };
-  const calculateDateOfBirth = age => {
-    console.log(age);
-    return moment().subtract(age, 'years').format('YYYY-MM-DD');
-  };
+
   const onProfileDetail = async () => {
+    console.log('signupValues.age', signupValues.age);
     const birthDate = moment(signupValues.age, 'YYYY-MM-DD');
     const currentDate = moment();
 
     const ageInYears = currentDate.diff(birthDate, 'years');
+    console.log(ageInYears);
 
     if (
       signupValues.accountType == 'Athlete' ||
@@ -499,7 +498,7 @@ const EditProfile = ({navigation, route}) => {
 
           return;
         }
-        if (ageInYears < 5) {
+        if (ageInYears <= 5) {
           setStateError({
             ...stateError,
             errorHeader: 'Invalid Age',

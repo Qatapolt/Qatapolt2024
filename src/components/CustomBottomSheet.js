@@ -53,15 +53,25 @@ const CustomBottomSheet = props => {
         <CustomText
           fontWeight={'500'}
           onPress={() => {
-
-            if(props.type.skill1==item.value||props.type.skill2==item.value  ||props.type.skill3==item.value){
-              return
+            if (
+              props.type.skill1 == item.value ||
+              props.type.skill2 == item.value ||
+              props.type.skill3 == item.value
+            ) {
+              return;
             }
-            props.onSetValue(item.value, item)
-
+            props.onSetValue(item.value, item);
           }}
           label={item.value}
-          color={props.type.skill1==item.value?colors.graySearch :props.type.skill2==item.value?colors.graySearch:props.type.skill3==item.value?colors.graySearch: colors.black}
+          color={
+            props.type.skill1 == item.value
+              ? colors.graySearch
+              : props.type.skill2 == item.value
+              ? colors.graySearch
+              : props.type.skill3 == item.value
+              ? colors.graySearch
+              : colors.black
+          }
         />
         <Spacer height={10} />
       </View>
@@ -75,7 +85,7 @@ const CustomBottomSheet = props => {
 
         <CustomText
           fontWeight={'500'}
-          onPress={() =>   scrollToIndex(index)}
+          onPress={() => scrollToIndex(index)}
           label={item.alphabet}
         />
       </View>
@@ -129,7 +139,7 @@ const CustomBottomSheet = props => {
             alignItems: 'center',
             justifyContent: 'space-between',
           }}>
-          <View style={{width: '90%',}}>
+          <View style={{width: '90%'}}>
             <FlatList
               data={selectData}
               ref={flatListRef}

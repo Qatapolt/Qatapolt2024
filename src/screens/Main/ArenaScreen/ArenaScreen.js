@@ -720,6 +720,7 @@ const ArenaScreen = ({navigation, route}) => {
       </>
     );
   };
+  console.log('running');
   return (
     <>
       <View style={styles.container}>

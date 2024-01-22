@@ -287,6 +287,7 @@ const SettingMain = props => {
   //     console.log(error);
   //   }
   // };
+
   const onShare = async () => {
     // console.log('calling share app');
     try {

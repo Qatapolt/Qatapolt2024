@@ -539,14 +539,18 @@ const PostItem = props => {
                   userProfileData,
                 );
               }}
-              style={{flexDirection: 'row', width: 33, alignItems: 'center'}}>
+              style={{
+                flexDirection: 'row',
+                // width: 33,
+                alignItems: 'center',
+              }}>
               <Image
                 resizeMode="contain"
                 source={imageSource}
                 style={{
                   width: scale(16),
                   height: scale(14),
-                  // backgroundColor:"red"
+                  // top: 4,
                 }}
               />
               <CustomText
@@ -562,11 +566,16 @@ const PostItem = props => {
                 setViewComments(!props.viewComments),
                   setIsCommentsOpen(!props.isCommentsOpen);
               }}
-              style={{flexDirection: 'row', alignItems: 'center'}}>
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
               <Image
+                resizeMode="contain"
                 source={icons.comment}
                 style={{
-                  ...styles.postFooterIcon,
+                  width: scale(16),
+                  height: scale(14),
                 }}
               />
 
@@ -591,15 +600,21 @@ const PostItem = props => {
                 props?.setSelectPost(props.item);
                 props.setShowReportPotions(true);
               }}
-              style={{flexDirection: 'row', alignItems: 'center'}}>
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
               <Image
+                resizeMode="contain"
                 source={
                   repostIds && repostIds.length > 0
                     ? icons.fillShare
                     : icons.unfillShare
                 }
                 style={{
-                  ...styles.postFooterIcon,
+                  width: scale(16),
+                  height: scale(12),
+                  top: 3,
                   tintColor:
                     repostIds && repostIds.length > 0
                       ? // && repostIds.includes(currentUser.uid)
@@ -627,10 +642,12 @@ const PostItem = props => {
               }}>
               <View>
                 <Image
+                  resizeMode="contain"
                   source={icons.view}
                   style={{
-                    width: scale(14),
-                    height: scale(16),
+                    width: scale(16),
+                    height: scale(11),
+                    top: 3,
                   }}
                 />
               </View>
@@ -660,11 +677,17 @@ const PostItem = props => {
                   internalShareIds: props?.item?.internalShareIds,
                 })
               }
-              style={{flexDirection: 'row', alignItems: 'center'}}>
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+              }}>
               <Image
                 source={icons.share}
+                resizeMode="contain"
                 style={{
-                  ...styles.postFooterIcon,
+                  width: scale(16),
+                  height: scale(14),
+                  top: 3,
                 }}
               />
 

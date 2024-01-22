@@ -1211,7 +1211,7 @@ PODS:
   - react-native-image-picker (7.1.0):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
-  - react-native-maps (1.9.1):
+  - react-native-maps (1.10.0):
     - React-Core
   - react-native-pager-view (6.2.3):
     - RCT-Folly (= 2021.07.22.00)
@@ -1814,7 +1814,7 @@ SPEC CHECKSUMS:
   react-native-fbsdk-next: 9c40664b1501be29572795c2e4c8e347f39f556f
   react-native-geolocation: ef66fb798d96284c6043f0b16c15d9d1d4955db4
   react-native-image-picker: 5e076db26cd81660cfb6db5bcf517cfa12054d45
-  react-native-maps: 4f45622710094c3603b262279c40026750579b1f
+  react-native-maps: b4c3b092b1c71240d8d4792bae3738828942f14a
   react-native-pager-view: e26d35e382d86950c936f8917e3beb9188115ccc
   react-native-safe-area-context: 0ee144a6170530ccc37a0fd9388e28d06f516a89
   react-native-video: c26780b224543c62d5e1b2a7244a5cd1b50e8253
@@ -1852,7 +1852,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: fe2be3be5598dc74329b211c58c9f2d231461769
   RNGoogleSignin: aac5c1ec73422109dec1da770247a1e410dcc620
   RNImageCropPicker: d9616a0cb9b72e8551ff94a7a5021fbd29050aa5
-  RNPermissions: 9610ef04ff03bdfe3156722c5c8f8910b628abf0
+  RNPermissions: ac7dbe780b7037a6df306df975541aa8e197c990
   RNReanimated: fdbaa9c964bbab7fac50c90862b6cc5f041679b9
   RNScreens: 3c5b9f4a9dcde752466854b6109b79c0e205dad3
   RNSentry: 9a8aebd354d3b47c428c72ec7264b7822cf4f3c2
@@ -1867,6 +1867,6 @@ SPEC CHECKSUMS:
   Yoga: 86fed2e4d425ee4c6eab3813ba1791101ee153c6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 59946bb08a468783a9c07e7ddb4c8428c5690d72
+PODFILE CHECKSUM: 34f8f2b9c561651fae36437f0d6e9fb5f7b4614c
 
 COCOAPODS: 1.14.3

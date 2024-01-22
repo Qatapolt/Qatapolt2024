@@ -42,6 +42,7 @@ function CustomText(props) {
             textDecorationLine: props.textDecorationLine,
             paddingHorizontal: props.paddingHorizontal,
             padding: props.padding,
+            letterSpacing: props.letterSpacing || 0,
             // text-decoration-color: "red";
           },
           props.textStyle,

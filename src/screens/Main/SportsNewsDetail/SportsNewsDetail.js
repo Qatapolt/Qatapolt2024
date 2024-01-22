@@ -31,11 +31,12 @@ const SportsNewsDetail = ({route, navigation}) => {
             label={item?.title}
             fontSize={17}
             fontFamily={InterFont.semiBold}
+            letterSpacing={1}
           />
           <Spacer height={15} />
-          <CustomText label={item?.title} fontSize={11} />
+          <CustomText label={item?.title} fontSize={11} letterSpacing={1} />
           <Spacer height={15} />
-          <CustomText label={item?.content} fontSize={11} />
+          <CustomText label={item?.content} fontSize={11} letterSpacing={1} />
           <Spacer height={15} />
           {/* <CustomText label={item?.description} fontSize={11} /> */}
         </View>

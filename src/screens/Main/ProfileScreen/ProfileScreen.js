@@ -129,24 +129,15 @@ const ProfileScreen = ({navigation, route}) => {
 
         try {
           setTimeout(() => {
-            // await Promise.all([
             fetchUserPosts(),
               fetchHighlights(),
               fetchSquad(),
-              // ]);
               setIsLoading(false);
           }, 500);
         } catch (error) {
           console.error('Error during focus effect:', error);
         } finally {
-          setTimeout(() => {
-            // await Promise.all([
-            fetchUserPosts(),
-              fetchHighlights(),
-              fetchSquad(),
-              // ]);
-              setIsLoading(false);
-          }, 500);
+          setIsLoading(false);
         }
       };
 
@@ -655,7 +646,7 @@ const ProfileScreen = ({navigation, route}) => {
                 renderItem={RenderPostData}
                 nestedScrollEnabled
                 ListHeaderComponent={getHeader}
-                ListEmptyComponent={emptyListComponent}
+                // ListEmptyComponent={emptyListComponent}
                 // refreshControl={
                 //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 // }
@@ -681,7 +672,7 @@ const ProfileScreen = ({navigation, route}) => {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderHightLightData}
                 ListHeaderComponent={getHeader}
-                ListEmptyComponent={emptyListComponent}
+                // ListEmptyComponent={emptyListComponent}
                 // refreshControl={
                 //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 // }
@@ -705,7 +696,7 @@ const ProfileScreen = ({navigation, route}) => {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderStats}
                 ListHeaderComponent={getHeader}
-                ListEmptyComponent={emptyListComponent}
+                // ListEmptyComponent={emptyListComponent}
               />
             )}
           </View>
@@ -728,6 +719,9 @@ const ProfileScreen = ({navigation, route}) => {
 
       <SetBackgroundSheet
         modalVisible={isbackgroundSheet}
+        isLoading={isLoading}
+        setIsLoading={setIsLoading}
+        navigation={navigation}
         onCloseModal={() => setIsbackgroundSheet(false)}
       />
 
