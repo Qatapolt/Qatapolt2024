@@ -1,10 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-      <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+      <uses-feature android:name="android.hardware.camera" android:required="false" />
+<uses-feature android:name="android.hardware.camera.front" android:required="false" />
+  <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+      <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
 
     <application
       AutoLogAppEventsEnabled="false"
@@ -18,7 +20,7 @@
      android:value="AIzaSyB-KsaN0xavVz_goI6TJ-rTd43B8Oz4glc" />
       <uses-library android:name="org.apache.http.legacy" android:required="false"/>
       <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
-   	  <meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
+   	<meta-data android:name="com.facebook.sdk.ClientToken" android:value="@string/facebook_client_token"/>
       <meta-data
           android:name="com.google.mlkit.vision.DEPENDENCIES"
           android:value="barcode" />
@@ -33,6 +35,9 @@
         <intent-filter>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
+            <data android:host="qatapoltsharepost.page.link" android:scheme="http" />
+            <data android:host="qatapoltsharepost.page.link" android:scheme="https" />
+            <data android:scheme="com.qatapolt"/>
         </intent-filter>
       </activity>
       <!-- <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/> -->
