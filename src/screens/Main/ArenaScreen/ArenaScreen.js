@@ -11,30 +11,31 @@ import {
   RefreshControl,
   PermissionsAndroid,
   Image,
-} from 'react-native';
-import React, {useState, useEffect, useCallback, useRef} from 'react';
-import {colors} from '../../../utils/Colors';
-import CustomText from '../../../components/CustomText';
-import {icons} from '../../../assets/icons';
-import {Spacer} from '../../../components/Spacer';
-import {Avatar, Divider, ListItem} from 'react-native-elements';
-import TopTabs from '../../../components/TopTabs';
-import commonStyles, {PH10, PH20} from '../../../utils/CommonStyles';
-import {images} from '../../../assets/images';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import PostItem from './Molecules/PostItem';
-import ViewPost from './Molecules/ViewPost';
-import AppFounderModal from '../../../components/AppFounderModal';
-import CustomTextInput from '../../../components/CustomTextInput';
-import CustomBottomSheet from '../../../components/CustomBottomSheet';
-import PostFilter from './Molecules/PostFilter';
-import {accountType, position, location} from '../../../utils/SignUpArray';
-import {useSelector} from 'react-redux';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import messaging from '@react-native-firebase/messaging';
-import Clipboard from '@react-native-clipboard/clipboard';
-import Toast from 'react-native-root-toast';
-import moment from 'moment';
+  Dimensions,
+} from "react-native";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import { colors } from "../../../utils/Colors";
+import CustomText from "../../../components/CustomText";
+import { icons } from "../../../assets/icons";
+import { Spacer } from "../../../components/Spacer";
+import { Avatar, Divider, ListItem } from "react-native-elements";
+import TopTabs from "../../../components/TopTabs";
+import commonStyles, { PH10, PH20 } from "../../../utils/CommonStyles";
+import { images } from "../../../assets/images";
+import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import PostItem from "./Molecules/PostItem";
+import ViewPost from "./Molecules/ViewPost";
+import AppFounderModal from "../../../components/AppFounderModal";
+import CustomTextInput from "../../../components/CustomTextInput";
+import CustomBottomSheet from "../../../components/CustomBottomSheet";
+import PostFilter from "./Molecules/PostFilter";
+import { accountType, position, location } from "../../../utils/SignUpArray";
+import { useSelector } from "react-redux";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import messaging from "@react-native-firebase/messaging";
+import Clipboard from "@react-native-clipboard/clipboard";
+import Toast from "react-native-root-toast";
+import moment from "moment";
 import {
   deleteImage,
   deletePost,
@@ -44,8 +45,8 @@ import {
   getPosts,
   getSpecificPost,
   getWatchListPosts,
-} from '../../services/PostServices';
-import {useIsFocused, useFocusEffect} from '@react-navigation/native';
+} from "../../services/PostServices";
+import { useIsFocused, useFocusEffect } from "@react-navigation/native";
 import {
   filterCustomTimeLine,
   getAllUSers,
@@ -53,12 +54,12 @@ import {
   getSpecificUser,
   NotificationSender,
   SaveUser,
-} from '../../services/UserServices';
-import {useDispatch} from 'react-redux';
-import {authData} from '../../../redux/reducers/authReducer';
-import {InterFont} from '../../../utils/Fonts';
-import auth from '@react-native-firebase/auth';
-import dynamicLinks from '@react-native-firebase/dynamic-links';
+} from "../../services/UserServices";
+import { useDispatch } from "react-redux";
+import { authData } from "../../../redux/reducers/authReducer";
+import { InterFont } from "../../../utils/Fonts";
+import auth from "@react-native-firebase/auth";
+import dynamicLinks from "@react-native-firebase/dynamic-links";
 
 import {
   EsportsSkills,
@@ -67,27 +68,28 @@ import {
   position2,
   skill,
   sports,
-} from '../../../utils/Data';
-import CustomLocationBottomSheet from '../../../components/CustomLocationBottomSheet';
-import HeigthBottomSheet from '../../Auth/ProfileDetail/molecules/HeigthBottomSheet';
-import {showMessage} from 'react-native-flash-message';
-import PostOptionsSheet from './Molecules/PostOptionsSheet';
-import SimpleLoader from '../../../utils/SimpleLoader';
-import loaderAnimation from '../../../assets/Loaders';
-import {positionSkillValidate} from '../../../utils/Commons';
-import ReportSheet from './Molecules/ReportSheet';
-import ArenaLayout from '../../../utils/Layouts/ArenaLayout';
-import WelcomeModal from '../../../components/WelcomeModal';
-import {TourGuideZoneByPosition, useTourGuideController} from 'rn-tourguide';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-const ArenaScreen = ({navigation, route}) => {
+} from "../../../utils/Data";
+import CustomLocationBottomSheet from "../../../components/CustomLocationBottomSheet";
+import HeigthBottomSheet from "../../Auth/ProfileDetail/molecules/HeigthBottomSheet";
+import { showMessage } from "react-native-flash-message";
+import PostOptionsSheet from "./Molecules/PostOptionsSheet";
+import SimpleLoader from "../../../utils/SimpleLoader";
+import loaderAnimation from "../../../assets/Loaders";
+import { positionSkillValidate } from "../../../utils/Commons";
+import ReportSheet from "./Molecules/ReportSheet";
+import ArenaLayout from "../../../utils/Layouts/ArenaLayout";
+import WelcomeModal from "../../../components/WelcomeModal";
+import { TourGuideZoneByPosition, useTourGuideController } from "rn-tourguide";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const ArenaScreen = ({ navigation, route }) => {
   const [likePost, setLikePost] = useState(false);
   const [showPost, setShowPost] = useState(false);
   const dispatch = useDispatch();
   const [heartPost, setHeartPost] = useState(false);
   const focused = useIsFocused();
-  const CurrentUser = useSelector(state => state.auth?.currentUser);
-  const notiAlert = useSelector(state => state.auth?.notificationAlert);
+  const CurrentUser = useSelector((state) => state.auth?.currentUser);
+  const notiAlert = useSelector((state) => state.auth?.notificationAlert);
   const postOptionRef = useRef();
   // console.log('AlettNoti', notiAlert);
 
@@ -100,11 +102,11 @@ const ArenaScreen = ({navigation, route}) => {
   const [indexMain, setIndexMain] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [signupId, setSignupId] = useState(-1);
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
   const [postData, setPostData] = useState([]);
   const [postObject, setPostObject] = useState({});
   const [allFilterPost, setAllFilterPost] = useState([]);
-  const [heightValue, setHeightValue] = useState('');
+  const [heightValue, setHeightValue] = useState("");
   const [heightModalVisible, setHeightModalVisible] = useState(false);
   const [countryModalVisible, setCountryModalVisible] = useState(false);
   const [cityModalVisible, setCityModalVisible] = useState(false);
@@ -117,21 +119,21 @@ const ArenaScreen = ({navigation, route}) => {
   const [loading, setLoading] = useState(false);
   const [selectPost, setSelectPost] = useState({});
   const [isLoading, setIsLoading] = useState(true);
-  const {canStart, start, stop, eventEmitter} = useTourGuideController();
+  const { canStart, start, stop, eventEmitter } = useTourGuideController();
   const [comments, setComments] = useState(0);
   const [commentCounts, setCommentCounts] = useState(0);
   const [newComment, setNewComment] = useState(false);
   const [repost, setRepost] = useState(false);
   const [internalShare, setInternalShare] = useState(false);
   const [appFounderData, setAppFounderData] = useState({});
-  const [selectionType, setSelectionType] = useState('');
+  const [selectionType, setSelectionType] = useState("");
   const [allUsersData, setAllUsersData] = useState([]);
 
   useEffect(() => {
     if (cityModalVisible === true) {
-      setSelectionType('cities');
+      setSelectionType("cities");
     } else if (countryModalVisible === true) {
-      setSelectionType('country');
+      setSelectionType("country");
     } else {
     }
   }, [countryModalVisible, cityModalVisible]);
@@ -140,19 +142,19 @@ const ArenaScreen = ({navigation, route}) => {
     setIsWelcomeModal(!isWelcomeModal);
   };
   const [signupValues, setSignupValues] = useState({
-    selectSport: '',
-    accountType: '',
-    position: '',
-    country: '',
-    city: '',
-    height: '',
-    age: '',
-    gender: '',
-    strongHand: '',
-    strongFoot: '',
-    skill1: '',
-    skill2: '',
-    skill3: '',
+    selectSport: "",
+    accountType: "",
+    position: "",
+    country: "",
+    city: "",
+    height: "",
+    age: "",
+    gender: "",
+    strongHand: "",
+    strongFoot: "",
+    skill1: "",
+    skill2: "",
+    skill3: "",
     freeAgent: false,
   });
 
@@ -166,7 +168,6 @@ const ArenaScreen = ({navigation, route}) => {
 
   const getFcmToken = async () => {
     const fcmToken = await messaging().getToken();
-    // console.log('fcmToken', fcmToken);
   };
 
   const checkDynamicLink = async () => {
@@ -174,9 +175,9 @@ const ArenaScreen = ({navigation, route}) => {
 
     dynamicLinks()
       .getInitialLink()
-      .then(async link => {
+      .then(async (link) => {
         if (link?.url) {
-          const id = link?.url?.split('=').pop();
+          const id = link?.url?.split("=").pop();
 
           const data = await getSpecificPost(id);
           obg.push(data);
@@ -190,11 +191,11 @@ const ArenaScreen = ({navigation, route}) => {
     dynamicLinks().onLink(handleDynamicLink);
   }, [dynamicLinks]);
 
-  const handleDynamicLink = async link => {
+  const handleDynamicLink = async (link) => {
     let obg = [];
     if (link?.url) {
       // console.log('UrlLink', link?.url, link);
-      const id = link.url?.split('=').pop();
+      const id = link.url?.split("=").pop();
       // console.log('Forground Id:', id);
       const data = await getSpecificPost(id);
       obg.push(data);
@@ -228,16 +229,29 @@ const ArenaScreen = ({navigation, route}) => {
       getAllPost();
     }
   }, [route?.params?.freeAgent, indexMain, isLoading, newComment, repost]);
+  useEffect(() => {
+    if (
+      freeAgent === undefined ||
+      (freeAgent === true && showFilter === true)
+    ) {
+      if (signupValues?.freeAgent === false) {
+        setSignupValues({
+          ...signupValues,
+          freeAgent: true,
+        });
+      }
+    }
+  }, [freeAgent, showFilter]);
   async function requestPermission() {
     try {
-      if (Platform.OS === 'android') {
+      if (Platform.OS === "android") {
         await PermissionsAndroid.requestMultiple([
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
           PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
           PermissionsAndroid.PERMISSIONS.CAMERA,
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-        ]).then(result => {
+        ]).then((result) => {
           // console.log('requestPermission result', result);
         });
       }
@@ -252,13 +266,13 @@ const ArenaScreen = ({navigation, route}) => {
   };
   const getNewPostsShare = async () => {
     try {
-      const myObj = await AsyncStorage.getItem('UPADTED_SHARE');
-      const myObjNew = await AsyncStorage.getItem('NEW_POST');
+      const myObj = await AsyncStorage.getItem("UPADTED_SHARE");
+      const myObjNew = await AsyncStorage.getItem("NEW_POST");
       if (myObj) {
         const result = JSON.parse(myObj);
         if (result.success === true) {
           getAllPostWithNew();
-          await AsyncStorage.removeItem('UPADTED_SHARE');
+          await AsyncStorage.removeItem("UPADTED_SHARE");
         }
       }
       if (myObjNew) {
@@ -266,31 +280,35 @@ const ArenaScreen = ({navigation, route}) => {
         // console.log('myObjNew =========>', result.success === true);
         if (result.success === true) {
           getAllPost();
-          await AsyncStorage.removeItem('NEW_POST');
+          await AsyncStorage.removeItem("NEW_POST");
         }
       }
     } catch (error) {
-      console.error('An error occurred:', error);
+      console.error("An error occurred:", error);
     }
   };
   useEffect(() => {
     const fetchDataFromAsyncStorage = async () => {
       try {
-        const myObj = await AsyncStorage.getItem('USERS_VALUE_FILTER');
+        const myObj = await AsyncStorage.getItem("USERS_VALUE_FILTER");
         const asyncValues = JSON.parse(myObj);
+        const myObjFree = await AsyncStorage.getItem(
+          "USERS_VALUE_FILTER_FREE_AGENT"
+        );
+        const asyncValuesFree = JSON.parse(myObjFree);
 
-        console.log('myObj =========', asyncValues);
-        if (asyncValues !== null) {
-          onFilterTimeLine(asyncValues);
+        console.log("myObj =========>", asyncValues, asyncValuesFree);
+        if (asyncValues !== null || asyncValuesFree !== null) {
+          onFilterTimeLine(asyncValues || asyncValuesFree);
         } else {
         }
         // Handle your data or perform any actions based on myObj
       } catch (error) {
-        console.error('Error fetching data from AsyncStorage:', error);
+        console.error("Error fetching data from AsyncStorage:", error);
       }
     };
 
-    if (indexMain === 3) {
+    if (indexMain === 3 || indexMain === 1) {
       fetchDataFromAsyncStorage();
     } else {
       // Handle other cases if needed
@@ -304,9 +322,8 @@ const ArenaScreen = ({navigation, route}) => {
       return async () => {
         setShowFilter(false);
         setIndexMain(0);
-        // setSignupValues({});
       };
-    }, []),
+    }, [])
   );
 
   const startGuide = () => {
@@ -316,8 +333,8 @@ const ArenaScreen = ({navigation, route}) => {
   };
 
   const OnPressNo = async () => {
-    await AsyncStorage.removeItem('contactUsTour');
-    await AsyncStorage.removeItem('searchTour');
+    await AsyncStorage.removeItem("contactUsTour");
+    await AsyncStorage.removeItem("searchTour");
     setIsWelcomeModal(false);
   };
   const onRefresh = useCallback(() => {
@@ -350,17 +367,44 @@ const ArenaScreen = ({navigation, route}) => {
     getAllUSers(setAllUsersData, CurrentUser?.uid);
   };
 
-  const onFilterTimeLine = async values => {
-    if (values !== null) {
-      const myObj = await AsyncStorage.getItem('USERS_VALUE_FILTER');
-      const asyncValues = JSON.parse(myObj);
+  const onFilterTimeLine = async (values, type) => {
+    console.log("type===>", type);
+
+    if (
+      (type === "FreeAgentPostScreen" && values !== null) ||
+      values !== undefined
+    ) {
       if (values !== undefined && values) {
-        await AsyncStorage.removeItem('USERS_VALUE_FILTER');
+        await AsyncStorage.removeItem("USERS_VALUE_FILTER_FREE_AGENT");
         await AsyncStorage.setItem(
-          'USERS_VALUE_FILTER',
-          JSON.stringify(values),
+          "USERS_VALUE_FILTER_FREE_AGENT",
+          JSON.stringify(values)
         );
       }
+    } else {
+      if ((type === "ArenaScreen" && values !== null) || values !== undefined)
+        if (values !== undefined && values) {
+          await AsyncStorage.removeItem("USERS_VALUE_FILTER");
+          await AsyncStorage.setItem(
+            "USERS_VALUE_FILTER",
+            JSON.stringify(values)
+          );
+        }
+    }
+
+    if (values !== null) {
+      const myObjFree = await AsyncStorage.getItem(
+        "USERS_VALUE_FILTER_FREE_AGENT"
+      );
+      const myObjArena = await AsyncStorage.getItem("USERS_VALUE_FILTER");
+      const asyncValues = JSON.parse(myObjArena, myObjFree);
+      // if (values !== undefined && values) {
+      //   await AsyncStorage.removeItem("USERS_VALUE_FILTER");
+      //   await AsyncStorage.setItem(
+      //     "USERS_VALUE_FILTER",
+      //     JSON.stringify(values)
+      //   );
+      // }
 
       setLoading(true);
 
@@ -374,7 +418,7 @@ const ArenaScreen = ({navigation, route}) => {
         setLoading(false);
         return;
       }
-      const arenaFilerUsers = allUsersData.filter(user => {
+      const arenaFilerUsers = allUsersData.filter((user) => {
         return (
           (!values.age || user?.age === values.age) &&
           (!values.gender || user?.gender === values.gender) &&
@@ -389,13 +433,13 @@ const ArenaScreen = ({navigation, route}) => {
           (!values.skill1 || user?.skill1 === values.skill1) &&
           (!values.skill2 || user?.skill2 === values.skill2) &&
           (!values.skill3 || user?.skill3 === values.skill3) &&
-          (typeof values.freeAgent === 'undefined' ||
+          (typeof values.freeAgent === "undefined" ||
             user?.freeAgent === values.freeAgent)
         );
       });
 
       const arenaFilerPost = arenaFilerUsers
-        .map(user => postData.find(post => post.userId === user?.uid))
+        .map((user) => postData.find((post) => post.userId === user?.uid))
         .filter(Boolean);
 
       setTimeout(() => {
@@ -428,6 +472,11 @@ const ArenaScreen = ({navigation, route}) => {
     if (freeAgent == false) {
       getPosts(setPostData);
     } else {
+      for (let i = 0; i < postData.length; i++) {
+        const element = postData[i].freeAgent === true;
+        console.log("Posts ===>", element);
+      }
+
       getFeeAgentPosts(setPostData);
     }
     setTimeout(() => {
@@ -445,7 +494,7 @@ const ArenaScreen = ({navigation, route}) => {
   const onHandelModal = async () => {
     try {
       setAppFounderModal(false);
-      await SaveUser(CurrentUser.uid, {firstLogin: 1});
+      await SaveUser(CurrentUser.uid, { firstLogin: 1 });
       const user = await getSpecificUser(CurrentUser.uid);
       dispatch(authData(user));
       setTimeout(() => {
@@ -454,18 +503,18 @@ const ArenaScreen = ({navigation, route}) => {
     } catch (error) {}
   };
 
-  const onSetHeightValue = item => {
-    setSignupValues({...signupValues, height: `${item} cm`});
+  const onSetHeightValue = (item) => {
+    setSignupValues({ ...signupValues, height: `${item} cm` });
     setHeightModalVisible(false);
   };
 
   const onSetValue = (item, data) => {
-    if (signupId == 'Account Type') {
-      setSignupValues({...signupValues, accountType: item});
+    if (signupId == "Account Type") {
+      setSignupValues({ ...signupValues, accountType: item });
       setModalVisible(false);
       return;
     }
-    if (signupId == 'Select Sport') {
+    if (signupId == "Select Sport") {
       setSignupValues({
         ...signupValues,
         selectSport: item,
@@ -475,37 +524,37 @@ const ArenaScreen = ({navigation, route}) => {
       return;
     }
     if (signupId == 5 || signupId == 10) {
-      setSignupValues({...signupValues, bio: item});
+      setSignupValues({ ...signupValues, bio: item });
       setModalVisible(false);
       return;
     }
-    if (signupId == 'Select Position') {
-      setSignupValues({...signupValues, position: item});
+    if (signupId == "Select Position") {
+      setSignupValues({ ...signupValues, position: item });
       setModalVisible(false);
       return;
     }
-    if (signupId == 'Skill #1') {
-      setSignupValues({...signupValues, skill1: item});
+    if (signupId == "Skill #1") {
+      setSignupValues({ ...signupValues, skill1: item });
       setModalVisible(false);
       return;
     }
-    if (signupId == 'Strong Hand') {
-      setSignupValues({...signupValues, strongHand: item});
+    if (signupId == "Strong Hand") {
+      setSignupValues({ ...signupValues, strongHand: item });
       setModalVisible(false);
       return;
     }
-    if (signupId == 'Strong Foot') {
-      setSignupValues({...signupValues, strongFoot: item});
+    if (signupId == "Strong Foot") {
+      setSignupValues({ ...signupValues, strongFoot: item });
       setModalVisible(false);
       return;
     }
-    if (signupId == 'Skill #2') {
-      setSignupValues({...signupValues, skill2: item});
+    if (signupId == "Skill #2") {
+      setSignupValues({ ...signupValues, skill2: item });
       setModalVisible(false);
       return;
     }
-    if (signupId == 'Skill #3') {
-      setSignupValues({...signupValues, skill3: item});
+    if (signupId == "Skill #3") {
+      setSignupValues({ ...signupValues, skill3: item });
       setModalVisible(false);
       return;
     }
@@ -520,9 +569,9 @@ const ArenaScreen = ({navigation, route}) => {
   };
 
   const delPost = () => {
-    Alert.alert('Delete Post', 'Are you sure you want to delete?', [
+    Alert.alert("Delete Post", "Are you sure you want to delete?", [
       {
-        text: 'Yes',
+        text: "Yes",
         onPress: async () => {
           if (selectPost.uriData.uri) {
             deleteImage(selectPost?.uriData.uri);
@@ -531,7 +580,7 @@ const ArenaScreen = ({navigation, route}) => {
           deletePost(selectPost?.postId);
 
           let filterDeletePost = CurrentUser?.PostIds.filter(
-            data => data.postId != selectPost?.postId,
+            (data) => data.postId != selectPost?.postId
           );
           await SaveUser(CurrentUser.uid, {
             PostIds: filterDeletePost,
@@ -546,7 +595,7 @@ const ArenaScreen = ({navigation, route}) => {
         // getMedia();
       },
       {
-        text: 'No',
+        text: "No",
         onPress: () => {
           onCloseModal();
           // getMedia();
@@ -560,19 +609,20 @@ const ArenaScreen = ({navigation, route}) => {
     if (postLink) {
       Clipboard.setString(postLink);
       setShowPostPotions(false);
-      Toast.show('Link Copied!');
+      Toast.show("Link Copied!");
     }
   };
-  const Header = ({navigation}) => (
+  const Header = ({ navigation }) => (
     <View style={styles.header}>
       {/* <CustomText label={''}/> */}
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          width: '69%',
-          justifyContent: 'space-between',
-        }}>
+          flexDirection: "row",
+          alignItems: "center",
+          width: "69%",
+          justifyContent: "space-between",
+        }}
+      >
         <TouchableOpacity
           onPress={() => {
             navigation.openDrawer();
@@ -583,12 +633,13 @@ const ArenaScreen = ({navigation, route}) => {
             width: 40,
             height: 40,
             backgroundColor: colors.superLightGray,
-            alignItems: 'center',
-            justifyContent: 'center',
+            alignItems: "center",
+            justifyContent: "center",
             borderRadius: 100,
             marginRight: 10,
-          }}>
-          <Image source={icons.drawer} style={{height: 27, width: 27}} />
+          }}
+        >
+          <Image source={icons.drawer} style={{ height: 27, width: 27 }} />
         </TouchableOpacity>
         {freeAgent == false ? (
           <View>
@@ -613,7 +664,8 @@ const ArenaScreen = ({navigation, route}) => {
           <>
             <TouchableOpacity
               activeOpacity={0.6}
-              onPress={() => navigation.navigate('SearchScreen')}>
+              onPress={() => navigation.navigate("SearchScreen")}
+            >
               <AntDesign
                 name="search1"
                 size={moderateScale(22)}
@@ -626,15 +678,16 @@ const ArenaScreen = ({navigation, route}) => {
 
         <TouchableOpacity
           activeOpacity={0.6}
-          onPress={() => navigation.navigate('Notifications')}>
-          <Image source={icons.bell} style={{height: 27, width: 27}} />
+          onPress={() => navigation.navigate("Notifications")}
+        >
+          <Image source={icons.bell} style={{ height: 27, width: 27 }} />
           {notiAlert && <View style={styles.notificationContainer} />}
         </TouchableOpacity>
       </View>
     </View>
   );
 
-  const RenderPostData = ({item, index}) => {
+  const RenderPostData = ({ item, index }) => {
     return (
       <View>
         <PostItem
@@ -683,24 +736,23 @@ const ArenaScreen = ({navigation, route}) => {
         <Spacer height={10} />
         <Divider />
         <View>
-          {freeAgent == false && (
-            <>
-              <Spacer height={5} />
-              <PH10>
-                <TopTabs
-                  setShowFilter={setShowFilter}
-                  setCustomTimeLineIds={setCustomTimeLineIds}
-                  signupValues={signupValues}
-                  setSignupValues={setSignupValues}
-                  showFilter={showFilter}
-                  indexMain={indexMain}
-                  setIndexMain={setIndexMain}
-                />
-              </PH10>
-              <Spacer height={5} />
-              <Divider />
-            </>
-          )}
+          <>
+            <Spacer height={5} />
+            <PH10>
+              <TopTabs
+                setShowFilter={setShowFilter}
+                setCustomTimeLineIds={setCustomTimeLineIds}
+                signupValues={signupValues}
+                setSignupValues={setSignupValues}
+                showFilter={showFilter}
+                indexMain={indexMain}
+                setIndexMain={setIndexMain}
+                freeAgent={freeAgent}
+              />
+            </PH10>
+            <Spacer height={5} />
+            <Divider />
+          </>
 
           {showFilter && (
             <PostFilter
@@ -710,8 +762,13 @@ const ArenaScreen = ({navigation, route}) => {
               setCityModalVisible={setCityModalVisible}
               setCountryModalVisible={setCountryModalVisible}
               setSignupId={setSignupId}
-              onFilterTimeLine={value => onFilterTimeLine(value)}
+              onFilterTimeLine={(value, type) => onFilterTimeLine(value, type)}
               setHeightModalVisible={setHeightModalVisible}
+              type={
+                freeAgent === undefined || freeAgent === true
+                  ? "FreeAgentPostScreen"
+                  : "ArenaScreen"
+              }
             />
           )}
           <Divider />
@@ -720,11 +777,11 @@ const ArenaScreen = ({navigation, route}) => {
       </>
     );
   };
-  console.log('running');
+
   return (
     <>
       <View style={styles.container}>
-        <Spacer height={Platform.OS == 'ios' ? 40 : 10} />
+        <Spacer height={Platform.OS == "ios" ? 40 : 10} />
         <View>
           <Header freeAgent={freeAgent} navigation={navigation} />
         </View>
@@ -785,8 +842,8 @@ const ArenaScreen = ({navigation, route}) => {
       />
       <CustomLocationBottomSheet
         modalVisible={countryModalVisible}
-        onLocationPress={data => {
-          setSignupValues({...signupValues, country: data});
+        onLocationPress={(data) => {
+          setSignupValues({ ...signupValues, country: data });
           setCountryModalVisible(false);
         }}
         onCloseModal={() => setCountryModalVisible(false)}
@@ -794,8 +851,8 @@ const ArenaScreen = ({navigation, route}) => {
       />
       <CustomLocationBottomSheet
         modalVisible={cityModalVisible}
-        onLocationPress={data => {
-          setSignupValues({...signupValues, city: data});
+        onLocationPress={(data) => {
+          setSignupValues({ ...signupValues, city: data });
           setCityModalVisible(false);
         }}
         onCloseModal={() => setCityModalVisible(false)}
@@ -851,16 +908,16 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: "row",
   },
   postContainer: {
     // aspectRatio: 1,
-    width: '100%',
+    width: "100%",
     height: 350,
     // flex: 1,
   },
@@ -873,7 +930,7 @@ const styles = StyleSheet.create({
     height: 7,
     backgroundColor: colors.red,
     borderRadius: 100,
-    position: 'absolute',
+    position: "absolute",
     right: 3,
     top: 3,
   },
