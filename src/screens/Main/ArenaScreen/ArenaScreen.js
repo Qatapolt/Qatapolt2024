@@ -292,14 +292,14 @@ const ArenaScreen = ({ navigation, route }) => {
       try {
         const myObj = await AsyncStorage.getItem("USERS_VALUE_FILTER");
         const asyncValues = JSON.parse(myObj);
-        const myObjFree = await AsyncStorage.getItem(
-          "USERS_VALUE_FILTER_FREE_AGENT"
-        );
-        const asyncValuesFree = JSON.parse(myObjFree);
+        // const myObjFree = await AsyncStorage.getItem(
+        //   "USERS_VALUE_FILTER_FREE_AGENT"
+        // );
+        // const asyncValuesFree = JSON.parse(myObjFree);
 
-        console.log("myObj =========>", asyncValues, asyncValuesFree);
-        if (asyncValues !== null || asyncValuesFree !== null) {
-          onFilterTimeLine(asyncValues || asyncValuesFree);
+        console.log("myObj =========>", asyncValues);
+        if (asyncValues !== null) {
+          onFilterTimeLine(asyncValues);
         } else {
         }
         // Handle your data or perform any actions based on myObj
@@ -308,7 +308,7 @@ const ArenaScreen = ({ navigation, route }) => {
       }
     };
 
-    if (indexMain === 3 || indexMain === 1) {
+    if (indexMain === 3) {
       fetchDataFromAsyncStorage();
     } else {
       // Handle other cases if needed
@@ -370,34 +370,31 @@ const ArenaScreen = ({ navigation, route }) => {
   const onFilterTimeLine = async (values, type) => {
     console.log("type===>", type);
 
-    if (
-      (type === "FreeAgentPostScreen" && values !== null) ||
-      values !== undefined
-    ) {
-      if (values !== undefined && values) {
-        await AsyncStorage.removeItem("USERS_VALUE_FILTER_FREE_AGENT");
-        await AsyncStorage.setItem(
-          "USERS_VALUE_FILTER_FREE_AGENT",
-          JSON.stringify(values)
-        );
-      }
-    } else {
-      if ((type === "ArenaScreen" && values !== null) || values !== undefined)
-        if (values !== undefined && values) {
-          await AsyncStorage.removeItem("USERS_VALUE_FILTER");
-          await AsyncStorage.setItem(
-            "USERS_VALUE_FILTER",
-            JSON.stringify(values)
-          );
-        }
+    // if (
+    //   (type === "FreeAgentPostScreen" && values !== null) ||
+    //   values !== undefined
+    // ) {
+    // if (values !== undefined && values) {
+    //   await AsyncStorage.removeItem("USERS_VALUE_FILTER_FREE_AGENT");
+    //   await AsyncStorage.setItem(
+    //     "USERS_VALUE_FILTER_FREE_AGENT",
+    //     JSON.stringify(values)
+    //   );
+    // }
+    // } else {
+    //   if ((type === "ArenaScreen" && values !== null) || values !== undefined)
+    if (values !== undefined && values) {
+      await AsyncStorage.removeItem("USERS_VALUE_FILTER");
+      await AsyncStorage.setItem("USERS_VALUE_FILTER", JSON.stringify(values));
     }
+    // }
 
     if (values !== null) {
-      const myObjFree = await AsyncStorage.getItem(
-        "USERS_VALUE_FILTER_FREE_AGENT"
-      );
+      // const myObjFree = await AsyncStorage.getItem(
+      //   "USERS_VALUE_FILTER_FREE_AGENT"
+      // );
       const myObjArena = await AsyncStorage.getItem("USERS_VALUE_FILTER");
-      const asyncValues = JSON.parse(myObjArena, myObjFree);
+      const asyncValues = JSON.parse(myObjArena);
       // if (values !== undefined && values) {
       //   await AsyncStorage.removeItem("USERS_VALUE_FILTER");
       //   await AsyncStorage.setItem(

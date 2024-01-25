@@ -25,12 +25,12 @@ const PostFilter = ({
   setHeightModalVisible,
   type,
 }) => {
-  const [minAge, setMinAge] = useState();
-  const [maxAge, setMaxAge] = useState();
-  const [finalAge, setFinalAge] = useState();
-  const [minHeight, setMinHeight] = useState();
-  const [maxHeight, setMaxHeight] = useState();
-  const [finalHeight, setFinalHeight] = useState();
+  const [minAge, setMinAge] = useState(null);
+  const [maxAge, setMaxAge] = useState(null);
+  const [finalAge, setFinalAge] = useState(null);
+  const [minHeight, setMinHeight] = useState(null);
+  const [maxHeight, setMaxHeight] = useState(null);
+  const [finalHeight, setFinalHeight] = useState(null);
 
   const [signupValues, setSignupValues] = useState({
     selectSport: "",
@@ -199,24 +199,23 @@ const PostFilter = ({
     },
   ];
   const onResetValues = async () => {
-    const myObj = await AsyncStorage.getItem("USERS_VALUE_FILTER");
-    const myObjFree = await AsyncStorage.getItem(
-      "USERS_VALUE_FILTER_FREE_AGENT"
-    );
-    console.log("asyncValues", myObj, myObjFree);
-    if (
-      (signupValues && myObj !== undefined) ||
-      myObj !== null ||
-      myObjFree !== null ||
-      myObjFree !== undefined
-    ) {
-      if (type === "FreeAgentPostScreen") {
-        await AsyncStorage.removeItem("USERS_VALUE_FILTER_FREE_AGENT");
+    if (type === "FreeAgentPostScreen") {
+      try {
         setSignupValues({
           ...signupValues,
           freeAgent: true,
         });
-      } else {
+        setMinAge(null);
+        setMaxAge(null);
+        setFinalAge(null);
+        setMinHeight(null);
+        setMaxHeight(null);
+        setFinalHeight(null);
+      } catch (error) {
+        console.error(error);
+      }
+    } else {
+      try {
         await AsyncStorage.removeItem("USERS_VALUE_FILTER");
         setSignupValues({
           selectSport: "",
@@ -234,6 +233,14 @@ const PostFilter = ({
           skill3: "",
           freeAgent: false,
         });
+        setMinAge(null);
+        setMaxAge(null);
+        setFinalAge(null);
+        setMinHeight(null);
+        setMaxHeight(null);
+        setFinalHeight(null);
+      } catch (error) {
+        console.error(error);
       }
     }
   };
@@ -329,7 +336,7 @@ const PostFilter = ({
 
             <View>
               <CustomPicker
-                disabled={minAge === undefined ? true : false}
+                disabled={minAge === null ? true : false}
                 disableAutoScroll={true}
                 data={Array.from(
                   { length: 60 - minAge + 1 },
@@ -442,7 +449,7 @@ const PostFilter = ({
             </View>
             <View>
               <CustomPicker
-                disabled={minHeight === undefined ? true : false}
+                disabled={minHeight === null ? true : false}
                 disableAutoScroll={true}
                 data={Array.from(
                   { length: 235 - minHeight + 1 },
@@ -451,7 +458,7 @@ const PostFilter = ({
                 onSelect={(selectedItem, index) => {
                   setMaxHeight(selectedItem);
                   try {
-                    if (minAge !== undefined && selectedItem !== undefined) {
+                    if (minHeight !== undefined && selectedItem !== undefined) {
                       const height = parseInt((minHeight + selectedItem) / 2);
 
                       setFinalHeight(height);
