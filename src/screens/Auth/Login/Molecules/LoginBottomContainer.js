@@ -9,15 +9,17 @@ const LoginBottomContainer = props => {
     <TouchableOpacity
       onPress={() => props.navigation.navigate('Signup')}
       style={{
-        borderBottomWidth: 1.2,
+        // borderBottomWidth: 1.2,
         borderBottomColor: colors.white,
         width: '50%',
+        // paddingBottom:20,
         alignItems: 'center',
         alignSelf: 'center',
       }}>
       <CustomText
         label="Create a New Account"
         fontSize={12}
+        textDecorationLine="underline"
         alignSelf="flex-end"
         marginBottom={1}
         fontWeight="500"

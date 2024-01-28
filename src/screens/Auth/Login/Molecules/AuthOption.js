@@ -9,7 +9,7 @@ import {
 import React from 'react';
 import {colors} from '../../../../utils/Colors';
 import CustomText from '../../../../components/CustomText';
-import {Montserrat} from '../../../../utils/Fonts';
+import {InterFont, Montserrat} from '../../../../utils/Fonts';
 import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
 import {Spacer} from '../../../../components/Spacer';
 import {icons} from '../../../../assets/icons';
@@ -48,22 +48,23 @@ const AuthOption = props => {
           activeOpacity={0.7}
           style={styles.authContainer}>
           <Image
-            style={{width: scale(20), height: verticalScale(20)}}
+            style={{width: scale(25), height: verticalScale(25)}}
             source={icons.googleLogo}
           />
           <Spacer width={5} />
           <Text
             style={{
               color: 'black',
-              fontSize: 14,
-              fontWeight: '600',
+              fontSize: verticalScale(15),
+              fontWeight: '500',
+              fontFamily:"Inter-Bold",
               marginTop: 3,
             }}>
             {'Google'}
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
+        {/* <TouchableOpacity
           onPress={props.onFacebook}
           activeOpacity={0.7}
           style={styles.authContainer}>
@@ -81,7 +82,7 @@ const AuthOption = props => {
             }}>
             {'Facebook'}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
     </View>
 
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
     height: 1,
   },
   authContainer: {
-    width: 120,
+    // width: "60%",
     height: 40,
     // marginTop: 10,
     shadowColor: Platform.OS == 'ios' ? '#ced4da' : colors.black,
@@ -112,7 +113,8 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     elevation: 5,
     shadowOpacity: 0.5,
-    justifyContent: 'center',
+    paddingHorizontal:30,
+    // justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
     shadowOffset: {width: 3, height: 5},
