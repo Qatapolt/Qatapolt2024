@@ -23,12 +23,15 @@ const PostOptionsSheet = (props) => {
         backgroundColor: "#FFFFFF",
         flex: 1,
         width: "100%",
+        zIndex: 9999999,
       }}
       useNativeDriver
-      modalHeight={props.viewPostModal === true ? 150 : 120}
+      modalHeight={props.viewPostModal === true ? 170 : 150}
       handlePosition="inside"
       panGestureComponentProps={{ enabled: true }}
-
+      onClosed={() => {
+        props.setOptionSheet(false);
+      }}
       // visible={props.modalVisible}
       // onBackButtonPress={props.onCloseModal}
       // onBackdropPress={props.onCloseModal}

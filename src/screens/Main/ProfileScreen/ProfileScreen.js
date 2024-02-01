@@ -87,8 +87,9 @@ const ProfileScreen = ({ navigation, route }) => {
   const [viewMedia, setViewMedia] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
+  const [optionSheet, setOptionSheet] = useState(false);
   useEffect(() => {
-    if (viewPostModal) {
+    if (viewPostModal || optionSheet) {
       navigation.getParent()?.setOptions({
         tabBarStyle: { display: "none" },
         tabBarVisible: false,
@@ -97,8 +98,19 @@ const ProfileScreen = ({ navigation, route }) => {
         navigation
           .getParent()
           ?.setOptions({ tabBarStyle: undefined, tabBarVisible: undefined });
+    } else {
+      navigation.getParent()?.setOptions({
+        tabBarStyle: {
+          height: verticalScale(65),
+          paddingTop: 5,
+          backgroundColor: colors.white,
+          display: route.name === "NewPost" ? "none" : "flex",
+          paddingBottom: Platform.OS == "ios" ? 20 : 12,
+        },
+        tabBarVisible: true,
+      });
     }
-  }, [navigation, viewPostModal]);
+  }, [navigation, viewPostModal, optionSheet]);
   const statsArray = [
     { id: 1, name: "Sport", value: CurrentUser?.selectSport },
     { id: 2, name: "Account Type", value: CurrentUser?.accountType },
@@ -132,6 +144,8 @@ const ProfileScreen = ({ navigation, route }) => {
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
+        modalizeRef?.current?.close();
+        modalizeRefReport?.current?.close();
         console.log("running focus profile", isLoading);
         setIsLoading(true);
         await getUserAllData();
@@ -160,6 +174,8 @@ const ProfileScreen = ({ navigation, route }) => {
       return () => {
         // Additional cleanup if needed
         setUserEvent(route?.params?.event);
+        modalizeRef?.current?.close();
+        modalizeRefReport?.current?.close();
       };
     }, [
       getUserAllData,
@@ -659,6 +675,7 @@ const ProfileScreen = ({ navigation, route }) => {
   };
   const onOpen = () => {
     modalizeRef.current?.open();
+    setOptionSheet(true);
   };
   const onOpenReport = () => {
     modalizeRefReport.current?.open();
@@ -790,6 +807,7 @@ const ProfileScreen = ({ navigation, route }) => {
         onCopyLink={onCopyPostLink}
         navigation={navigation}
         modalizeRef={modalizeRef}
+        setOptionSheet={setOptionSheet}
       />
       <ReportSheet
         modalVisible={showReportPotions}

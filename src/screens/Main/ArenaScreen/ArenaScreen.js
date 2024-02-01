@@ -131,8 +131,9 @@ const ArenaScreen = ({ navigation, route }) => {
   const [appFounderData, setAppFounderData] = useState({});
   const [selectionType, setSelectionType] = useState("");
   const [allUsersData, setAllUsersData] = useState([]);
+  const [optionSheet, setOptionSheet] = useState(false);
   useEffect(() => {
-    if (viewPostModal) {
+    if (viewPostModal || optionSheet) {
       navigation.getParent()?.setOptions({
         tabBarStyle: { display: "none" },
         tabBarVisible: false,
@@ -153,7 +154,7 @@ const ArenaScreen = ({ navigation, route }) => {
         tabBarVisible: true,
       });
     }
-  }, [navigation, viewPostModal]);
+  }, [navigation, viewPostModal, optionSheet]);
   useEffect(() => {
     if (cityModalVisible === true) {
       setSelectionType("cities");
@@ -346,10 +347,13 @@ const ArenaScreen = ({ navigation, route }) => {
       getNewPostsShare();
       requestPermission();
       getAllUser();
-
+      modalizeRef?.current?.close();
+      modalizeRefReport?.current?.close();
       return async () => {
         setShowFilter(false);
         setIndexMain(0);
+        modalizeRef?.current?.close();
+        modalizeRefReport?.current?.close();
       };
     }, [])
   );
@@ -847,6 +851,7 @@ const ArenaScreen = ({ navigation, route }) => {
   };
   const onOpen = () => {
     modalizeRef.current?.open();
+    setOptionSheet(true);
   };
   const onOpenReport = () => {
     modalizeRefReport.current?.open();
@@ -953,6 +958,7 @@ const ArenaScreen = ({ navigation, route }) => {
         navigation={navigation}
         modalizeRef={modalizeRef}
         viewPostModal={viewPostModal}
+        setOptionSheet={setOptionSheet}
       />
       <ReportSheet
         modalVisible={showReportPotions}

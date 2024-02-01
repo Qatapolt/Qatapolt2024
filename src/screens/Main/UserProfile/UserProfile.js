@@ -93,6 +93,7 @@ const UserProfile = ({ navigation, route }) => {
   const [hightLightData, setHightLightData] = useState([]);
   const [viewMedia, setViewMedia] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
+
   useEffect(() => {
     if (viewPostModal) {
       navigation.getParent()?.setOptions({
