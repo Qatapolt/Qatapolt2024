@@ -1,20 +1,20 @@
-import axios from 'axios';
-import firestore from '@react-native-firebase/firestore';
-import {firebase} from '@react-native-firebase/firestore';
-import uuid from 'react-native-uuid';
+import axios from "axios";
+import firestore from "@react-native-firebase/firestore";
+import { firebase } from "@react-native-firebase/firestore";
+import uuid from "react-native-uuid";
 export const NotificationSender = (fcmToken, title, message) => {
   // console.log('userIdfcmToken', fcmToken);
   const NotificationData = {
-    method: 'POST',
-    url: 'https://fcm.googleapis.com/fcm/send',
+    method: "POST",
+    url: "https://fcm.googleapis.com/fcm/send",
     headers: {
       Authorization:
-        'key=AAAAIgAoddI:APA91bH7CeM1lHY3mq_4KoWaWHH-1okwjHFg6sUV0f3joouDy-yvpIl3scHonC2cdMNNBBE55PNiA178i_OT4VAmT8HIHovkoaYt_4j6_tQwWxmC0GELbQRulNIUeVlO2ozjnvgerrDk',
-      'Content-Type': 'application/json',
+        "key=AAAAIgAoddI:APA91bH7CeM1lHY3mq_4KoWaWHH-1okwjHFg6sUV0f3joouDy-yvpIl3scHonC2cdMNNBBE55PNiA178i_OT4VAmT8HIHovkoaYt_4j6_tQwWxmC0GELbQRulNIUeVlO2ozjnvgerrDk",
+      "Content-Type": "application/json",
     },
     data: {
       registration_ids: [fcmToken],
-      notification: {body: message, title: title},
+      notification: { body: message, title: title },
     },
   };
 
@@ -22,27 +22,27 @@ export const NotificationSender = (fcmToken, title, message) => {
     axios
       .request(NotificationData)
       .then(function (response) {
-        console.log('response', response?.data);
+        console.log("response", response?.data);
       })
       .catch(function (error) {
         console.error(error);
       });
   } catch (error) {
-    console.log('NotificationError', error);
+    console.log("NotificationError", error);
   }
 };
 
-export const postNotification = async data => {
+export const postNotification = async (data) => {
   // console.log('NotiData', data);
   try {
     const response = await firestore()
-      .collection('notifications')
+      .collection("notifications")
       .doc(data?.id)
-      .set(data, {merge: true});
+      .set(data, { merge: true });
 
     return response;
   } catch (error) {
-    console.log('ErrorNoti', error);
+    console.log("ErrorNoti", error);
   }
 };
 
@@ -52,11 +52,11 @@ export const getNotifications = async (id, setData) => {
 
   try {
     const response = await firestore()
-      .collection('notifications')
-      .where('notificationType', '!=', 'FOLLOW__REQUEST')
+      .collection("notifications")
+      .where("notificationType", "!=", "FOLLOW__REQUEST")
       .get()
-      .then(snapshot => {
-        snapshot.forEach(da => {
+      .then((snapshot) => {
+        snapshot.forEach((da) => {
           if (da.data().receiverId == id) {
             notificationData.push(da.data());
           }
@@ -72,12 +72,12 @@ export const getNotifications = async (id, setData) => {
 export const getFollowRequestNotiCount = async (id, setRequestCount) => {
   try {
     firestore()
-      .collection('notifications')
-      .where('notificationType', '==', 'FOLLOW__REQUEST')
-      .where('receiverId', '==', id)
+      .collection("notifications")
+      .where("notificationType", "==", "FOLLOW__REQUEST")
+      .where("receiverId", "==", id)
 
       .get()
-      .then(querySnapshot => {
+      .then((querySnapshot) => {
         const TotalUsers = querySnapshot.size;
 
         setRequestCount(TotalUsers);
@@ -86,19 +86,18 @@ export const getFollowRequestNotiCount = async (id, setRequestCount) => {
 };
 
 export const deleteRequestNotification = async (id) => {
-  console.log("knxkn",id)
+  // console.log("knxkn",id)
   try {
-  firestore()
-      .collection('notifications')
-      .where("id", 'in', id)
+    firestore()
+      .collection("notifications")
+      .where("id", "in", id)
 
       // data.delete()
       // console.log("DataColl",data)
       .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(doc => {
+      .then((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
           doc.ref.delete();
-          
         });
       });
   } catch (error) {}
@@ -109,12 +108,12 @@ export const getRequestWithLimit = async (id, setData) => {
 
   try {
     const response = await firestore()
-      .collection('notifications')
-      .where('notificationType', '==', 'FOLLOW__REQUEST')
+      .collection("notifications")
+      .where("notificationType", "==", "FOLLOW__REQUEST")
       .limit(1)
       .get()
-      .then(snapshot => {
-        snapshot.forEach(da => {
+      .then((snapshot) => {
+        snapshot.forEach((da) => {
           if (da.data().receiverId == id) {
             notificationData.push(da.data());
           }
@@ -132,11 +131,11 @@ export const getRequestNotification = async (id, setData) => {
 
   try {
     const response = await firestore()
-      .collection('notifications')
-      .where('notificationType', '==', 'FOLLOW__REQUEST')
+      .collection("notifications")
+      .where("notificationType", "==", "FOLLOW__REQUEST")
       .get()
-      .then(snapshot => {
-        snapshot.forEach(da => {
+      .then((snapshot) => {
+        snapshot.forEach((da) => {
           if (da.data().receiverId == id) {
             notificationData.push(da.data());
           }
@@ -153,17 +152,17 @@ export const sendNotification = async (
   thumbnail,
   title,
   message,
-  type,
+  type
 ) => {
   const senderName = `${currentUser?.name} ${message}`;
-  console.log("FcmLike",data?.fcmToken)
+  console.log("FcmLike", data?.fcmToken);
 
   // like your post 'Like Post'
   NotificationSender(data?.fcmToken, title, senderName);
 
   const senderData = {
     message: message,
-    thumbnail: thumbnail == undefined ? '' : thumbnail,
+    thumbnail: thumbnail == undefined ? "" : thumbnail,
     notificationType: type,
     senderName: currentUser?.name,
     senderUsername: currentUser?.name,
@@ -171,33 +170,37 @@ export const sendNotification = async (
     senderId: currentUser?.uid,
     receiverId: data?.uid,
     createdAt: new Date(),
-    senderImage: currentUser?.profileImage ? currentUser?.profileImage : '',
+    senderImage: currentUser?.profileImage ? currentUser?.profileImage : "",
   };
 
   await postNotification(senderData);
 };
 
-
-
-export const sendFollowerNotification = async ( authUser,CurrentUser, message,type,id) => {
+export const sendFollowerNotification = async (
+  authUser,
+  CurrentUser,
+  message,
+  type,
+  id
+) => {
   const senderName = `${authUser?.name} ${message}`;
 
   NotificationSender(CurrentUser?.fcmToken, message, senderName);
 
   const senderData = {
     message: message,
-    thumbnail: CurrentUser?.profileImage ? CurrentUser?.profileImage : '',
+    thumbnail: CurrentUser?.profileImage ? CurrentUser?.profileImage : "",
     senderName: authUser?.name,
     senderId: authUser?.uid,
-    senderUsername:authUser?.username,
+    senderUsername: authUser?.username,
     notificationType: type,
-    id:id,
+    id: id,
     receiverId: CurrentUser?.uid,
     createdAt: new Date(),
-    senderImage: authUser?.profileImage ? authUser?.profileImage : '',
+    senderImage: authUser?.profileImage ? authUser?.profileImage : "",
   };
 
-  console.log("SenderDataAll",senderData)
+  console.log("SenderDataAll", senderData);
 
   await postNotification(senderData);
 };

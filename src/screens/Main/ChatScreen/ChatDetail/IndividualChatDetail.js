@@ -8,24 +8,24 @@ import {
   TextInput,
   Image,
   ScrollView,
-} from 'react-native';
-import React, {useState, useRef} from 'react';
-import {SafeAreaView} from 'react-native-safe-area-context';
+} from "react-native";
+import React, { useState, useRef } from "react";
+import { SafeAreaView } from "react-native-safe-area-context";
 import {
   moderateScale,
   scale,
   ScaledSheet,
   verticalScale,
-} from 'react-native-size-matters';
-import {colors} from '../../../../utils/Colors';
-import commonStyles, {PH10} from '../../../../utils/CommonStyles';
-import {icons} from '../../../../assets/icons';
-import {Spacer} from '../../../../components/Spacer';
-import {ChatBody} from '../../../../components/ChatBody';
-import {images} from '../../../../assets/images';
-import SendMessage from '../../../../components/SendMessage';
-import ChatHeader from '../../../../components/ChatHeader';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
+} from "react-native-size-matters";
+import { colors } from "../../../../utils/Colors";
+import commonStyles, { PH10 } from "../../../../utils/CommonStyles";
+import { icons } from "../../../../assets/icons";
+import { Spacer } from "../../../../components/Spacer";
+import { ChatBody } from "../../../../components/ChatBody";
+import { images } from "../../../../assets/images";
+import SendMessage from "../../../../components/SendMessage";
+import ChatHeader from "../../../../components/ChatHeader";
+import { responsiveHeight } from "react-native-responsive-dimensions";
 
 import {
   checkIndividualRequest,
@@ -33,29 +33,29 @@ import {
   deleteIndividualChat,
   sendMessage,
   updateLastIndividualMessage,
-} from '../../../services/MessagesServices';
-import {useSelector} from 'react-redux';
-import {uploadImage} from '../../../services/StorageServics';
-import ImageView from '../../../../components/ImageView';
-import SimpleLoader from '../../../../utils/SimpleLoader';
-import loaderAnimation from '../../../../assets/Loaders';
-import CustomCamera from '../../../../components/CustomCamera';
-import {sendNotification} from '../../../services/NotificationServices';
-import {getSpecificUser} from '../../../services/UserServices';
+} from "../../../services/MessagesServices";
+import { useSelector } from "react-redux";
+import { uploadImage } from "../../../services/StorageServics";
+import ImageView from "../../../../components/ImageView";
+import SimpleLoader from "../../../../utils/SimpleLoader";
+import loaderAnimation from "../../../../assets/Loaders";
+import CustomCamera from "../../../../components/CustomCamera";
+import { sendNotification } from "../../../services/NotificationServices";
+import { getSpecificUser } from "../../../services/UserServices";
 
-const IndividualChatDetail = ({navigation, route}) => {
+const IndividualChatDetail = ({ navigation, route }) => {
   const [showTyping, setShowTyping] = useState(false);
-  const [textMessage, setTextMessage] = useState('');
+  const [textMessage, setTextMessage] = useState("");
   const [isCameraActive, setIsCameraActive] = useState(false);
 
   const [imageObject, setImageObject] = useState({});
   const [imageModal, setImageModal] = useState(false);
   const [topHeaderData, setTopHeaderData] = useState({});
   const [imageLoading, setImageLoading] = useState(false);
-  const [imageFile, setImageFile] = useState('');
-  const [VideoFile, setVideoFile] = useState('');
+  const [imageFile, setImageFile] = useState("");
+  const [VideoFile, setVideoFile] = useState("");
 
-  const authData = useSelector(state => state.auth.currentUser);
+  const authData = useSelector((state) => state.auth.currentUser);
   // console.log('AuthData', imageObject);
 
   const groupData = route?.params?.group;
@@ -65,20 +65,20 @@ const IndividualChatDetail = ({navigation, route}) => {
   const individual = route?.params?.individual;
   // console.log('topHeaderData', imageObject);
 
-  const SendMessageData = async imageFile => {
-    setTextMessage('');
+  const SendMessageData = async (imageFile) => {
+    setTextMessage("");
     const RequestStatus = await checkIndividualRequest(otherId, authData?.uid);
-    console.log('RequestData', RequestStatus);
+    console.log("RequestData", RequestStatus);
     const mediaFiles = {
-      uri: '',
-      type: '',
-      thumbnail: '',
+      uri: "",
+      type: "",
+      thumbnail: "",
     };
     const internalShare = {
-      senderId: '',
+      senderId: "",
       internalFile: {
-        type: '',
-        postId: '',
+        type: "",
+        postId: "",
       },
     };
     if (!RequestStatus) {
@@ -94,12 +94,12 @@ const IndividualChatDetail = ({navigation, route}) => {
       setImageLoading(true);
       if (imageFile.thumbnail) {
         const linkData = await uploadImage(imageFile.thumbnail, authData?.uid);
-        mediaFiles['thumbnail'] = linkData;
+        mediaFiles["thumbnail"] = linkData;
       }
 
       const linkData = await uploadImage(imageFile.uri, authData?.uid);
-      mediaFiles['uri'] = linkData;
-      mediaFiles['type'] = imageFile.type;
+      mediaFiles["uri"] = linkData;
+      mediaFiles["type"] = imageFile.type;
 
       setImageLoading(false);
     }
@@ -110,25 +110,25 @@ const IndividualChatDetail = ({navigation, route}) => {
       textMessage
         ? textMessage
         : mediaFiles.thumbnail
-        ? '🎥 Video'
-        : '📷 Photo',
+        ? "🎥 Video"
+        : "📷 Photo",
       mediaFiles,
-      internalShare,
+      internalShare
     );
     const userData = await getSpecificUser(otherId);
     // console.log('MessageResponse', authData?.uid, otherId, textMessage?textMessage:mediaFiles?"📷 Photo":"" ,mediaFiles);
-    console.log('userData===>', userData);
+
     sendNotification(
       authData,
       userData,
       textMessage
         ? textMessage
         : mediaFiles.thumbnail
-        ? '🎥 Video'
-        : '📷 Photo',
-      'Qatapolt',
-      'Send A Message',
-      'SEND_MESSAGE',
+        ? "🎥 Video"
+        : "📷 Photo",
+      "Qatapolt",
+      "Send A Message",
+      "SEND_MESSAGE"
     );
     updateLastIndividualMessage(authData?.uid, otherId, messageData);
     setShowTyping(!showTyping);
@@ -147,16 +147,16 @@ const IndividualChatDetail = ({navigation, route}) => {
   return (
     <>
       <KeyboardAvoidingView
-        style={{flex: 1}}
-        behavior={Platform.OS === 'ios' ? 'padding' : null}
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : null}
         keyboardVerticalOffset={
-          Platform.OS === 'ios' ? responsiveHeight(-1) : responsiveHeight(1)
+          Platform.OS === "ios" ? responsiveHeight(-1) : responsiveHeight(1)
         }
         // keyboardVerticalOffset={
         //   Platform.OS === 'ios' ?-10 : 12
         // }
       >
-        <View style={{flex: 1, backgroundColor: colors.white}}>
+        <View style={{ flex: 1, backgroundColor: colors.white }}>
           <ChatHeader
             otherId={otherId}
             delChat={onDeleteChat}
@@ -192,7 +192,7 @@ const IndividualChatDetail = ({navigation, route}) => {
                   return;
                 }
               }}
-              onChangeText={txt => setTextMessage(txt)}
+              onChangeText={(txt) => setTextMessage(txt)}
               textMessage={textMessage}
               setTextMessage={setTextMessage}
             />
@@ -204,7 +204,7 @@ const IndividualChatDetail = ({navigation, route}) => {
         setModalVisible={setImageModal}
         authId={authData?.uid}
         uploadedBy={
-          imageObject?.form == authData?.uid ? topHeaderData?.name : 'You'
+          imageObject?.form == authData?.uid ? topHeaderData?.name : "You"
         }
         setImage={setImageObject}
         image={imageObject}
@@ -229,63 +229,63 @@ export default IndividualChatDetail;
 const styles = ScaledSheet.create({
   textInputContainer: {
     backgroundColor: colors.primary,
-    borderTopLeftRadius: '20@s',
-    borderTopRightRadius: '20@s',
+    borderTopLeftRadius: "20@s",
+    borderTopRightRadius: "20@s",
     minHeight: verticalScale(60),
     maxHeight: verticalScale(100),
     // paddingTop: verticalScale(20),
-    width: '100%',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     padding: verticalScale(5),
   },
   inPutContainer: {
     backgroundColor: colors.white,
     // height: verticalScale(35),
     fontSize: verticalScale(14),
-    width: '75%',
+    width: "75%",
     color: colors.black,
-    fontWeight: '600',
+    fontWeight: "600",
     paddingHorizontal: verticalScale(10),
   },
 
   sendContainer: {
-    width: '20@s',
-    height: '25@vs',
+    width: "20@s",
+    height: "25@vs",
   },
   sendVideo: {
     width: 30,
     height: 30,
     backgroundColor: colors.primary,
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   footer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: colors.white,
-    width: '75%',
+    width: "75%",
     margin: 10,
     minHeight: verticalScale(38),
     maxHeight: verticalScale(100),
     borderRadius: 50,
     borderWidth: 1.5,
-    borderColor: '#BFBFBF',
-    shadowColor: Platform.OS == 'ios' ? colors.inputGray : colors.black,
+    borderColor: "#BFBFBF",
+    shadowColor: Platform.OS == "ios" ? colors.inputGray : colors.black,
     shadowRadius: 5,
     elevation: 5,
     shadowOpacity: 0.5,
 
-    shadowOffset: {width: 1, height: 1},
+    shadowOffset: { width: 1, height: 1 },
   },
   send: {
     width: 37,
     height: 37,
     borderRadius: 30,
     backgroundColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
   },
   input: {
     paddingHorizontal: 20,

@@ -81,8 +81,11 @@ import ArenaLayout from "../../../utils/Layouts/ArenaLayout";
 import WelcomeModal from "../../../components/WelcomeModal";
 import { TourGuideZoneByPosition, useTourGuideController } from "rn-tourguide";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
+import firestore from "@react-native-firebase/firestore";
+import { firebase } from "@react-native-firebase/firestore";
 const ArenaScreen = ({ navigation, route }) => {
+  const modalizeRef = useRef(null);
+  const modalizeRefReport = useRef(null);
   const [likePost, setLikePost] = useState(false);
   const [showPost, setShowPost] = useState(false);
   const dispatch = useDispatch();
@@ -128,7 +131,29 @@ const ArenaScreen = ({ navigation, route }) => {
   const [appFounderData, setAppFounderData] = useState({});
   const [selectionType, setSelectionType] = useState("");
   const [allUsersData, setAllUsersData] = useState([]);
-
+  useEffect(() => {
+    if (viewPostModal) {
+      navigation.getParent()?.setOptions({
+        tabBarStyle: { display: "none" },
+        tabBarVisible: false,
+      });
+      return () =>
+        navigation
+          .getParent()
+          ?.setOptions({ tabBarStyle: undefined, tabBarVisible: undefined });
+    } else {
+      navigation.getParent()?.setOptions({
+        tabBarStyle: {
+          height: verticalScale(65),
+          paddingTop: 5,
+          backgroundColor: colors.white,
+          display: route.name === "NewPost" ? "none" : "flex",
+          paddingBottom: Platform.OS == "ios" ? 20 : 12,
+        },
+        tabBarVisible: true,
+      });
+    }
+  }, [navigation, viewPostModal]);
   useEffect(() => {
     if (cityModalVisible === true) {
       setSelectionType("cities");
@@ -225,10 +250,12 @@ const ArenaScreen = ({ navigation, route }) => {
       getWatchListPostData();
       return;
     }
+  }, [route?.params?.freeAgent, indexMain, isLoading, repost, newComment]);
+  useEffect(() => {
     if (repost === true) {
       getAllPost();
     }
-  }, [route?.params?.freeAgent, indexMain, isLoading, newComment, repost]);
+  }, [repost]);
   useEffect(() => {
     if (
       freeAgent === undefined ||
@@ -319,6 +346,7 @@ const ArenaScreen = ({ navigation, route }) => {
       getNewPostsShare();
       requestPermission();
       getAllUser();
+
       return async () => {
         setShowFilter(false);
         setIndexMain(0);
@@ -468,23 +496,64 @@ const ArenaScreen = ({ navigation, route }) => {
     setLoading(true);
     if (freeAgent == false) {
       getPosts(setPostData);
-    } else {
-      for (let i = 0; i < postData.length; i++) {
-        const element = postData[i].freeAgent === true;
-        console.log("Posts ===>", element);
-      }
-
-      getFeeAgentPosts(setPostData);
-    }
-    setTimeout(() => {
       setLoading(false);
-    }, 1000);
+    } else {
+      try {
+        firestore()
+          .collection("Posts")
+          .where("freeAgent", "==", true)
+          .get()
+          .then((datingSnapshot) => {
+            datingSnapshot.forEach((da) => {
+              postData.push(da.data());
+            });
+            const sortedArray = [...postData].sort((a, b) => {
+              const createdAtA =
+                a.createAt.seconds + a.createAt.nanoseconds / 1e9;
+              const createdAtB =
+                b.createAt.seconds + b.createAt.nanoseconds / 1e9;
+              return createdAtB - createdAtA;
+            });
+            console.log("PostData", sortedArray.length);
+            setPostData(sortedArray);
+          });
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        throw error;
+      }
+      // getFeeAgentPosts(setPostData);
+    }
   };
   const getAllPostWithNew = () => {
     if (freeAgent == false) {
       getPosts(setPostData);
+      setLoading(false);
     } else {
-      getFeeAgentPosts(setPostData);
+      try {
+        firestore()
+          .collection("Posts")
+          .where("freeAgent", "==", true)
+          .get()
+          .then((datingSnapshot) => {
+            datingSnapshot.forEach((da) => {
+              postData.push(da.data());
+            });
+            const sortedArray = [...postData].sort((a, b) => {
+              const createdAtA =
+                a.createAt.seconds + a.createAt.nanoseconds / 1e9;
+              const createdAtB =
+                b.createAt.seconds + b.createAt.nanoseconds / 1e9;
+              return createdAtB - createdAtA;
+            });
+            console.log("PostData", sortedArray.length);
+            setPostData(sortedArray);
+          });
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        throw error;
+      }
     }
   };
 
@@ -562,7 +631,7 @@ const ArenaScreen = ({ navigation, route }) => {
     setShowPostPotions(!showPostPotions);
   };
   const onReportModal = () => {
-    setShowReportPotions(false);
+    modalizeRefReport.current?.close();
   };
 
   const delPost = () => {
@@ -688,6 +757,8 @@ const ArenaScreen = ({ navigation, route }) => {
     return (
       <View>
         <PostItem
+          onOpen={onOpen}
+          onOpenReport={onOpenReport}
           navigation={navigation}
           index={index}
           item={item}
@@ -774,6 +845,12 @@ const ArenaScreen = ({ navigation, route }) => {
       </>
     );
   };
+  const onOpen = () => {
+    modalizeRef.current?.open();
+  };
+  const onOpenReport = () => {
+    modalizeRefReport.current?.open();
+  };
 
   return (
     <>
@@ -819,6 +896,7 @@ const ArenaScreen = ({ navigation, route }) => {
         setShowPost={setShowPost}
         showPost={showPost}
         showPostPotions={showPostPotions}
+        onOpen={onOpen}
       />
       <AppFounderModal
         modalVisible={appFounderModal}
@@ -873,6 +951,8 @@ const ArenaScreen = ({ navigation, route }) => {
         onDelPost={delPost}
         onCopyLink={onCopyPostLink}
         navigation={navigation}
+        modalizeRef={modalizeRef}
+        viewPostModal={viewPostModal}
       />
       <ReportSheet
         modalVisible={showReportPotions}
@@ -884,6 +964,10 @@ const ArenaScreen = ({ navigation, route }) => {
         onDelPost={delPost}
         navigation={navigation}
         setRepost={setRepost}
+        postData={postData}
+        setPostData={setPostData}
+        freeAgent={freeAgent}
+        modalizeRefReport={modalizeRefReport}
       />
       <WelcomeModal
         toggleModal={WelcomeToggleModal}

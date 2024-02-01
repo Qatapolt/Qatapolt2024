@@ -13,82 +13,83 @@ import {
   Alert,
   FlatList,
   PermissionsAndroid,
-} from 'react-native';
-import React, {useRef, useState, useEffect} from 'react';
-import {colors} from '../../../utils/Colors';
-import CustomText from '../../../components/CustomText';
-import {icons} from '../../../assets/icons';
-import {Spacer} from '../../../components/Spacer';
-import {Avatar, Divider, Image, ListItem} from 'react-native-elements';
-import TopTabs from '../../../components/TopTabs';
-import commonStyles, {PH10, PH20} from '../../../utils/CommonStyles';
-import {images} from '../../../assets/images';
-import GradientButton from '../../../components/GradientButton';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {InterFont} from '../../../utils/Fonts';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Octicons from 'react-native-vector-icons/Octicons';
-import CustomHeader from '../../../components/CustomHeader';
-import Entypo from 'react-native-vector-icons/Entypo';
+} from "react-native";
+import React, { useRef, useState, useEffect } from "react";
+import { colors } from "../../../utils/Colors";
+import CustomText from "../../../components/CustomText";
+import { icons } from "../../../assets/icons";
+import { Spacer } from "../../../components/Spacer";
+import { Avatar, Divider, Image, ListItem } from "react-native-elements";
+import TopTabs from "../../../components/TopTabs";
+import commonStyles, { PH10, PH20 } from "../../../utils/CommonStyles";
+import { images } from "../../../assets/images";
+import GradientButton from "../../../components/GradientButton";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import { InterFont } from "../../../utils/Fonts";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import Octicons from "react-native-vector-icons/Octicons";
+import CustomHeader from "../../../components/CustomHeader";
+import Entypo from "react-native-vector-icons/Entypo";
 
-import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import { launchCamera, launchImageLibrary } from "react-native-image-picker";
 
-import ImagePicker from 'react-native-image-crop-picker';
-import uuid from 'react-native-uuid';
-import ActionSheet from 'react-native-actionsheet';
-import Geocoder from 'react-native-geocoding';
-import CustomButton from '../../../components/CustomButton';
-import CreatePostBottom from './Molecules/CreatePostBottom';
-import {CheckBox} from '@rneui/themed';
-import {useDispatch, useSelector} from 'react-redux';
-import CustomImage from '../../../components/CustomImage';
-import {uploadImage, uploadVideo} from '../../services/StorageServics';
-import {SavePost} from '../../services/PostServices';
-import {useFocusEffect} from '@react-navigation/native';
-import VideoPlayer from 'react-native-video-player';
-import {request, PERMISSIONS, check, RESULTS} from 'react-native-permissions';
-import Geolocation from '@react-native-community/geolocation';
+import ImagePicker from "react-native-image-crop-picker";
+import uuid from "react-native-uuid";
+import ActionSheet from "react-native-actionsheet";
+import Geocoder from "react-native-geocoding";
+import CustomButton from "../../../components/CustomButton";
+import CreatePostBottom from "./Molecules/CreatePostBottom";
+import { CheckBox } from "@rneui/themed";
+import { useDispatch, useSelector } from "react-redux";
+import CustomImage from "../../../components/CustomImage";
+import { uploadImage, uploadVideo } from "../../services/StorageServics";
+import { SavePost } from "../../services/PostServices";
+import { useFocusEffect } from "@react-navigation/native";
+import VideoPlayer from "react-native-video-player";
+import { request, PERMISSIONS, check, RESULTS } from "react-native-permissions";
+import Geolocation from "@react-native-community/geolocation";
 import {
   getAllUSers,
   getSpecificUser,
   userPost,
   userPostId,
-} from '../../services/UserServices';
-import {responsiveHeight} from 'react-native-responsive-dimensions';
-import {createThumbnail} from 'react-native-create-thumbnail';
-import {cameraPermissionError} from '../../../utils/Permissions';
-import UserContainer from './Molecules/UserContainer';
+} from "../../services/UserServices";
+import { responsiveHeight } from "react-native-responsive-dimensions";
+import { createThumbnail } from "react-native-create-thumbnail";
+import { cameraPermissionError } from "../../../utils/Permissions";
+import UserContainer from "./Molecules/UserContainer";
 import {
   authData,
   setCurrentLocation,
   setEmptyPostLocation,
-} from '../../../redux/reducers/authReducer';
-import {ImageHeight, ImageWidth} from '../../../utils/Data';
-import PostHeader from './Molecules/PostHeader';
-import {locationPermissionError} from '../../../utils/Commons';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+} from "../../../redux/reducers/authReducer";
+import { ImageHeight, ImageWidth } from "../../../utils/Data";
+import PostHeader from "./Molecules/PostHeader";
+import { locationPermissionError } from "../../../utils/Commons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import {
   requestCameraPermission,
   requestGalleryPermission,
-} from '../../services/Permissions';
-import CustomCamera from '../../../components/CustomCamera';
-import axios from 'axios';
-import * as Animatable from 'react-native-animatable';
-const PostScreen = ({navigation, route}) => {
-  const height = Dimensions.get('screen').height;
+} from "../../services/Permissions";
+import CustomCamera from "../../../components/CustomCamera";
+import axios from "axios";
+import * as Animatable from "react-native-animatable";
+import FastImage from "react-native-fast-image";
+const PostScreen = ({ navigation, route }) => {
+  const height = Dimensions.get("screen").height;
   const viewref = useRef(null);
   const useTextInput = useRef();
-  const currentUser = useSelector(state => state.auth?.currentUser);
-  const postLocation = useSelector(state => state.auth?.createPostLocation);
+  const currentUser = useSelector((state) => state.auth?.currentUser);
+  const postLocation = useSelector((state) => state.auth?.createPostLocation);
   const [isCameraActive, setIsCameraActive] = useState(false);
   const [checkFreeAgent, setCheckFreeAgent] = useState(false);
   const [loading, setLoading] = useState(false);
   const actionSheetRef = useRef();
-  const [imageFile, setImageFile] = useState('');
-  const [VideoFile, setVideoFile] = useState('');
+  const [imageFile, setImageFile] = useState("");
+  const [VideoFile, setVideoFile] = useState("");
   const dispatch = useDispatch();
-  const [postDescription, setPostDescription] = useState('');
+  const [postDescription, setPostDescription] = useState("");
   const [userData, setUserData] = useState([]);
   const [mentionedUsers, setMentionedUsers] = useState([]);
   const [placeId, setPlaceId] = useState(null);
@@ -107,24 +108,24 @@ const PostScreen = ({navigation, route}) => {
         }, 1000);
       }
       return async () => {
-        setPostDescription('');
-        setImageFile('');
+        setPostDescription("");
+        setImageFile("");
         setCheckFreeAgent(false);
       };
-    }, []),
+    }, [])
   );
   useEffect(() => {
-    if (postDescription.includes('@') && visibleFlatList === false) {
+    if (postDescription.includes("@") && visibleFlatList === false) {
       try {
         viewref?.current
           ?.fadeOut()
           .then(
-            () => console.log('visibleFlatList ===>', visibleFlatList),
-            setVisibleFlatList(true),
+            () => console.log("visibleFlatList ===>", visibleFlatList),
+            setVisibleFlatList(true)
           );
         getAllUSers(setUserData, currentUser.uid);
       } catch (error) {
-        console.log('error ====>', error);
+        console.log("error ====>", error);
       }
     }
   }, [postDescription]);
@@ -137,14 +138,14 @@ const PostScreen = ({navigation, route}) => {
   }, [route?.params]);
   async function requestPermission() {
     try {
-      if (Platform.OS === 'android') {
+      if (Platform.OS === "android") {
         await PermissionsAndroid.requestMultiple([
           PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
           PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
           PermissionsAndroid.PERMISSIONS.CAMERA,
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
-        ]).then(result => {
+        ]).then((result) => {
           // console.log('requestPermission result', result);
         });
       }
@@ -166,7 +167,7 @@ const PostScreen = ({navigation, route}) => {
       setLocationDetails(null);
 
       setMentionedUsers([]);
-      setPostDescription('');
+      setPostDescription("");
       navigation.goBack();
     } else if (
       locationDetails !== null &&
@@ -175,12 +176,12 @@ const PostScreen = ({navigation, route}) => {
       setLocationDetails(null);
 
       setMentionedUsers([]);
-      setPostDescription('');
+      setPostDescription("");
       navigation.goBack();
     } else {
       setMentionedUsers([]);
 
-      setPostDescription('');
+      setPostDescription("");
       navigation.goBack();
     }
   };
@@ -207,7 +208,7 @@ const PostScreen = ({navigation, route}) => {
         )}
         Center={() => (
           <CustomText
-            label={'Create Post'}
+            label={"Create Post"}
             fontSize={16}
             marginLeft={30}
             textAlign="center"
@@ -231,7 +232,7 @@ const PostScreen = ({navigation, route}) => {
                   ? colors.green
                   : colors.lightGray
               }
-              title={'Publish'}
+              title={"Publish"}
               width={80}
             />
           </View>
@@ -242,10 +243,10 @@ const PostScreen = ({navigation, route}) => {
 
   const onOpenCamera = async () => {
     const cameraPermission = await requestCameraPermission();
-    if (cameraPermission == 'granted') {
+    if (cameraPermission == "granted") {
       setIsCameraActive(true);
-    } else if (cameraPermission == 'blocked') {
-      if (Platform.OS == 'android') {
+    } else if (cameraPermission == "blocked") {
+      if (Platform.OS == "android") {
         Linking.openSettings();
       } else {
         openSettings();
@@ -254,31 +255,31 @@ const PostScreen = ({navigation, route}) => {
   };
   const onPostImagevideoSelect = () => {
     Alert.alert(
-      'Qatapolt Instruction',
-      'If you Want to post a video, please select less than 60 seconds',
+      "Qatapolt Instruction",
+      "If you Want to post a video, please select less than 60 seconds",
       [
         {
-          text: 'OK',
+          text: "OK",
           onPress: () => {
             onPickGallery();
           },
         },
         {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
+          text: "Cancel",
+          onPress: () => console.log("Cancel Pressed"),
+          style: "cancel",
         },
-      ],
+      ]
     );
   };
   const onPickGallery = async () => {
     const cameraPermission = await requestGalleryPermission();
-    if (cameraPermission == 'granted') {
+    if (cameraPermission == "granted") {
       try {
         const res = await ImagePicker.openPicker({
           width: 300,
           height: 400,
-          mediaType: 'any',
+          mediaType: "any",
         });
 
         if (res) {
@@ -286,24 +287,24 @@ const PostScreen = ({navigation, route}) => {
             uri: res.path,
             fileName: res.path,
             type: res.mime,
-            thumbnail: '',
+            thumbnail: "",
           };
 
           let videDuration = Number(res.duration);
-          console.log('DurationData', videDuration);
-          if (file.type?.includes('video')) {
+          console.log("DurationData", videDuration);
+          if (file.type?.includes("video")) {
             if (videDuration >= 60000) {
-              Alert.alert('Video length must be smaller than 60 seconds');
+              Alert.alert("Video length must be smaller than 60 seconds");
             } else {
               createThumbnail({
                 url: file.uri,
                 timeStamp: 10000,
               })
-                .then(response => {
-                  file['thumbnail'] = response.path;
+                .then((response) => {
+                  file["thumbnail"] = response.path;
                   setVideoFile(file);
                 })
-                .catch(err => console.log({err}));
+                .catch((err) => console.log({ err }));
             }
           } else {
             setImageFile(file);
@@ -313,8 +314,8 @@ const PostScreen = ({navigation, route}) => {
       } catch (error) {
         cameraPermissionError(error);
       }
-    } else if (cameraPermission == 'blocked') {
-      if (Platform.OS == 'android') {
+    } else if (cameraPermission == "blocked") {
+      if (Platform.OS == "android") {
         Linking.openSettings();
       } else {
         openSettings();
@@ -323,14 +324,14 @@ const PostScreen = ({navigation, route}) => {
   };
   const onImagePick = async () => {
     try {
-      if (VideoFile != '') {
-        setVideoFile('');
+      if (VideoFile != "") {
+        setVideoFile("");
       }
       const result = await ImagePicker.openPicker({
         width: 300,
         height: 400,
         cropping: true,
-        mediaType: 'photo',
+        mediaType: "photo",
         multiple: false,
       });
 
@@ -353,18 +354,18 @@ const PostScreen = ({navigation, route}) => {
     setLoading(true);
     const postData = {
       uriData: {
-        uri: '',
+        uri: "",
         type:
-          VideoFile != ''
+          VideoFile != ""
             ? VideoFile.type
               ? VideoFile.type
-              : ''
+              : ""
             : imageFile.type
             ? imageFile.type
-            : '',
+            : "",
       },
       description: postDescription,
-      thumbnail: '',
+      thumbnail: "",
       freeAgent: checkFreeAgent,
       postId: uuid.v4(),
       medalsId: [],
@@ -382,18 +383,19 @@ const PostScreen = ({navigation, route}) => {
       comments: [],
       comments_Count: 0,
     };
+    console.log("postData", postData);
     if (imageFile.uri) {
       const linkData = await uploadImage(imageFile.uri, currentUser.uid);
-      postData.uriData['uri'] = linkData;
+      postData.uriData["uri"] = linkData;
     } else if (VideoFile.uri) {
       const thumbnailData = await uploadImage(
         VideoFile.thumbnail,
-        currentUser.uid,
+        currentUser.uid
       );
-      postData.uriData['thumbnail'] = thumbnailData;
+      postData.uriData["thumbnail"] = thumbnailData;
 
       const linkData = await uploadVideo(VideoFile.uri, currentUser.uid);
-      postData.uriData['uri'] = linkData;
+      postData.uriData["uri"] = linkData;
     }
     try {
       await SavePost(postData);
@@ -410,77 +412,88 @@ const PostScreen = ({navigation, route}) => {
       if (checkFreeAgent) {
         navigation.reset({
           index: 0,
-          routes: [{name: 'Free Agents', freeAgent: true}],
+          routes: [{ name: "Free Agents", freeAgent: true }],
         });
       } else {
         let myObj = {
           success: true,
         };
-        await AsyncStorage.setItem('NEW_POST', JSON.stringify(myObj));
+        await AsyncStorage.setItem("NEW_POST", JSON.stringify(myObj));
         navigation.goBack();
       }
 
       setLocationDetails(null);
       setMentionedUsers([]);
-      setImageFile('');
-      setVideoFile('');
-      setPostDescription('');
+      setImageFile("");
+      setVideoFile("");
+      setPostDescription("");
     } catch (error) {
-      console.log('ImageUploading error', error);
+      console.log("ImageUploading error", error);
     }
     setLoading(false);
   };
-  const onSelectUser = item => {
-    const mentionSymbol = '@';
+  const onSelectUser = (item) => {
+    const mentionSymbol = "@";
     if (postDescription.includes(mentionSymbol)) {
-      console.log('Before state update:', visibleFlatList);
-      const updatedDescription = postDescription.replace(mentionSymbol, '');
+      console.log("Before state update:", visibleFlatList);
+      const updatedDescription = postDescription.replace(mentionSymbol, "");
       setPostDescription(`${updatedDescription}${item.username}`);
-      setMentionedUsers(prevUsers => [...prevUsers, item.uid]);
-      console.log('===>', visibleFlatList);
+      setMentionedUsers((prevUsers) => [...prevUsers, item.uid]);
+      console.log("===>", visibleFlatList);
       try {
         viewref?.current
           ?.fadeOutUpBig()
           .then(
-            () => console.log('visibleFlatList ===>', visibleFlatList),
-            setVisibleFlatList(false),
+            () => console.log("visibleFlatList ===>", visibleFlatList),
+            setVisibleFlatList(false)
           );
       } catch (error) {
-        console.log('error ==>', error);
+        console.log("error ==>", error);
       }
     }
   };
-  const renderSearchUser = ({item, index}) => {
+  const renderSearchUser = ({ item, index }) => {
     return (
       <TouchableOpacity
         activeOpacity={0.6}
         onPress={() => {
           onSelectUser(item);
-        }}>
+        }}
+      >
         <UserContainer item={item} />
       </TouchableOpacity>
     );
   };
+  const getLocationPermissions = async () => {
+    try {
+      const permissionResult = await request(
+        Platform.select({
+          android: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
+          ios: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
+        })
+      );
 
+      return permissionResult === RESULTS.GRANTED;
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
+  };
   const handleGetLocation = async () => {
-    const apiKey = 'AIzaSyDXoHO79vxypTv8xL4V10cf5kFpIYDO9Rk';
-    const result = await request(
-      Platform.OS === 'android'
-        ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
-        : PERMISSIONS.IOS.ACCESS_FINE_LOCATION,
-    );
+    const apiKey = "AIzaSyDXoHO79vxypTv8xL4V10cf5kFpIYDO9Rk";
+    const result = await getLocationPermissions();
 
-    if (result && result === RESULTS.GRANTED) {
+    if (result === true || result === "granted") {
       try {
         Geolocation.getCurrentPosition(
-          position => {
+          (position) => {
             const latitude = position?.coords?.latitude;
             const longitude = position?.coords?.longitude;
             const geocodingApiUrl = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`;
 
             axios
               .get(geocodingApiUrl)
-              .then(response => {
+              .then((response) => {
                 const results = response.data.results;
                 if (results && results.length > 0) {
                   const firstResult = results[0];
@@ -490,70 +503,71 @@ const PostScreen = ({navigation, route}) => {
 
                   axios
                     .get(placesApiUrl)
-                    .then(placesResponse => {
+                    .then((placesResponse) => {
                       const result = placesResponse.data.result;
                       if (result) {
                         // Extracting specific components from the formatted address
                         const addressComponents = result.address_components;
                         const city =
                           addressComponents.find(
-                            component =>
-                              component.types.includes('locality') ||
+                            (component) =>
+                              component.types.includes("locality") ||
                               component.types.includes(
-                                'administrative_area_level_2',
-                              ),
-                          )?.long_name || '';
+                                "administrative_area_level_2"
+                              )
+                          )?.long_name || "";
 
                         const state =
-                          addressComponents.find(component =>
+                          addressComponents.find((component) =>
                             component.types.includes(
-                              'administrative_area_level_1',
-                            ),
-                          )?.long_name || '';
+                              "administrative_area_level_1"
+                            )
+                          )?.long_name || "";
 
                         const country =
-                          addressComponents.find(component =>
-                            component.types.includes('country'),
-                          )?.long_name || '';
+                          addressComponents.find((component) =>
+                            component.types.includes("country")
+                          )?.long_name || "";
 
-                        const formattedAddress = `${city}, ${state}, ${country}`;
+                        const formattedAddress = `${city}`;
+                        // const formattedAddress = `${city}, ${state}, ${country}`;
                         setLocationDetails(formattedAddress);
                       }
                     })
-                    .catch(placesError => {
+                    .catch((placesError) => {
                       console.error(
-                        'Error fetching place details:',
-                        placesError,
+                        "Error fetching place details:",
+                        placesError
                       );
                     });
                 }
               })
-              .catch(error => {
-                console.error('Error fetching location details:', error);
+              .catch((error) => {
+                console.error("Error fetching location details:", error);
               });
           },
-          error => {
+          (error) => {
             console.log(error);
-          },
-          {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+          }
+          // { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
         );
       } catch (error) {
-        console.log('Location error:', error);
+        console.log("Location error:", error);
       }
     } else {
       // If permission is not granted, request permission again
       Alert.alert(
-        'Permission Denied',
-        'Please grant location permission to use this feature.',
+        "Permission Denied",
+        "Please grant location permission to use this feature.",
         [
           {
-            text: 'OK',
+            text: "OK",
             onPress: async () => {
               try {
                 const permissionResult = await request(
-                  Platform.OS === 'android'
+                  Platform.OS === "android"
                     ? PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION
-                    : PERMISSIONS.IOS.ACCESS_FINE_LOCATION,
+                    : PERMISSIONS.IOS.ACCESS_FINE_LOCATION
                 );
 
                 if (permissionResult === RESULTS.GRANTED) {
@@ -561,37 +575,37 @@ const PostScreen = ({navigation, route}) => {
                   handleGetLocation();
                 } else {
                   // Handle case where permission is still not granted
-                  console.log('Permission still not granted.');
+                  console.log("Permission still not granted.");
                 }
               } catch (permissionError) {
                 console.error(
-                  'Error requesting location permission:',
-                  permissionError,
+                  "Error requesting location permission:",
+                  permissionError
                 );
               }
             },
           },
           {
-            text: 'Cancel',
-            onPress: () => console.log('Cancel Pressed'),
-            style: 'cancel',
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
           },
-        ],
+        ]
       );
     }
   };
 
-  const handleTextChange = text => {
+  const handleTextChange = (text) => {
     setPostDescription(text);
   };
 
   const renderHighlightedText = () => {
     const components = [];
-    let currentText = '';
+    let currentText = "";
     let lastIndex = 0;
 
     for (let i = 0; i < postDescription.length; i++) {
-      if (postDescription[i] === '@') {
+      if (postDescription[i] === "@") {
         // If there is text before the '@', render it
         if (currentText) {
           components.push(
@@ -601,11 +615,12 @@ const PostScreen = ({navigation, route}) => {
                 fontFamily: InterFont.regular,
                 color: colors.inputGray,
               }}
-              key={`text_${lastIndex}`}>
+              key={`text_${lastIndex}`}
+            >
               {currentText}
-            </Text>,
+            </Text>
           );
-          currentText = ''; // Reset currentText
+          currentText = ""; // Reset currentText
         }
 
         // Check if the '@' is followed by a valid username
@@ -624,13 +639,14 @@ const PostScreen = ({navigation, route}) => {
           components.push(
             <TouchableOpacity
               key={`mention_${lastIndex}`}
-              onPress={() => handleUsernamePress(username)}>
+              onPress={() => handleUsernamePress(username)}
+            >
               <Text style={styles.mention}>{`@${username}`}</Text>
-            </TouchableOpacity>,
+            </TouchableOpacity>
           );
         } else {
           // If '@' is not entered manually, render as regular text
-          currentText += '@';
+          currentText += "@";
         }
 
         lastIndex = i + 1;
@@ -648,28 +664,30 @@ const PostScreen = ({navigation, route}) => {
             fontFamily: InterFont.regular,
             color: colors.inputGray,
           }}
-          key={`text_${lastIndex}`}>
+          key={`text_${lastIndex}`}
+        >
           {currentText}
-        </Text>,
+        </Text>
       );
     }
 
     return components;
   };
-  const handleUsernamePress = username => {
+  const handleUsernamePress = (username) => {
     // Implement your navigation logic here, e.g., navigate to the user's profile
     console.log(`Navigating to profile of ${username}`);
   };
   return (
     <>
       <KeyboardAvoidingView
-        style={{flex: 1}}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
         keyboardVerticalOffset={
-          Platform.OS === 'ios' ? responsiveHeight(-1) : responsiveHeight(1)
-        }>
-        <SafeAreaView style={{...styles.container}}>
-          <View style={{flex: 1}}>
+          Platform.OS === "ios" ? responsiveHeight(-1) : responsiveHeight(1)
+        }
+      >
+        <SafeAreaView style={{ ...styles.container }}>
+          <View style={{ flex: 1 }}>
             <Header
               SavePost={onSavePost}
               loading={loading}
@@ -685,11 +703,12 @@ const PostScreen = ({navigation, route}) => {
               <PostHeader currentUser={currentUser} />
               <View
                 style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  width: '100%',
-                }}>
-                <View style={{flex: 1}}>
+                  flexDirection: "row",
+                  alignItems: "center",
+                  width: "100%",
+                }}
+              >
+                <View style={{ flex: 1 }}>
                   {currentUser?.freeAgent && (
                     <>
                       <CheckBox
@@ -709,7 +728,8 @@ const PostScreen = ({navigation, route}) => {
                       ...commonStyles.rowContainer,
                       ...styles.locationContainer,
                       padding: 10,
-                    }}>
+                    }}
+                  >
                     <Octicons
                       name="location"
                       size={moderateScale(10)}
@@ -731,7 +751,8 @@ const PostScreen = ({navigation, route}) => {
                   style={{
                     paddingHorizontal: 10,
                     borderRadius: scale(10),
-                  }}>
+                  }}
+                >
                   <TextInput
                     multiline={true}
                     ref={useTextInput}
@@ -741,9 +762,9 @@ const PostScreen = ({navigation, route}) => {
                     style={{
                       fontSize: verticalScale(12),
                       fontFamily: InterFont.regular,
-                      color: 'transparent',
+                      color: "transparent",
                     }}
-                    placeholder={'Create Your Own Luck...'}
+                    placeholder={"Create Your Own Luck..."}
                     placeholderTextColor={colors.inputGray}
                   />
                   <View style={styles.textContainer}>
@@ -756,56 +777,58 @@ const PostScreen = ({navigation, route}) => {
                   <View
                     style={{
                       height: height / 2,
-                      width: '100%',
+                      width: "100%",
                       borderRadius: scale(10),
 
                       borderWidth: 2,
                       borderColor: colors.superLightGray,
-                      alignItems: 'center',
-                      overflow: 'hidden',
-                      justifyContent: 'center',
-                    }}>
+                      alignItems: "center",
+                      overflow: "hidden",
+                      justifyContent: "center",
+                    }}
+                  >
                     <TouchableOpacity
                       onPress={() => {
-                        setImageFile('');
-                        setVideoFile('');
+                        setImageFile("");
+                        setVideoFile("");
                       }}
-                      style={{...styles.iconsPosition, top: 10}}>
+                      style={{ ...styles.iconsPosition, top: 10 }}
+                    >
                       <Image
                         source={icons.trashVector}
-                        style={{height: 16, width: 16}}
+                        style={{ height: 16, width: 16 }}
                       />
                     </TouchableOpacity>
 
-                    {imageFile?.type?.includes('image') ? (
-                      <Image
-                        resizeMode="cover"
+                    {imageFile?.type?.includes("image") ? (
+                      <FastImage
+                        resizeMode={FastImage.resizeMode.cover}
                         containerStyle={{
-                          width: '100%',
-                          height: '100%',
+                          width: "100%",
+                          height: "100%",
                           borderRadius: scale(10),
                         }}
-                        source={{uri: imageFile.uri}}
+                        source={{ uri: imageFile.uri }}
                       />
                     ) : (
                       <View
                         style={{
-                          width: '100%',
-                          height: '100%',
-                          backgroundColor: 'red',
-                        }}>
+                          width: "100%",
+                          height: "100%",
+                        }}
+                      >
                         <VideoPlayer
                           autoplay={false}
                           defaultMuted={true}
                           resizeMode="cover"
-                          style={{width: '100%', height: '100%'}}
+                          style={{ width: "100%", height: "100%" }}
                           playButton={true}
                           pauseOnPress={true}
                           // onPress={() => props.setViewPostModal(true)}
                           //   videoWidth={100}
                           //   videoHeight={150}
-                          video={{uri: VideoFile?.uri}}
-                          thumbnail={{uri: VideoFile?.thumbnail}}
+                          video={{ uri: VideoFile?.uri }}
+                          thumbnail={{ uri: VideoFile?.thumbnail }}
 
                           // controls={true}
                           // onPause={true}
@@ -822,9 +845,9 @@ const PostScreen = ({navigation, route}) => {
                   </View>
                 ) : (
                   <View>
-                    {postDescription.includes('@') ? (
+                    {postDescription.includes("@") ? (
                       <Animatable.View
-                        animation={'fadeIn'}
+                        animation={"fadeIn"}
                         ref={viewref}
                         duration={500}
                         useNativeDriver
@@ -832,16 +855,17 @@ const PostScreen = ({navigation, route}) => {
                         style={{
                           height: 400,
                           // position: 'absolute',
-                          width: '100%',
+                          width: "100%",
                           top: 0,
                           zIndex: 9999999999999,
                           elevation: 5,
-                          overflow: 'hidden',
-                          backgroundColor: 'rgba(0, 0, 0, 0.1)',
-                        }}>
+                          overflow: "hidden",
+                          backgroundColor: "rgba(0, 0, 0, 0.1)",
+                        }}
+                      >
                         <FlatList
                           data={userData}
-                          keyExtractor={item => item.uid.toString()}
+                          keyExtractor={(item) => item.uid.toString()}
                           renderItem={renderSearchUser}
                         />
                       </Animatable.View>
@@ -856,7 +880,7 @@ const PostScreen = ({navigation, route}) => {
                 onOpenCamera();
               }}
               onPressLocation={() => {
-                navigation.navigate('SearchLocation');
+                navigation.navigate("SearchLocation");
                 // handleGetLocation();
               }}
               onPickGallery={onPostImagevideoSelect}
@@ -869,14 +893,14 @@ const PostScreen = ({navigation, route}) => {
 
             <ActionSheet
               ref={actionSheetRef}
-              title={'Add Image'}
+              title={"Add Image"}
               options={[
-                'Choose Image from gallery',
-                'Choose Video from gallery',
-                'Cancel',
+                "Choose Image from gallery",
+                "Choose Video from gallery",
+                "Cancel",
               ]}
               cancelButtonIndex={2}
-              onPress={index => {
+              onPress={(index) => {
                 if (index == 0) {
                   onPickGallery(false);
                 }
@@ -910,16 +934,16 @@ const styles = StyleSheet.create({
   },
   header: {
     paddingHorizontal: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   postContainer: {
     // aspectRatio: 1,
-    width: '100%',
+    width: "100%",
     height: 350,
     // flex: 1,
   },
@@ -932,9 +956,9 @@ const styles = StyleSheet.create({
     height: scale(30),
     width: scale(30),
     borderRadius: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
     zIndex: 99,
     right: 10,
   },
@@ -943,25 +967,25 @@ const styles = StyleSheet.create({
     height: scale(30),
     width: scale(30),
     borderRadius: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
-    position: 'absolute',
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
     zIndex: 99,
     left: 10,
     paddingLeft: 2,
   },
   locationContainer: {
     height: verticalScale(30),
-    minWidth: '20%',
-    maxWidth: '30%',
+    minWidth: "20%",
+    maxWidth: "30%",
     backgroundColor: colors.superLightGray,
     borderRadius: scale(30),
     borderWidth: 0.5,
     borderColor: colors.lightGray,
-    alignItems: 'center',
+    alignItems: "center",
     padding: scale(15),
-    justifyContent: 'center',
-    alignSelf: 'center',
+    justifyContent: "center",
+    alignSelf: "center",
     marginRight: scale(10),
   },
   //
@@ -971,10 +995,10 @@ const styles = StyleSheet.create({
     color: colors.green,
   },
   textContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    position: 'absolute',
-    top: 13,
+    flexDirection: "row",
+    flexWrap: "wrap",
+    position: "absolute",
+    top: Platform.OS === "ios" ? 5 : 13,
     left: 12.5,
     right: 10,
   },

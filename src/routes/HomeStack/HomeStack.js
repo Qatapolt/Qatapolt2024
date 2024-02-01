@@ -24,9 +24,12 @@ import { TourGuideZoneByPosition } from "rn-tourguide";
 import PostStack from "../PostStack/PostStack";
 import { View } from "react-native";
 import FastImage from "react-native-fast-image";
-
+import {
+  getFocusedRouteNameFromRoute,
+  NavigationContainer,
+} from "@react-navigation/native";
 const Tab = createBottomTabNavigator();
-
+import { useRoute } from "@react-navigation/native";
 const HomeStack = ({ route }) => {
   useEffect(() => {
     getUserAllData();

@@ -1,44 +1,48 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
-import CustomText from '../../../../components/CustomText';
-import {colors} from '../../../../utils/Colors';
-import {InterFont} from '../../../../utils/Fonts';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {BottomSheet} from 'react-native-btr';
-import {Spacer} from '../../../../components/Spacer';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import {useDispatch} from 'react-redux';
-import {setReportUserId} from '../../../../redux/reducers/ReportUserReducer';
-
-const PostOptionsSheet = props => {
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import CustomText from "../../../../components/CustomText";
+import { colors } from "../../../../utils/Colors";
+import { InterFont } from "../../../../utils/Fonts";
+import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import { BottomSheet } from "react-native-btr";
+import { Spacer } from "../../../../components/Spacer";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import { useDispatch } from "react-redux";
+import { setReportUserId } from "../../../../redux/reducers/ReportUserReducer";
+import { Modalize } from "react-native-modalize";
+const PostOptionsSheet = (props) => {
   const dispatch = useDispatch();
 
   // props?.postData.userId == props?.authData.uid
   return (
-    <BottomSheet
-      visible={props.modalVisible}
-      onBackButtonPress={props.onCloseModal}
-      onBackdropPress={props.onCloseModal}>
-      <View
-        flexDirection={'column'}
-        backgroundColor={'white'}
-        alignSelf="center"
-        paddingHorizontal={scale(15)}
-        height={'20%'}
-        width={'100%'}
-        borderTopLeftRadius={scale(15)}
-        borderTopRightRadius={scale(15)}
-        overflow="hidden">
+    <Modalize
+      ref={props.modalizeRef}
+      modalStyle={{
+        backgroundColor: "#FFFFFF",
+        flex: 1,
+        width: "100%",
+      }}
+      useNativeDriver
+      modalHeight={props.viewPostModal === true ? 150 : 120}
+      handlePosition="inside"
+      panGestureComponentProps={{ enabled: true }}
+
+      // visible={props.modalVisible}
+      // onBackButtonPress={props.onCloseModal}
+      // onBackdropPress={props.onCloseModal}
+    >
+      <View>
         <Spacer height={5} />
 
-        <View style={styles.topLine}></View>
+        {/* <View style={styles.topLine}></View> */}
         <Spacer height={10} />
         <TouchableOpacity
           activeOpacity={0.6}
           onPress={props?.onCopyLink}
-          style={styles.optionContainer}>
+          style={styles.optionContainer}
+        >
           <AntDesign
             name="copy1"
             size={moderateScale(20)}
@@ -52,7 +56,8 @@ const PostOptionsSheet = props => {
           <TouchableOpacity
             activeOpacity={0.6}
             onPress={props?.onDelPost}
-            style={styles.optionContainer}>
+            style={styles.optionContainer}
+          >
             <FontAwesome
               name="trash-o"
               size={moderateScale(20)}
@@ -68,9 +73,10 @@ const PostOptionsSheet = props => {
               props.onCloseModal();
 
               dispatch(setReportUserId(props?.selectedId));
-              props?.navigation.navigate('ReportPost');
+              props?.navigation.navigate("ReportPost");
             }}
-            style={styles.optionContainer}>
+            style={styles.optionContainer}
+          >
             <MaterialIcons
               name="report"
               size={moderateScale(20)}
@@ -81,7 +87,7 @@ const PostOptionsSheet = props => {
           </TouchableOpacity>
         )}
       </View>
-    </BottomSheet>
+    </Modalize>
   );
 };
 
@@ -91,16 +97,16 @@ const styles = StyleSheet.create({
   topLine: {
     width: scale(80),
     height: 5,
-    backgroundColor: '#dee2e6',
-    alignSelf: 'center',
+    backgroundColor: "#dee2e6",
+    alignSelf: "center",
     borderRadius: 10,
   },
   optionContainer: {
-    width: '100%',
+    width: "100%",
     padding: scale(10),
     // borderBottomWidth:0.5,
     // borderColor:"#dee2e6",
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
 });

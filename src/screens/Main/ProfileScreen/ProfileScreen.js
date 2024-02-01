@@ -9,53 +9,55 @@ import {
   TouchableOpacity,
   FlatList,
   RefreshControl,
-} from 'react-native';
-import React, {useState, useEffect, useRef} from 'react';
-import commonStyles, {PH10, PH20} from '../../../utils/CommonStyles';
-import {Spacer} from '../../../components/Spacer';
-import {images} from '../../../assets/images';
-import ProfileTop from './Molecules/ProfileTop';
-import {colors} from '../../../utils/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
-import ProfilePhoto from '../../../components/ProfilePhoto';
-import ProfileMainTop from './Molecules/ProfileMainTop';
-import ProfileMainBody from './Molecules/ProfileMainBody';
-import {useFocusEffect} from '@react-navigation/native';
-import CustomText from '../../../components/CustomText';
-import {useDispatch, useSelector} from 'react-redux';
-import CustomImage from '../../../components/CustomImage';
-import {getSpecificUser} from '../../services/UserServices';
-import {useIsFocused} from '@react-navigation/native';
-import {TourGuideZoneByPosition, useTourGuideController} from 'rn-tourguide';
-import AppTour from '../../../components/AppTour';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import ProfileImageView from '../../../components/ProfileImageView';
-import SetBackgroundSheet from './Molecules/SetBackgroundSheet';
-import SepratorLine from '../../../components/SepratorLine';
-import {InterFont} from '../../../utils/Fonts';
-import ProfileTabs from '../../../components/ProfileTabs';
-import {deletePost, getPosts} from '../../services/PostServices';
-import Clipboard from '@react-native-clipboard/clipboard';
-import Toast from 'react-native-root-toast';
-import ReportSheet from '../ArenaScreen/Molecules/ReportSheet';
-import PostOptionsSheet from '../ArenaScreen/Molecules/PostOptionsSheet';
-import ViewPost from '../ArenaScreen/Molecules/ViewPost';
-import PostItem from '../ArenaScreen/Molecules/PostItem';
-import UserHightLightContainer from '../UserProfile/Molecules/UserHightLightContainer';
-import MediaView from '../../../components/MediaView';
-import SimpleLoader from '../../../utils/SimpleLoader';
-import loaderAnimation from '../../../assets/Loaders';
-import _ from 'lodash';
-import Loader from '../../../utils/Loader';
-import firestore from '@react-native-firebase/firestore';
-import {firebase} from '@react-native-firebase/firestore';
-import moment from 'moment';
-const ProfileScreen = ({navigation, route}) => {
-  const CurrentUser = useSelector(state => state.auth?.currentUser);
-
+  Alert,
+} from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import commonStyles, { PH10, PH20 } from "../../../utils/CommonStyles";
+import { Spacer } from "../../../components/Spacer";
+import { images } from "../../../assets/images";
+import ProfileTop from "./Molecules/ProfileTop";
+import { colors } from "../../../utils/Colors";
+import { scale, verticalScale } from "react-native-size-matters";
+import ProfilePhoto from "../../../components/ProfilePhoto";
+import ProfileMainTop from "./Molecules/ProfileMainTop";
+import ProfileMainBody from "./Molecules/ProfileMainBody";
+import { useFocusEffect } from "@react-navigation/native";
+import CustomText from "../../../components/CustomText";
+import { useDispatch, useSelector } from "react-redux";
+import CustomImage from "../../../components/CustomImage";
+import { getSpecificUser } from "../../services/UserServices";
+import { useIsFocused } from "@react-navigation/native";
+import { TourGuideZoneByPosition, useTourGuideController } from "rn-tourguide";
+import AppTour from "../../../components/AppTour";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import ProfileImageView from "../../../components/ProfileImageView";
+import SetBackgroundSheet from "./Molecules/SetBackgroundSheet";
+import SepratorLine from "../../../components/SepratorLine";
+import { InterFont } from "../../../utils/Fonts";
+import ProfileTabs from "../../../components/ProfileTabs";
+import { deletePost, getPosts } from "../../services/PostServices";
+import Clipboard from "@react-native-clipboard/clipboard";
+import Toast from "react-native-root-toast";
+import ReportSheet from "../ArenaScreen/Molecules/ReportSheet";
+import PostOptionsSheet from "../ArenaScreen/Molecules/PostOptionsSheet";
+import ViewPost from "../ArenaScreen/Molecules/ViewPost";
+import PostItem from "../ArenaScreen/Molecules/PostItem";
+import UserHightLightContainer from "../UserProfile/Molecules/UserHightLightContainer";
+import MediaView from "../../../components/MediaView";
+import SimpleLoader from "../../../utils/SimpleLoader";
+import loaderAnimation from "../../../assets/Loaders";
+import _ from "lodash";
+import Loader from "../../../utils/Loader";
+import firestore from "@react-native-firebase/firestore";
+import { firebase } from "@react-native-firebase/firestore";
+import moment from "moment";
+const ProfileScreen = ({ navigation, route }) => {
+  const CurrentUser = useSelector((state) => state.auth?.currentUser);
+  const modalizeRef = useRef(null);
+  const modalizeRefReport = useRef(null);
   const dispatch = useDispatch();
   const [imageViewModal, setImageViewModal] = useState(false);
-  const [imageObject, setImageObject] = useState('');
+  const [imageObject, setImageObject] = useState("");
   const [userEvent, setUserEvent] = useState({});
   const [userData, setUserData] = useState({});
   const [isAppTour, setIsAppTour] = useState(false);
@@ -85,33 +87,44 @@ const ProfileScreen = ({navigation, route}) => {
   const [viewMedia, setViewMedia] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
-
+  useEffect(() => {
+    if (viewPostModal) {
+      navigation.getParent()?.setOptions({
+        tabBarStyle: { display: "none" },
+        tabBarVisible: false,
+      });
+      return () =>
+        navigation
+          .getParent()
+          ?.setOptions({ tabBarStyle: undefined, tabBarVisible: undefined });
+    }
+  }, [navigation, viewPostModal]);
   const statsArray = [
-    {id: 1, name: 'Sport', value: CurrentUser?.selectSport},
-    {id: 2, name: 'Account Type', value: CurrentUser?.accountType},
-    {id: 3, name: 'Country', value: CurrentUser?.country},
-    {id: 4, name: 'City', value: CurrentUser?.city},
-    {id: 5, name: 'Skill #1', value: CurrentUser?.skill1},
-    {id: 6, name: 'Skill #2', value: CurrentUser?.skill2},
-    {id: 7, name: 'Skill #3', value: CurrentUser?.skill3},
+    { id: 1, name: "Sport", value: CurrentUser?.selectSport },
+    { id: 2, name: "Account Type", value: CurrentUser?.accountType },
+    { id: 3, name: "Country", value: CurrentUser?.country },
+    { id: 4, name: "City", value: CurrentUser?.city },
+    { id: 5, name: "Skill #1", value: CurrentUser?.skill1 },
+    { id: 6, name: "Skill #2", value: CurrentUser?.skill2 },
+    { id: 7, name: "Skill #3", value: CurrentUser?.skill3 },
     {
       id: 8,
-      name: 'Age',
-      value: CurrentUser?.age ? CurrentUser?.age + ' ' + 'years' : '',
+      name: "Age",
+      value: CurrentUser?.age ? CurrentUser?.age + " " + "years" : "",
     },
 
     {
       id: 9,
-      name: 'Email',
-      value: CurrentUser?.email ? CurrentUser?.email : '____________',
+      name: "Email",
+      value: CurrentUser?.email ? CurrentUser?.email : "____________",
     },
-    {id: 10, name: 'Height', value: CurrentUser.height},
-    {id: 11, name: 'Strong Hand', value: CurrentUser?.strongHand},
-    {id: 12, name: 'Strong Foot', value: CurrentUser?.strongFoot},
+    { id: 10, name: "Height", value: CurrentUser.height },
+    { id: 11, name: "Strong Hand", value: CurrentUser?.strongHand },
+    { id: 12, name: "Strong Foot", value: CurrentUser?.strongFoot },
   ];
 
   const [numColumns, setNumColumns] = useState(3);
-  const handleNumColumnsChange = newNumColumns => {
+  const handleNumColumnsChange = (newNumColumns) => {
     // Change the key to force a fresh render when the number of columns changes
     setNumColumns(newNumColumns + 1);
   };
@@ -119,7 +132,7 @@ const ProfileScreen = ({navigation, route}) => {
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        console.log('running focus profile', isLoading);
+        console.log("running focus profile", isLoading);
         setIsLoading(true);
         await getUserAllData();
         SetTabIndex(0);
@@ -135,7 +148,7 @@ const ProfileScreen = ({navigation, route}) => {
               setIsLoading(false);
           }, 500);
         } catch (error) {
-          console.error('Error during focus effect:', error);
+          console.error("Error during focus effect:", error);
         } finally {
           setIsLoading(false);
         }
@@ -157,7 +170,7 @@ const ProfileScreen = ({navigation, route}) => {
       fetchSquad,
       setUserEvent,
       route?.params?.event,
-    ]),
+    ])
   );
 
   const getAllPost = () => {
@@ -169,7 +182,6 @@ const ProfileScreen = ({navigation, route}) => {
   };
   const fetchSquad = async () => {
     const CurrentUserAllFollowers = CurrentUser.AllFollowers;
-    // console.log('CurrentUserPosts', CurrentUserAllFollowers);
     const squadData = [];
 
     try {
@@ -177,19 +189,26 @@ const ProfileScreen = ({navigation, route}) => {
         Array.isArray(CurrentUserAllFollowers) &&
         CurrentUserAllFollowers.length > 0
       ) {
-        CurrentUserAllFollowers.map(async element => {
+        // Fetch user data for each follower and store in squadData
+        for (const element of CurrentUserAllFollowers) {
           const data = await getSpecificUser(element);
           if (data !== undefined) {
             squadData.push(data);
           }
-        });
+        }
+
+        // Sort squadData based on the number of followers each user has
+        squadData.sort((a, b) => (b.followers || 0) - (a.followers || 0));
+
+        console.log("squadData", squadData);
       }
 
       setSquadData(squadData);
     } catch (error) {
-      console.error('fetchSquad error', error);
+      console.error("fetchSquad error", error);
     }
   };
+
   const fetchUserPosts = async () => {
     const CurrentUserPosts = CurrentUser.PostIds;
     // console.log('CurrentUserPosts', CurrentUserPosts);
@@ -199,21 +218,21 @@ const ProfileScreen = ({navigation, route}) => {
     try {
       // Use await with the Firestore query
       const datingSnapshot = await firestore()
-        .collection('Posts')
-        .orderBy('createAt', 'desc')
+        .collection("Posts")
+        .orderBy("createAt", "desc")
         .get();
 
       // Iterate through the results using forEach
-      datingSnapshot.forEach(da => {
+      datingSnapshot.forEach((da) => {
         allPostData.push(da.data());
       });
 
       if (Array.isArray(CurrentUserPosts) && CurrentUserPosts?.length > 0) {
         // Use forEach with async when iterating through userData?.PostIds
 
-        CurrentUserPosts.map(async element => {
+        CurrentUserPosts.map(async (element) => {
           const userPosts = allPostData.find(
-            post => post?.postId === element?.postId,
+            (post) => post?.postId === element?.postId
           );
           if (userPosts !== undefined) {
             allPostByUser.push(userPosts);
@@ -229,7 +248,7 @@ const ProfileScreen = ({navigation, route}) => {
         setCommentaryData(sortedArray);
       }
     } catch (error) {
-      console.error('fetchUserPosts error', error);
+      console.error("fetchUserPosts error", error);
     }
   };
 
@@ -238,14 +257,14 @@ const ProfileScreen = ({navigation, route}) => {
     // console.log('CurrentUserPosts', CurrentUserPosts);
     try {
       if (Array.isArray(CurrentUserPosts) && CurrentUserPosts.length > 0) {
-        const filterIds = CurrentUserPosts?.filter(item => item.type != '');
-        const sortedByDate = _.orderBy(filterIds, item => item?.createAt, [
-          'desc',
+        const filterIds = CurrentUserPosts?.filter((item) => item.type != "");
+        const sortedByDate = _.orderBy(filterIds, (item) => item?.createAt, [
+          "desc",
         ]);
         setHightLightData(sortedByDate);
       }
     } catch (error) {
-      console.log('fetchHighlights error', error);
+      console.log("fetchHighlights error", error);
     }
   };
 
@@ -253,19 +272,19 @@ const ProfileScreen = ({navigation, route}) => {
     setShowPostPotions(!showPostPotions);
   };
   const onReportModal = () => {
-    setShowReportPotions(false);
+    modalizeRefReport.current?.close();
   };
   const delPost = () => {
-    Alert.alert('Delete Post', 'Are you sure you want to delete?', [
+    Alert.alert("Delete Post", "Are you sure you want to delete?", [
       {
-        text: 'Yes',
+        text: "Yes",
         onPress: async () => {
           if (selectPost.uriData.uri) {
             deleteImage(selectPost?.uriData?.uri);
           }
           deletePost(selectPost?.postId);
           let filterDeletePost = CurrentUser?.PostIds.filter(
-            data => data.postId != selectPost?.postId,
+            (data) => data.postId != selectPost?.postId
           );
           await SaveUser(CurrentUser.uid, {
             PostIds: filterDeletePost,
@@ -277,7 +296,7 @@ const ProfileScreen = ({navigation, route}) => {
         },
       },
       {
-        text: 'No',
+        text: "No",
         onPress: () => {
           onCloseModal();
         },
@@ -290,35 +309,37 @@ const ProfileScreen = ({navigation, route}) => {
     if (postLink) {
       Clipboard.setString(postLink);
       setShowPostPotions(false);
-      Toast.show('Link Copied!');
+      Toast.show("Link Copied!");
     }
   };
 
   const toggleModal = async () => {
     try {
-      await AsyncStorage.removeItem('contactUsTour');
+      await AsyncStorage.removeItem("contactUsTour");
     } catch (error) {}
 
     setIsAppTour(!isAppTour);
   };
   const getUserAllData = async () => {
     const userData = await getSpecificUser(CurrentUser?.uid);
-    dispatch({type: 'UPDATE_CURRENT_USER', payload: userData});
+    dispatch({ type: "UPDATE_CURRENT_USER", payload: userData });
     setUserData(userData);
   };
 
   const checkAppTour = async () => {
     try {
-      const value = await AsyncStorage.getItem('contactUsTour');
+      const value = await AsyncStorage.getItem("contactUsTour");
       if (value) {
         setIsAppTour(true);
       }
     } catch (error) {}
   };
-  const RenderPostData = ({item, index}) => {
+  const RenderPostData = ({ item, index }) => {
     return (
       <View>
         <PostItem
+          onOpen={onOpen}
+          onOpenReport={onOpenReport}
           navigation={navigation}
           index={index}
           item={item}
@@ -358,7 +379,7 @@ const ProfileScreen = ({navigation, route}) => {
       </View>
     );
   };
-  const renderHightLightData = ({item, index}) => {
+  const renderHightLightData = ({ item, index }) => {
     return (
       <UserHightLightContainer
         index={index}
@@ -368,17 +389,18 @@ const ProfileScreen = ({navigation, route}) => {
       />
     );
   };
-  const renderStats = ({item}) => {
+  const renderStats = ({ item }) => {
     return (
       <>
         <View
           style={{
             marginVertical: verticalScale(15),
-            width: '100%',
-            flexDirection: 'row',
+            width: "100%",
+            flexDirection: "row",
             marginHorizontal: 30,
-          }}>
-          <View style={{width: '30%'}}>
+          }}
+        >
+          <View style={{ width: "30%" }}>
             <CustomText
               label={`${item.name}:`}
               fontSize={11}
@@ -388,7 +410,7 @@ const ProfileScreen = ({navigation, route}) => {
               fontFamily={InterFont.semiBold}
             />
           </View>
-          <View style={{width: '70%'}}>
+          <View style={{ width: "70%" }}>
             <CustomText
               label={item.value}
               fontSize={11}
@@ -410,37 +432,39 @@ const ProfileScreen = ({navigation, route}) => {
       <>
         <View>
           <ImageBackground
-            style={{width: '100%', height: 250}}
-            resizeMode={'cover'}
+            style={{ width: "100%", height: 250 }}
+            resizeMode={"cover"}
             source={
               userData?.profileBackground
-                ? {uri: userData?.profileBackground}
+                ? { uri: userData?.profileBackground }
                 : images.background
-            }>
+            }
+          >
             <TouchableOpacity
               onLongPress={() => setIsbackgroundSheet(true)}
               activeOpacity={0.7}
               disabled={!userData?.profileBackground ? true : false}
-              style={{width: '100%', height: 250}}
+              style={{ width: "100%", height: 250 }}
               onPress={() => {
                 setImageObject(
                   userData?.profileBackground
                     ? userData?.profileBackground
-                    : userData?.profileImage,
+                    : userData?.profileImage
                 );
                 setImageViewModal(true);
-              }}>
+              }}
+            >
               <View
                 style={{
                   borderRadius: 10,
                   opacity: 0.1,
-                  backgroundColor: '#454545',
-                  width: '100%',
-                  height: '100%',
+                  backgroundColor: "#454545",
+                  width: "100%",
+                  height: "100%",
                 }}
               />
-              <Spacer height={Platform.OS == 'ios' ? 50 : 20} />
-              <View style={{position: 'absolute', top: 50, width: '100%'}}>
+              <Spacer height={Platform.OS == "ios" ? 50 : 20} />
+              <View style={{ position: "absolute", top: 50, width: "100%" }}>
                 <ProfileTop
                   CurrentUser={userData}
                   userEvent={userEvent}
@@ -456,15 +480,17 @@ const ProfileScreen = ({navigation, route}) => {
               borderTopLeftRadius: scale(20),
               borderTopRightRadius: scale(20),
               marginTop: -20,
-            }}>
+            }}
+          >
             <View
               style={{
-                position: 'absolute',
+                position: "absolute",
                 top: verticalScale(-50),
-                alignSelf: 'center',
-              }}>
+                alignSelf: "center",
+              }}
+            >
               <CustomImage
-                isVerified={userData?.trophy == 'verified' ? true : false}
+                isVerified={userData?.trophy == "verified" ? true : false}
                 disabled={!userData?.profileImage ? true : false}
                 onImagePress={() => {
                   setImageObject(userData?.profileImage);
@@ -472,12 +498,12 @@ const ProfileScreen = ({navigation, route}) => {
                 }}
                 imageUrl={userData?.profileImage}
                 mainStyle={{
-                  shadowColor: Platform.OS == 'ios' ? '#343a40' : colors.black,
+                  shadowColor: Platform.OS == "ios" ? "#343a40" : colors.black,
                   shadowRadius: 2,
                   elevation: 5,
                   shadowOpacity: 0.4,
                   // inputMarginTop:-20,
-                  shadowOffset: {width: -1, height: 3},
+                  shadowOffset: { width: -1, height: 3 },
                 }}
               />
             </View>
@@ -491,7 +517,7 @@ const ProfileScreen = ({navigation, route}) => {
               followerState={followerState}
             />
             <Spacer height={20} />
-            <View style={{width: '100%'}}>
+            <View style={{ width: "100%" }}>
               <SepratorLine height={8} />
               <Spacer height={20} />
               {Array.isArray(squadData) && squadData.length > 0 && (
@@ -513,14 +539,15 @@ const ProfileScreen = ({navigation, route}) => {
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     <View
                       style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        width: '100%',
+                        flexDirection: "row",
+                        alignItems: "center",
+                        width: "100%",
                         paddingLeft: scale(10),
-                      }}>
+                      }}
+                    >
                       {Array.isArray(squadData) &&
                         squadData.length > 0 &&
-                        squadData?.map(item => {
+                        squadData?.map((item) => {
                           return (
                             <>
                               <RenderPeople item={item} />
@@ -546,9 +573,11 @@ const ProfileScreen = ({navigation, route}) => {
   const emptyListComponent = () => {
     return (
       <>
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
           <CustomText
-            label={isLoading ? 'Fetching Posts' : 'no Recods Found'}
+            label={isLoading ? "Fetching Posts" : "no Recods Found"}
             fontSize={12}
             textAlign="center"
             color={colors.black}
@@ -559,43 +588,44 @@ const ProfileScreen = ({navigation, route}) => {
     );
   };
 
-  const onNavigate = item => {
+  const onNavigate = (item) => {
     if (userData?.BlockUsers?.includes(item?.uid)) {
-      navigation.navigate('BlockScreen');
+      navigation.navigate("BlockScreen");
 
       return;
     }
 
     if (item.uid == userData?.uid) {
-      navigation.navigate('Profile', {
+      navigation.navigate("Profile", {
         event: item.uid,
       });
       return;
     }
     if (item?.isOther === undefined) {
-      navigation.navigate('UserProfile', {
+      navigation.navigate("UserProfile", {
         event: item.uid,
       });
 
       return;
     }
-    navigation.navigate('OtherUserProfile', {
+    navigation.navigate("OtherUserProfile", {
       event: item.uid,
     });
   };
-  const RenderPeople = ({item}) => {
+  const RenderPeople = ({ item }) => {
     return (
       <TouchableOpacity
         activeOpacity={0.6}
         onPress={() => onNavigate(item)}
-        style={{marginHorizontal: scale(10)}}>
+        style={{ marginHorizontal: scale(10) }}
+      >
         <CustomImage
           onImagePress={() => onNavigate(item)}
           imageUrl={item?.profileImage}
           width={50}
           height={50}
         />
-        <View style={{width: scale(55), alignItems: 'center'}}>
+        <View style={{ width: scale(55), alignItems: "center" }}>
           <CustomText
             label={item?.name}
             numberOfLines={1}
@@ -614,19 +644,25 @@ const ProfileScreen = ({navigation, route}) => {
     return (
       <View
         style={{
-          backgroundColor: 'transparent',
+          backgroundColor: "transparent",
           flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
+          justifyContent: "center",
+          alignItems: "center",
           zIndex: 999999999999,
-          height: '100%',
-          width: '100%',
-        }}>
+          height: "100%",
+          width: "100%",
+        }}
+      >
         <Loader file={loaderAnimation} />
       </View>
     );
   };
-
+  const onOpen = () => {
+    modalizeRef.current?.open();
+  };
+  const onOpenReport = () => {
+    modalizeRefReport.current?.open();
+  };
   return (
     <>
       {tabIndex === 0 ? (
@@ -635,7 +671,8 @@ const ProfileScreen = ({navigation, route}) => {
             style={{
               flex: 1,
               backgroundColor: colors.white,
-            }}>
+            }}
+          >
             {isLoading ? (
               <Loading />
             ) : (
@@ -660,7 +697,8 @@ const ProfileScreen = ({navigation, route}) => {
             style={{
               flex: 1,
               backgroundColor: colors.white,
-            }}>
+            }}
+          >
             {isLoading ? (
               <Loading />
             ) : (
@@ -686,7 +724,8 @@ const ProfileScreen = ({navigation, route}) => {
             style={{
               flex: 1,
               backgroundColor: colors.white,
-            }}>
+            }}
+          >
             {isLoading ? (
               <Loading />
             ) : (
@@ -706,7 +745,7 @@ const ProfileScreen = ({navigation, route}) => {
         title="Help / Support"
         emoji="👩‍💻"
         description={
-          'If you encounter any issues while using the app please press the Contact Us button.'
+          "If you encounter any issues while using the app please press the Contact Us button."
         }
         toggleModal={toggleModal}
         isModalVisible={isAppTour}
@@ -726,6 +765,7 @@ const ProfileScreen = ({navigation, route}) => {
       />
 
       <ViewPost
+        onOpen={onOpen}
         viewPostModal={viewPostModal}
         postIndex={postIndex}
         postObject={postObject}
@@ -749,6 +789,7 @@ const ProfileScreen = ({navigation, route}) => {
         onDelPost={delPost}
         onCopyLink={onCopyPostLink}
         navigation={navigation}
+        modalizeRef={modalizeRef}
       />
       <ReportSheet
         modalVisible={showReportPotions}
@@ -760,6 +801,7 @@ const ProfileScreen = ({navigation, route}) => {
         onDelPost={delPost}
         navigation={navigation}
         setRepost={setRepost}
+        modalizeRefReport={modalizeRefReport}
       />
       <MediaView
         setViewMedia={setViewMedia}
@@ -777,11 +819,11 @@ export default ProfileScreen;
 
 const styles = StyleSheet.create({
   alignContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   txtWidth: {
     width: scale(100),
-    backgroundColor: 'red',
+    backgroundColor: "red",
   },
 });

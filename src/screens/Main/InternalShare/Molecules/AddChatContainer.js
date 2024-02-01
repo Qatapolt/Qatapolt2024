@@ -1,22 +1,23 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Avatar } from "react-native-elements";
-import { icons } from "../../../../../assets/icons";
-import CustomText from "../../../../../components/CustomText";
-import { colors } from "../../../../../utils/Colors";
-import { InterFont } from "../../../../../utils/Fonts";
+import { icons } from "../../../../assets/icons";
+
+import { colors } from "../../../../utils/Colors";
+import { InterFont } from "../../../../utils/Fonts";
 import AntDesign from "react-native-vector-icons/AntDesign";
 import { scale, ScaledSheet, verticalScale } from "react-native-size-matters";
-import { Spacer } from "../../../../../components/Spacer";
+import { Spacer } from "../../../../components/Spacer";
 
 import { getSpecificUser } from "../../../../services/UserServices";
-import CustomImage from "../../../../../components/CustomImage";
-import commonStyles from "../../../../../utils/CommonStyles";
+import CustomImage from "../../../../components/CustomImage";
+import commonStyles from "../../../../utils/CommonStyles";
+import CustomText from "../../../../components/CustomText";
 
 const AddChatContainer = (props) => {
-  const handleSelection = () => {
-    props.onSelect(props.index);
-    props.setCheck(props.index);
+  const handleSelection = (index) => {
+    props.onSelect(index);
+    props.setCheck(index);
     props.setUserObject(props.item?.uid);
   };
   return (
@@ -69,15 +70,14 @@ const AddChatContainer = (props) => {
         </View>
 
         <TouchableOpacity
-          onPress={() => handleSelection()}
+          onPress={() => props.onSelect(props.index)}
           style={{
             ...styles.checkCon,
-            backgroundColor:
-              props.check == props.index ? colors.black : colors.white,
+            backgroundColor: props.selected ? colors.black : colors.white,
           }}
           activeOpacity={0.6}
         >
-          {props.check == props.index && (
+          {props.selected && (
             <AntDesign name="check" size={20} color={colors.white} />
           )}
         </TouchableOpacity>

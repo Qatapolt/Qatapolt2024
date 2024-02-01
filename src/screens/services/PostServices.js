@@ -1,13 +1,13 @@
-import uuid from 'react-native-uuid';
-import firestore from '@react-native-firebase/firestore';
-import {firebase} from '@react-native-firebase/firestore';
-import storage from '@react-native-firebase/storage';
-import dynamicLinks from '@react-native-firebase/dynamic-links';
+import uuid from "react-native-uuid";
+import firestore from "@react-native-firebase/firestore";
+import { firebase } from "@react-native-firebase/firestore";
+import storage from "@react-native-firebase/storage";
+import dynamicLinks from "@react-native-firebase/dynamic-links";
 
-import axios from 'axios';
-import {sendNotification} from './NotificationServices';
+import axios from "axios";
+import { sendNotification } from "./NotificationServices";
 
-export const combineData = async id => {
+export const combineData = async (id) => {
   try {
     const [posts, users] = await Promise.all([getPosts(), getAllUsers(id)]);
 
@@ -20,9 +20,9 @@ export const combineData = async id => {
   }
 };
 
-export const getSpecificUser = async postID => {
+export const getSpecificUser = async (postID) => {
   try {
-    const user = await firestore().collection('Posts').doc(postID).get();
+    const user = await firestore().collection("Posts").doc(postID).get();
     return user.data();
   } catch (error) {
     // console.log('getUser line 51', error);
@@ -30,12 +30,12 @@ export const getSpecificUser = async postID => {
   }
 };
 
-export const SavePost = async data => {
+export const SavePost = async (data) => {
   try {
     const response = await firestore()
-      .collection('Posts')
+      .collection("Posts")
       .doc(data?.postId)
-      .set(data, {merge: true});
+      .set(data, { merge: true });
     return response;
   } catch (error) {
     throw error;
@@ -44,7 +44,7 @@ export const SavePost = async data => {
 
 export const getSpecificPost = async (userId, postDate) => {
   try {
-    const user = await firestore().collection('Posts').doc(userId).get();
+    const user = await firestore().collection("Posts").doc(userId).get();
     return user.data();
   } catch (error) {
     // console.log('getUser line 51', error);
@@ -52,51 +52,51 @@ export const getSpecificPost = async (userId, postDate) => {
   }
 };
 
-export const generateLink = async postData => {
-  console.log('PostData', postData);
+export const generateLink = async (postData) => {
+  console.log("PostData", postData);
 
   try {
     var link = await dynamicLinks().buildShortLink(
       {
         link: `https://qatapoltsharepost.page.link/iDzQ?id=${postData?.postId}`,
-        domainUriPrefix: 'https://qatapoltsharepost.page.link',
+        domainUriPrefix: "https://qatapoltsharepost.page.link",
 
         android: {
-          packageName: 'com.qatapolt',
+          packageName: "com.qatapolt",
           // fallbackUrl:
         },
         ios: {
-          bundleId: 'com.qatapolt.qatapolt',
+          bundleId: "com.qatapolt.qatapolt",
         },
 
         social: {
-          title: 'Check out this post on Qatapolt',
-          descriptionText: postData?.description ? postData?.description : '',
+          title: "Check out this post on Qatapolt",
+          descriptionText: postData?.description ? postData?.description : "",
           imageUrl: postData?.uriData?.thumbnail
             ? postData?.uriData?.thumbnail
             : postData?.uriData?.uri
             ? postData?.uriData?.uri
-            : 'https://firebasestorage.googleapis.com/v0/b/qatapolt-2023.appspot.com/o/image0.png?alt=media&token=8e50fe8a-f946-4ccf-96b5-0e7b70b40031',
+            : "https://firebasestorage.googleapis.com/v0/b/qatapolt-2023.appspot.com/o/image0.png?alt=media&token=8e50fe8a-f946-4ccf-96b5-0e7b70b40031",
         },
       },
-      dynamicLinks.ShortLinkType.DEFAULT,
+      dynamicLinks.ShortLinkType.DEFAULT
     );
     return link;
   } catch (error) {
-    console.log('error raised', error);
+    console.log("error raised", error);
   }
 };
 
-export const getPosts = setData => {
+export const getPosts = (setData) => {
   const postData = [];
 
   try {
     firestore()
-      .collection('Posts')
-      .orderBy('createAt', 'desc')
+      .collection("Posts")
+      .orderBy("createAt", "desc")
       .get()
-      .then(datingSnapshot => {
-        datingSnapshot.forEach(da => {
+      .then((datingSnapshot) => {
+        datingSnapshot.forEach((da) => {
           postData.push(da.data());
         });
         // postData.sort((a, b) => a?.createAt?.localeCompare(b?.createAt));
@@ -111,12 +111,12 @@ export const getWatchListPosts = (setData, followingIds) => {
 
   try {
     firestore()
-      .collection('Posts')
-      .orderBy('createAt', 'desc')
+      .collection("Posts")
+      .orderBy("createAt", "desc")
       .get()
-      .then(datingSnapshot => {
-        datingSnapshot.forEach(da => {
-          followingIds.forEach(id => {
+      .then((datingSnapshot) => {
+        datingSnapshot.forEach((da) => {
+          followingIds.forEach((id) => {
             if (id == da.data().userId) {
               postData.push(da.data());
             }
@@ -142,12 +142,12 @@ export const getFollowingPosts = (setData, watchlistIds) => {
 
   try {
     firestore()
-      .collection('Posts')
-      .orderBy('createAt', 'desc')
+      .collection("Posts")
+      .orderBy("createAt", "desc")
       .get()
-      .then(datingSnapshot => {
-        datingSnapshot.forEach(da => {
-          watchlistIds.forEach(id => {
+      .then((datingSnapshot) => {
+        datingSnapshot.forEach((da) => {
+          watchlistIds.forEach((id) => {
             if (id == da.data().userId) {
               postData.push(da.data());
             }
@@ -168,22 +168,22 @@ export const getFollowingPosts = (setData, watchlistIds) => {
     throw error;
   }
 };
-export const deletePost = id => {
+export const deletePost = (id) => {
   try {
     firebase
       .firestore()
-      .collection('Posts')
+      .collection("Posts")
       .doc(id)
       .delete()
       .then(() => {
-        // console.log('Post isDelete');
+        console.log("Post isDelete");
       });
   } catch (error) {
     throw error;
   }
 };
 
-export const deleteImage = async url => {
+export const deleteImage = async (url) => {
   const storageRef = storage().refFromURL(url);
   const imageRef = storage().ref(storageRef.fullPath);
 
@@ -195,16 +195,16 @@ export const deleteImage = async url => {
   }
 };
 
-export const getFeeAgentPosts = setData => {
+export const getFeeAgentPosts = (setData) => {
   const postData = [];
 
   try {
     firestore()
-      .collection('Posts')
-      .where('freeAgent', '==', true)
+      .collection("Posts")
+      .where("freeAgent", "==", true)
       .get()
-      .then(datingSnapshot => {
-        datingSnapshot.forEach(da => {
+      .then((datingSnapshot) => {
+        datingSnapshot.forEach((da) => {
           postData.push(da.data());
         });
         // postData.sort((a, b) => a?.createAt?.localeCompare(b?.createAt));
@@ -216,26 +216,26 @@ export const getFeeAgentPosts = setData => {
   }
 };
 
-export const getOrganizations = async element => {
+export const getOrganizations = async (element) => {
   try {
     return await axios.get(
-      `${'https://event-app-production-production.up.railway.app/'}${'api/v1/client'}/${
+      `${"https://event-app-production-production.up.railway.app/"}${"api/v1/client"}/${
         element.clientID
       }`,
       {
         headers: {
           Authorization:
-            'Bearer ' +
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImlubmVydmlldzM0QGdtYWlsLmNvbSIsImFkbWluSWQiOiI2NDk3NDQ3ZTExNjlhNzI5ZGUyNzBlMDIiLCJpYXQiOjE2ODc3MDQyOTl9.Sa59ljcfm8ExmP3Z5axK92lwhyY234E8wwSLDq9uGDI',
+            "Bearer " +
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImlubmVydmlldzM0QGdtYWlsLmNvbSIsImFkbWluSWQiOiI2NDk3NDQ3ZTExNjlhNzI5ZGUyNzBlMDIiLCJpYXQiOjE2ODc3MDQyOTl9.Sa59ljcfm8ExmP3Z5axK92lwhyY234E8wwSLDq9uGDI",
         },
-      },
+      }
     );
   } catch (error) {}
 };
 
-export const deleteNotiRequest = async id => {
+export const deleteNotiRequest = async (id) => {
   try {
-    await firebase.firestore().collection('notifications').doc(id).delete();
+    await firebase.firestore().collection("notifications").doc(id).delete();
 
     return true;
   } catch (error) {
@@ -264,13 +264,13 @@ export const getCustomTimeLinePost = (setData, id) => {
 
   try {
     firestore()
-      .collection('Posts')
+      .collection("Posts")
 
       // .orderBy('createAt', 'desc')
-      .where('userId', 'in', id)
+      .where("userId", "in", id)
       .get()
-      .then(datingSnapshot => {
-        datingSnapshot.forEach(da => {
+      .then((datingSnapshot) => {
+        datingSnapshot.forEach((da) => {
           postData.push(da.data());
         });
         // postData.sort((a, b) => a?.createAt?.localeCompare(b?.createAt));
@@ -286,13 +286,13 @@ export const getFilterPost = (id, setData) => {
 
   try {
     firestore()
-      .collection('Posts')
+      .collection("Posts")
 
       // .orderBy('createAt', 'desc')
-      .where('postId', 'in', id)
+      .where("postId", "in", id)
       .get()
-      .then(datingSnapshot => {
-        datingSnapshot.forEach(da => {
+      .then((datingSnapshot) => {
+        datingSnapshot.forEach((da) => {
           postData.push(da.data());
         });
         // postData.sort((a, b) => a?.createAt?.localeCompare(b?.createAt));
@@ -310,11 +310,11 @@ export const handlePress = async (
   setImageSource,
   likePost,
   icons,
-  userProfileData,
+  userProfileData
 ) => {
   const updatedLikePost = !likePost;
 
-  const postRef = firebase.firestore().collection('Posts').doc(postData.postId);
+  const postRef = firebase.firestore().collection("Posts").doc(postData.postId);
   try {
     const postSnapshot = await postRef.get();
     const postData = postSnapshot.data();
@@ -323,7 +323,7 @@ export const handlePress = async (
     if (updatedLikePost) {
       if (medalsIdArray.includes(currentUser.uid)) {
         const updatedMedalsIdArray = medalsIdArray.filter(
-          id => id !== currentUser.uid,
+          (id) => id !== currentUser.uid
         );
         await postRef.update({
           medalsId: updatedMedalsIdArray,
@@ -338,8 +338,8 @@ export const handlePress = async (
           medalsId: medalsIdArray,
           medals: postData.medals + 1,
         });
-        let postUri = '';
-        if (postData?.uriData?.type?.includes('image')) {
+        let postUri = "";
+        if (postData?.uriData?.type?.includes("image")) {
           postUri = postData?.uriData?.uri;
         } else {
           postUri = postData?.uriData?.thumbnail;
@@ -354,9 +354,9 @@ export const handlePress = async (
           currentUser,
           userProfileData,
           postUri,
-          'Qatapolt',
-          'gave you a medal',
-          'LIKE_POST',
+          "Qatapolt",
+          "gave you a medal",
+          "LIKE_POST"
         );
 
         // console.log('Like count updated successfully');
@@ -372,7 +372,7 @@ export const handlePress = async (
         // console.log('User has not liked the post');
       } else {
         const updatedMedalsIdArray = medalsIdArray.filter(
-          id => id !== currentUser.uid,
+          (id) => id !== currentUser.uid
         );
         await postRef.update({
           medalsId: updatedMedalsIdArray,
@@ -387,18 +387,18 @@ export const handlePress = async (
 
     setLikeCount(updatedPostData.medals || 0);
     const updatedImageSource = updatedPostData.medalsId.includes(
-      currentUser.uid,
+      currentUser.uid
     )
       ? icons.likemadel
       : icons.unFilledMedal;
     setImageSource(updatedImageSource);
   } catch (error) {
-    console.error('Error updating like count:', error);
+    console.error("Error updating like count:", error);
   }
 };
 
 export const incrementViewCount = async (postId, currentUser, setViewCount) => {
-  const postRef = firebase.firestore().collection('Posts').doc(postId);
+  const postRef = firebase.firestore().collection("Posts").doc(postId);
 
   try {
     const postSnapshot = await postRef.get();
@@ -411,17 +411,17 @@ export const incrementViewCount = async (postId, currentUser, setViewCount) => {
         viewsId: [...viewsIdArray, currentUser.uid],
       });
       // console.log('View count updated successfully');
-      setViewCount(prevCount => prevCount + 1);
+      setViewCount((prevCount) => prevCount + 1);
     } else {
       // console.log('User already viewed the post');
     }
   } catch (error) {
-    console.error('Error updating view count:', error);
+    console.error("Error updating view count:", error);
   }
 };
 
 export const updateInternalShareCount = async (postId, id) => {
-  const postRef = firebase.firestore().collection('Posts').doc(postId);
+  const postRef = firebase.firestore().collection("Posts").doc(postId);
   try {
     const postSnapshot = await postRef.get();
     const postData = postSnapshot.data();
@@ -435,12 +435,12 @@ export const updateInternalShareCount = async (postId, id) => {
       // console.log('data no found');
     }
   } catch (error) {
-    console.error('Error updating view count:', error);
+    console.error("Error updating view count:", error);
   }
 };
 
 export const updateRepostCount = async (postId, id) => {
-  const postRef = firebase.firestore().collection('Posts').doc(postId);
+  const postRef = firebase.firestore().collection("Posts").doc(postId);
   try {
     const postSnapshot = await postRef.get();
     const postData = postSnapshot.data();
@@ -454,7 +454,7 @@ export const updateRepostCount = async (postId, id) => {
       // console.log('data no found');
     }
   } catch (error) {
-    console.error('Error updating view count:', error);
+    console.error("Error updating view count:", error);
   }
 };
 export const handleCommentLikePress = async (
@@ -463,18 +463,18 @@ export const handleCommentLikePress = async (
   setLikeCount,
   setImageSource,
   icons,
-  likeComment,
+  likeComment
 ) => {
   const updatedLikeComments = !likeComment;
   const commentId = item.id;
-  const postRef = firebase.firestore().collection('Posts').doc(item.postId);
+  const postRef = firebase.firestore().collection("Posts").doc(item.postId);
 
   try {
     const postSnapshot = await postRef.get();
     const postData = postSnapshot.data();
     const comments = postData?.comments || [];
     const commentIndex = comments.findIndex(
-      comment => comment.id === commentId,
+      (comment) => comment.id === commentId
     );
 
     if (commentIndex !== -1) {
@@ -484,7 +484,7 @@ export const handleCommentLikePress = async (
       if (updatedLikeComments) {
         if (medalsIdArray.includes(currentUser.uid)) {
           const updatedMedalsIdArray = medalsIdArray.filter(
-            id => id !== currentUser.uid,
+            (id) => id !== currentUser.uid
           );
           comment.medalsId = updatedMedalsIdArray;
           comment.medals = Math.max(0, comment.medals - 1);
@@ -508,7 +508,7 @@ export const handleCommentLikePress = async (
           // console.log('User has not liked the comment');
         } else {
           const updatedMedalsIdArray = medalsIdArray.filter(
-            id => id !== currentUser.uid,
+            (id) => id !== currentUser.uid
           );
           comment.medalsId = updatedMedalsIdArray;
           comment.medals = Math.max(0, comment.medals - 1);
@@ -527,9 +527,9 @@ export const handleCommentLikePress = async (
         : icons.unFilledMedal;
       setImageSource(updatedImageSource);
     } else {
-      console.error('Comment not found in post data');
+      console.error("Comment not found in post data");
     }
   } catch (error) {
-    console.error('Error updating comment like count:', error);
+    console.error("Error updating comment like count:", error);
   }
 };

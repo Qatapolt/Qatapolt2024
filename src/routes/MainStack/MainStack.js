@@ -1,54 +1,52 @@
 // import {SafeAreaView, PanResponder} from 'react-native';
-import React, {useRef, useState, useEffect} from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
-import HomeStack from '../HomeStack/HomeStack';
-import SportsNewsDetail from '../../screens/Main/SportsNewsDetail/SportsNewsDetail';
-import SettingScreen from '../../screens/Main/SettingScreen/SettingScreen';
-import IndividualChatDetail from '../../screens/Main/ChatScreen/ChatDetail/IndividualChatDetail';
-import ContactUs from '../../screens/Main/ContactUs/ContactUs';
-import AddChat from '../../screens/Main/ChatScreen/AddChat/AddChat';
-import AddGroupChat from '../../screens/Main/GroupChat/AddGroupChat/AddGroupChat';
-import FollowedScreen from '../../screens/Main/FollowedScreen/FollowedScreen';
-import BlockedAccounts from '../../screens/Main/BlockedAccounts/BlockedAccounts';
-import UserProfile from '../../screens/Main/UserProfile/UserProfile';
-import SearchScreen from '../../screens/Auth/SearchScreen/SearchScreen';
-import Notifications from '../../screens/Auth/Notification/NotificationScreen';
-import AdvanceSearch from '../../screens/Auth/AdvanceSearch/AdvanceSearch';
-import ChatSettings from '../../screens/Main/ChatSettings/ChatSettings';
-import AddGroupChatDetail from '../../screens/Main/GroupChat/AddGroupChatDetail/AddGroupChatDetail';
-import MainDrawer from '../MainDrawer/MainDrawer';
-import FollowScreen from '../../screens/Main/FollowScreen/FollowScreen';
-import FollowingScreen from '../../screens/Main/FollowingScreen/FollowingScreen';
-import GroupChatDetail from '../../screens/Main/GroupChat/GroupChatDetail/GroupChatDetail';
-import ArenaScreen from '../../screens/Main/ArenaScreen/ArenaScreen';
-import BlockScreen from '../../screens/Main/BlockScreen/BlockScreen';
-import SearchLocation from '../../screens/Main/SearchLocation/SearchLocation';
-import FollowedStack from '../FollowedStack/FollowedStack';
-import InternalShare from '../../screens/Main/InternalShare/InternalShare';
-import UserFollowers from '../../screens/Main/UserFollowers/UserFollowers';
-import UserFollowing from '../../screens/Main/UserFollowing/UserFollowing';
-import AdvanceSearchUser from '../../screens/Main/AdvanceSearchUser/AdvanceSearchUser';
-import EditProfile from '../../screens/Main/EditProfile/EditProfile';
-import OtherUserProfile from '../../screens/Main/OtherUserProfile/OtherUserProfile';
-import {useSelector} from 'react-redux';
-import ProfileDetail from '../../screens/Auth/ProfileDetail/ProfileDetail';
-import EmailVerification from '../../screens/Auth/Signup/EmailVerification';
-import ReportPost from '../../screens/Main/ReportPost/ReportPost';
-import ReportReason from '../../screens/Main/ReportPost/ReportReason/ReportReason';
-import AllViewBy from '../../screens/Main/AllViewBy/AllViewBy';
-import GroupInfo from '../../screens/Main/GroupChat/GroupInfo/GroupInfo';
-import NotificationRequest from '../../screens/Auth/Notification/NotificationRequest/NotificationRequest';
-import QataPoltNewsDetail from '../../screens/Main/QatalPoltNews/QataPoltNewsDetail/QataPoltNewsDetail';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useRef, useState, useEffect } from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+import HomeStack from "../HomeStack/HomeStack";
+import SportsNewsDetail from "../../screens/Main/SportsNewsDetail/SportsNewsDetail";
+import SettingScreen from "../../screens/Main/SettingScreen/SettingScreen";
+import IndividualChatDetail from "../../screens/Main/ChatScreen/ChatDetail/IndividualChatDetail";
+import ContactUs from "../../screens/Main/ContactUs/ContactUs";
+import AddChat from "../../screens/Main/ChatScreen/AddChat/AddChat";
+import AddGroupChat from "../../screens/Main/GroupChat/AddGroupChat/AddGroupChat";
+import FollowedScreen from "../../screens/Main/FollowedScreen/FollowedScreen";
+import BlockedAccounts from "../../screens/Main/BlockedAccounts/BlockedAccounts";
+import UserProfile from "../../screens/Main/UserProfile/UserProfile";
+import SearchScreen from "../../screens/Auth/SearchScreen/SearchScreen";
+import Notifications from "../../screens/Auth/Notification/NotificationScreen";
+import AdvanceSearch from "../../screens/Auth/AdvanceSearch/AdvanceSearch";
+import ChatSettings from "../../screens/Main/ChatSettings/ChatSettings";
+import AddGroupChatDetail from "../../screens/Main/GroupChat/AddGroupChatDetail/AddGroupChatDetail";
+import MainDrawer from "../MainDrawer/MainDrawer";
+import FollowScreen from "../../screens/Main/FollowScreen/FollowScreen";
+import FollowingScreen from "../../screens/Main/FollowingScreen/FollowingScreen";
+import GroupChatDetail from "../../screens/Main/GroupChat/GroupChatDetail/GroupChatDetail";
+import ArenaScreen from "../../screens/Main/ArenaScreen/ArenaScreen";
+import BlockScreen from "../../screens/Main/BlockScreen/BlockScreen";
+import SearchLocation from "../../screens/Main/SearchLocation/SearchLocation";
+import FollowedStack from "../FollowedStack/FollowedStack";
+import InternalShare from "../../screens/Main/InternalShare/InternalShare";
+import UserFollowers from "../../screens/Main/UserFollowers/UserFollowers";
+import UserFollowing from "../../screens/Main/UserFollowing/UserFollowing";
+import AdvanceSearchUser from "../../screens/Main/AdvanceSearchUser/AdvanceSearchUser";
+import EditProfile from "../../screens/Main/EditProfile/EditProfile";
+import OtherUserProfile from "../../screens/Main/OtherUserProfile/OtherUserProfile";
+import { useSelector } from "react-redux";
+import ProfileDetail from "../../screens/Auth/ProfileDetail/ProfileDetail";
+import EmailVerification from "../../screens/Auth/Signup/EmailVerification";
+import ReportPost from "../../screens/Main/ReportPost/ReportPost";
+import ReportReason from "../../screens/Main/ReportPost/ReportReason/ReportReason";
+import AllViewBy from "../../screens/Main/AllViewBy/AllViewBy";
+import GroupInfo from "../../screens/Main/GroupChat/GroupInfo/GroupInfo";
+import NotificationRequest from "../../screens/Auth/Notification/NotificationRequest/NotificationRequest";
+import QataPoltNewsDetail from "../../screens/Main/QatalPoltNews/QataPoltNewsDetail/QataPoltNewsDetail";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const MainStack = () => {
-  const authState = useSelector(state => state.auth?.currentUser);
-  const authBioVerified = useSelector(state => state.auth?.isBioVerified);
+  const authState = useSelector((state) => state.auth?.currentUser);
+  const authBioVerified = useSelector((state) => state.auth?.isBioVerified);
 
-  const [isBioVerified, setIsBioVerified] = useState(false)
+  const [isBioVerified, setIsBioVerified] = useState(false);
 
-
-  
   // const timerId = useRef(false);
   // const [timeForInactivityInSecond, setTimeForInactivityInSecond] =
   //   useState(10);
@@ -57,12 +55,11 @@ const MainStack = () => {
     getIsBioVerified();
   }, []);
 
-  const getIsBioVerified= async()=>{
-    const res= await AsyncStorage.getItem("isBioMetric")
-    console.log("BioVer",res)
-    setIsBioVerified(res)
- 
-   }
+  const getIsBioVerified = async () => {
+    const res = await AsyncStorage.getItem("isBioMetric");
+    console.log("BioVer", res);
+    setIsBioVerified(res);
+  };
   // useEffect(() => {
   //   // Remove the timer when the component unmounts
   //   return () => {
@@ -92,8 +89,8 @@ const MainStack = () => {
     //   collapsable={false}
     //   {...panResponder.panHandlers}
     //   >
-    
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       {!authState?.isProfileComplete ? (
         <Stack.Screen name="ProfileDetail" component={ProfileDetail} />
       ) : null}

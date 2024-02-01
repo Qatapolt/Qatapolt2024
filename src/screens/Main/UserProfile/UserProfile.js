@@ -9,59 +9,59 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
-} from 'react-native';
-import moment from 'moment';
-import React, {useState, useEffect, useRef} from 'react';
-import commonStyles, {PH10, PH20} from '../../../utils/CommonStyles';
-import {Spacer} from '../../../components/Spacer';
-import {images} from '../../../assets/images';
-import {colors} from '../../../utils/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
-import UserProfileMainTop from './Molecules/UserProfileMainTop';
-import UserProfileMainBody from './Molecules/UserProfileMainBody';
-import UserProfileTop from './Molecules/UserProfileTop';
-import {useDispatch, useSelector} from 'react-redux';
-import CustomImage from '../../../components/CustomImage';
+} from "react-native";
+import moment from "moment";
+import React, { useState, useEffect, useRef } from "react";
+import commonStyles, { PH10, PH20 } from "../../../utils/CommonStyles";
+import { Spacer } from "../../../components/Spacer";
+import { images } from "../../../assets/images";
+import { colors } from "../../../utils/Colors";
+import { scale, verticalScale } from "react-native-size-matters";
+import UserProfileMainTop from "./Molecules/UserProfileMainTop";
+import UserProfileMainBody from "./Molecules/UserProfileMainBody";
+import UserProfileTop from "./Molecules/UserProfileTop";
+import { useDispatch, useSelector } from "react-redux";
+import CustomImage from "../../../components/CustomImage";
 import {
   getSpecificUser,
   UpdateBlockUsers,
   UpdateUser,
   UpdateBlockUsersOthers,
   SaveUser,
-} from '../../services/UserServices';
-import {useIsFocused} from '@react-navigation/native';
-import {authData} from '../../../redux/reducers/authReducer';
-import Toast from 'react-native-root-toast';
-import loaderAnimation from '../../../assets/Loaders';
+} from "../../services/UserServices";
+import { useIsFocused } from "@react-navigation/native";
+import { authData } from "../../../redux/reducers/authReducer";
+import Toast from "react-native-root-toast";
+import loaderAnimation from "../../../assets/Loaders";
 
-import Loader from '../../../utils/Loader';
-import {setUserData} from '../../../redux/reducers/userReducer';
-import {setReportUserId} from '../../../redux/reducers/ReportUserReducer';
-import ProfileBottomActionSheet from '../../../components/ProfileBottomActionSheet';
-import ProfileImageView from '../../../components/ProfileImageView';
-import ProfileTabs from '../../../components/ProfileTabs';
-import {deleteImage, deletePost, getPosts} from '../../services/PostServices';
-import CustomText from '../../../components/CustomText';
-import SepratorLine from '../../../components/SepratorLine';
-import _ from 'lodash';
-import {InterFont} from '../../../utils/Fonts';
-import PostItem from '../ArenaScreen/Molecules/PostItem';
-import UserHightLightContainer from './Molecules/UserHightLightContainer';
-import {useFocusEffect} from '@react-navigation/native';
-import MediaView from '../../../components/MediaView';
-import ReportSheet from '../ArenaScreen/Molecules/ReportSheet';
-import PostOptionsSheet from '../ArenaScreen/Molecules/PostOptionsSheet';
-import ViewPost from '../ArenaScreen/Molecules/ViewPost';
-import Clipboard from '@react-native-clipboard/clipboard';
-import firestore from '@react-native-firebase/firestore';
-import {firebase} from '@react-native-firebase/firestore';
-const UserProfile = ({navigation, route}) => {
-  const CurrentUser = useSelector(state => state.auth?.currentUser);
-  const userData = useSelector(state => state.user?.userData);
+import Loader from "../../../utils/Loader";
+import { setUserData } from "../../../redux/reducers/userReducer";
+import { setReportUserId } from "../../../redux/reducers/ReportUserReducer";
+import ProfileBottomActionSheet from "../../../components/ProfileBottomActionSheet";
+import ProfileImageView from "../../../components/ProfileImageView";
+import ProfileTabs from "../../../components/ProfileTabs";
+import { deleteImage, deletePost, getPosts } from "../../services/PostServices";
+import CustomText from "../../../components/CustomText";
+import SepratorLine from "../../../components/SepratorLine";
+import _ from "lodash";
+import { InterFont } from "../../../utils/Fonts";
+import PostItem from "../ArenaScreen/Molecules/PostItem";
+import UserHightLightContainer from "./Molecules/UserHightLightContainer";
+import { useFocusEffect } from "@react-navigation/native";
+import MediaView from "../../../components/MediaView";
+import ReportSheet from "../ArenaScreen/Molecules/ReportSheet";
+import PostOptionsSheet from "../ArenaScreen/Molecules/PostOptionsSheet";
+import ViewPost from "../ArenaScreen/Molecules/ViewPost";
+import Clipboard from "@react-native-clipboard/clipboard";
+import firestore from "@react-native-firebase/firestore";
+import { firebase } from "@react-native-firebase/firestore";
+const UserProfile = ({ navigation, route }) => {
+  const CurrentUser = useSelector((state) => state.auth?.currentUser);
+  const userData = useSelector((state) => state.user?.userData);
 
   const [showActionPotions, setShowActionPotions] = useState(false);
   const [imageViewModal, setImageViewModal] = useState(false);
-  const [imageObject, setImageObject] = useState('');
+  const [imageObject, setImageObject] = useState("");
   const [userEvent, setUserEvent] = useState({});
   const focused = useIsFocused();
   const dispatch = useDispatch();
@@ -93,33 +93,55 @@ const UserProfile = ({navigation, route}) => {
   const [hightLightData, setHightLightData] = useState([]);
   const [viewMedia, setViewMedia] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
-
+  useEffect(() => {
+    if (viewPostModal) {
+      navigation.getParent()?.setOptions({
+        tabBarStyle: { display: "none" },
+        tabBarVisible: false,
+      });
+      return () =>
+        navigation
+          .getParent()
+          ?.setOptions({ tabBarStyle: undefined, tabBarVisible: undefined });
+    } else {
+      navigation.getParent()?.setOptions({
+        tabBarStyle: {
+          height: verticalScale(65),
+          paddingTop: 5,
+          backgroundColor: colors.white,
+          display: route.name === "NewPost" ? "none" : "flex",
+          paddingBottom: Platform.OS == "ios" ? 20 : 12,
+        },
+        tabBarVisible: true,
+      });
+    }
+  }, [navigation, viewPostModal]);
   const statsArray = [
-    {id: 1, name: 'Sport', value: userData?.selectSport},
-    {id: 2, name: 'Account Type', value: userData?.accountType},
-    {id: 3, name: 'Country', value: userData?.country},
-    {id: 4, name: 'City', value: userData?.city},
-    {id: 5, name: 'Skill #1', value: userData?.skill1},
-    {id: 6, name: 'Skill #2', value: userData?.skill2},
-    {id: 7, name: 'Skill #3', value: userData?.skill3},
+    { id: 1, name: "Sport", value: userData?.selectSport },
+    { id: 2, name: "Account Type", value: userData?.accountType },
+    { id: 3, name: "Country", value: userData?.country },
+    { id: 4, name: "City", value: userData?.city },
+    { id: 5, name: "Skill #1", value: userData?.skill1 },
+    { id: 6, name: "Skill #2", value: userData?.skill2 },
+    { id: 7, name: "Skill #3", value: userData?.skill3 },
     {
       id: 8,
-      name: 'Age',
-      value: userData?.age ? userData?.age + ' ' + 'years' : '',
+      name: "Age",
+      value: userData?.age ? userData?.age + " " + "years" : "",
     },
 
     {
       id: 9,
-      name: 'Email',
-      value: userData?.email ? userData?.email : '____________',
+      name: "Email",
+      value: userData?.email ? userData?.email : "____________",
     },
-    {id: 10, name: 'Height', value: userData?.height},
-    {id: 11, name: 'Strong Hand', value: userData?.strongHand},
-    {id: 12, name: 'Strong Foot', value: userData?.strongFoot},
+    { id: 10, name: "Height", value: userData?.height },
+    { id: 11, name: "Strong Hand", value: userData?.strongHand },
+    { id: 12, name: "Strong Foot", value: userData?.strongFoot },
   ];
 
   const [numColumns, setNumColumns] = useState(3);
-  const handleNumColumnsChange = newNumColumns => {
+  const handleNumColumnsChange = (newNumColumns) => {
     // Change the key to force a fresh render when the number of columns changes
     setNumColumns(newNumColumns + 1);
   };
@@ -127,7 +149,7 @@ const UserProfile = ({navigation, route}) => {
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
-        console.log('running focus userProfile', isLoading);
+        console.log("running focus userProfile", isLoading);
         setIsLoading(true);
         try {
           await getUserData();
@@ -137,7 +159,7 @@ const UserProfile = ({navigation, route}) => {
             fetchSquad();
           }, 500);
         } catch (error) {
-          console.error('Error during focus effect:', error);
+          console.error("Error during focus effect:", error);
         } finally {
           setIsLoading(false);
         }
@@ -158,20 +180,20 @@ const UserProfile = ({navigation, route}) => {
       fetchSquad,
       setUserEvent,
       route?.params?.event,
-    ]),
+    ])
   );
 
   const delPost = () => {
-    Alert.alert('Delete Post', 'Are you sure you want to delete?', [
+    Alert.alert("Delete Post", "Are you sure you want to delete?", [
       {
-        text: 'Yes',
+        text: "Yes",
         onPress: async () => {
           if (selectPost.uriData.uri) {
             deleteImage(selectPost?.uriData?.uri);
           }
           deletePost(selectPost?.postId);
           let filterDeletePost = CurrentUser?.PostIds.filter(
-            data => data.postId != selectPost?.postId,
+            (data) => data.postId != selectPost?.postId
           );
           await SaveUser(CurrentUser.uid, {
             PostIds: filterDeletePost,
@@ -183,7 +205,7 @@ const UserProfile = ({navigation, route}) => {
         },
       },
       {
-        text: 'No',
+        text: "No",
         onPress: () => {
           onCloseModal();
         },
@@ -195,7 +217,7 @@ const UserProfile = ({navigation, route}) => {
     if (postLink) {
       Clipboard.setString(postLink);
       setShowPostPotions(false);
-      Toast.show('Link Copied!');
+      Toast.show("Link Copied!");
     }
   };
   const onCloseModal = () => {
@@ -214,68 +236,76 @@ const UserProfile = ({navigation, route}) => {
       await UpdateBlockUsers(CurrentUser?.uid, userData?.uid);
       // await UpdateBlockUsersOthers(userData?.uid, CurrentUser.uid);
       const user = await getSpecificUser(CurrentUser?.uid);
-      Toast.show('Account Blocked Successfully');
+      Toast.show("Account Blocked Successfully");
       setShowActionPotions(false);
       dispatch(authData(user));
-      navigation.navigate('Arena');
+      navigation.navigate("Arena");
     } catch (error) {
-      console.log('Usernot block', error);
+      console.log("Usernot block", error);
     }
   };
   const reportUser = () => {
     dispatch(setReportUserId(userData?.uid));
     setShowActionPotions(false);
-    navigation.navigate('ReportPost', {event: 'UserProfile'});
+    navigation.navigate("ReportPost", { event: "UserProfile" });
   };
 
   const getAllPost = () => {
     getPosts(setPostData);
   };
-
   const fetchSquad = async () => {
-    const userAllFollowers = userData.AllFollowers;
-    console.log('userAllFollowers', userAllFollowers);
+    const CurrentUserAllFollowers = userData.AllFollowers;
     const squadData = [];
 
     try {
-      if (Array.isArray(userAllFollowers) && userAllFollowers.length > 0) {
-        userAllFollowers.map(async element => {
+      if (
+        Array.isArray(CurrentUserAllFollowers) &&
+        CurrentUserAllFollowers.length > 0
+      ) {
+        // Fetch user data for each follower and store in squadData
+        for (const element of CurrentUserAllFollowers) {
           const data = await getSpecificUser(element);
           if (data !== undefined) {
             squadData.push(data);
           }
-        });
+        }
+
+        // Sort squadData based on the number of followers each user has
+        squadData.sort((a, b) => (b.followers || 0) - (a.followers || 0));
+
+        console.log("squadData", squadData);
       }
 
       setSquadData(squadData);
     } catch (error) {
-      console.error('fetchSquad error', error);
+      console.error("fetchSquad error", error);
     }
   };
+
   const fetchUserPosts = async () => {
     const userAllPosts = userData?.PostIds;
-    console.log('userAllPosts', userAllPosts);
+    // console.log("userAllPosts", userAllPosts);
     const allPostData = [];
     const allPostByUser = [];
 
     try {
       // Use await with the Firestore query
       const datingSnapshot = await firestore()
-        .collection('Posts')
-        .orderBy('createAt', 'desc')
+        .collection("Posts")
+        .orderBy("createAt", "desc")
         .get();
 
       // Iterate through the results using forEach
-      datingSnapshot.forEach(da => {
+      datingSnapshot.forEach((da) => {
         allPostData.push(da.data());
       });
 
       if (Array.isArray(userAllPosts) && userAllPosts?.length > 0) {
         // Use forEach with async when iterating through userData?.PostIds
 
-        userAllPosts.map(async element => {
+        userAllPosts.map(async (element) => {
           const userPosts = allPostData.find(
-            post => post?.postId === element?.postId,
+            (post) => post?.postId === element?.postId
           );
           if (userPosts !== undefined) {
             allPostByUser.push(userPosts);
@@ -287,30 +317,30 @@ const UserProfile = ({navigation, route}) => {
           const createdAtB = b.createAt.seconds + b.createAt.nanoseconds / 1e9;
           return createdAtB - createdAtA;
         });
-        console.log('🚀sortedArray:', sortedArray);
+
         setCommentaryData(sortedArray);
       }
     } catch (error) {
-      console.error('fetchUserPosts error', error);
+      console.error("fetchUserPosts error", error);
     }
   };
 
   const fetchHighlights = () => {
     const userAllPosts = userData.PostIds;
-    console.log('userAllPosts', userAllPosts);
+    // console.log("userAllPosts", userAllPosts);
     try {
       if (Array.isArray(userAllPosts) && userAllPosts.length > 0) {
-        const filterIds = userAllPosts?.filter(item => item.type != '');
-        const sortedByDate = _.orderBy(filterIds, item => item?.createAt, [
-          'desc',
+        const filterIds = userAllPosts?.filter((item) => item.type != "");
+        const sortedByDate = _.orderBy(filterIds, (item) => item?.createAt, [
+          "desc",
         ]);
         setHightLightData(sortedByDate);
       }
     } catch (error) {
-      console.log('fetchHighlights error', error);
+      console.log("fetchHighlights error", error);
     }
   };
-  const RenderPostData = ({item, index}) => {
+  const RenderPostData = ({ item, index }) => {
     return (
       <View>
         <PostItem
@@ -353,7 +383,7 @@ const UserProfile = ({navigation, route}) => {
       </View>
     );
   };
-  const renderHightLightData = ({item, index}) => {
+  const renderHightLightData = ({ item, index }) => {
     return (
       <UserHightLightContainer
         index={index}
@@ -363,17 +393,18 @@ const UserProfile = ({navigation, route}) => {
       />
     );
   };
-  const renderStats = ({item}) => {
+  const renderStats = ({ item }) => {
     return (
       <>
         <View
           style={{
             marginVertical: verticalScale(15),
-            width: '100%',
-            flexDirection: 'row',
+            width: "100%",
+            flexDirection: "row",
             marginHorizontal: 30,
-          }}>
-          <View style={{width: '30%'}}>
+          }}
+        >
+          <View style={{ width: "30%" }}>
             <CustomText
               label={`${item.name}:`}
               fontSize={11}
@@ -383,7 +414,7 @@ const UserProfile = ({navigation, route}) => {
               fontFamily={InterFont.semiBold}
             />
           </View>
-          <View style={{width: '70%'}}>
+          <View style={{ width: "70%" }}>
             <CustomText
               label={item.value}
               fontSize={11}
@@ -405,37 +436,39 @@ const UserProfile = ({navigation, route}) => {
       <>
         <View>
           <ImageBackground
-            style={{width: '100%', height: 250}}
-            resizeMode={'cover'}
+            style={{ width: "100%", height: 250 }}
+            resizeMode={"cover"}
             source={
               userData?.profileBackground
-                ? {uri: userData?.profileBackground}
+                ? { uri: userData?.profileBackground }
                 : images.background
-            }>
+            }
+          >
             <TouchableOpacity
               activeOpacity={0.6}
               disabled={!userData?.profileBackground ? true : false}
-              style={{width: '100%', height: 250}}
+              style={{ width: "100%", height: 250 }}
               onPress={() => {
                 setImageObject(
                   userData?.profileBackground
                     ? userData?.profileBackground
-                    : userData?.profileImage,
+                    : userData?.profileImage
                 );
                 setImageViewModal(true);
-              }}>
+              }}
+            >
               <View
                 style={{
                   borderRadius: 10,
                   opacity: 0.1,
-                  backgroundColor: '#454545',
-                  width: '100%',
-                  height: '100%',
+                  backgroundColor: "#454545",
+                  width: "100%",
+                  height: "100%",
                 }}
               />
 
-              <Spacer height={Platform.OS == 'ios' ? 50 : 20} />
-              <View style={{position: 'absolute', top: 50, width: '100%'}}>
+              <Spacer height={Platform.OS == "ios" ? 50 : 20} />
+              <View style={{ position: "absolute", top: 50, width: "100%" }}>
                 <UserProfileTop
                   onBlockUser={BlockUser}
                   setSheetVisible={setShowActionPotions}
@@ -455,15 +488,17 @@ const UserProfile = ({navigation, route}) => {
               borderTopLeftRadius: scale(20),
               borderTopRightRadius: scale(20),
               marginTop: -20,
-            }}>
+            }}
+          >
             <View
               style={{
-                position: 'absolute',
+                position: "absolute",
                 top: verticalScale(-50),
-                alignSelf: 'center',
-              }}>
+                alignSelf: "center",
+              }}
+            >
               <CustomImage
-                isVerified={userData?.trophy == 'verified' ? true : false}
+                isVerified={userData?.trophy == "verified" ? true : false}
                 disabled={!userData?.profileImage ? true : false}
                 onImagePress={() => {
                   setImageObject(userData?.profileImage);
@@ -471,12 +506,12 @@ const UserProfile = ({navigation, route}) => {
                 }}
                 imageUrl={userData?.profileImage}
                 mainStyle={{
-                  shadowColor: Platform.OS == 'ios' ? '#343a40' : colors.black,
+                  shadowColor: Platform.OS == "ios" ? "#343a40" : colors.black,
                   shadowRadius: 2,
                   elevation: 5,
                   shadowOpacity: 0.4,
                   // inputMarginTop:-20,
-                  shadowOffset: {width: -1, height: 3},
+                  shadowOffset: { width: -1, height: 3 },
                 }}
               />
             </View>
@@ -493,7 +528,7 @@ const UserProfile = ({navigation, route}) => {
               followerState={followerState}
             />
             <Spacer height={20} />
-            <View style={{width: '100%'}}>
+            <View style={{ width: "100%" }}>
               <SepratorLine height={8} />
               <Spacer height={20} />
 
@@ -516,14 +551,15 @@ const UserProfile = ({navigation, route}) => {
                   <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                     <View
                       style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        width: '100%',
+                        flexDirection: "row",
+                        alignItems: "center",
+                        width: "100%",
                         paddingLeft: scale(10),
-                      }}>
+                      }}
+                    >
                       {Array.isArray(squadData) &&
                         squadData.length > 0 &&
-                        squadData?.map(item => {
+                        squadData?.map((item) => {
                           return (
                             <>
                               <RenderPeople item={item} />
@@ -550,9 +586,11 @@ const UserProfile = ({navigation, route}) => {
   const emptyListComponent = () => {
     return (
       <>
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
           <CustomText
-            label={isLoading ? 'Fetching Posts' : 'no Recods Found'}
+            label={isLoading ? "Fetching Posts" : "no Recods Found"}
             fontSize={12}
             textAlign="center"
             color={colors.black}
@@ -563,43 +601,44 @@ const UserProfile = ({navigation, route}) => {
     );
   };
 
-  const onNavigate = item => {
+  const onNavigate = (item) => {
     if (userData?.BlockUsers?.includes(item?.uid)) {
-      navigation.navigate('BlockScreen');
+      navigation.navigate("BlockScreen");
 
       return;
     }
 
     if (item.uid == userData?.uid) {
-      navigation.navigate('Profile', {
+      navigation.navigate("Profile", {
         event: item.uid,
       });
       return;
     }
     if (item?.isOther === undefined) {
-      navigation.navigate('UserProfile', {
+      navigation.navigate("UserProfile", {
         event: item.uid,
       });
 
       return;
     }
-    navigation.navigate('OtherUserProfile', {
+    navigation.navigate("OtherUserProfile", {
       event: item.uid,
     });
   };
-  const RenderPeople = ({item}) => {
+  const RenderPeople = ({ item }) => {
     return (
       <TouchableOpacity
         activeOpacity={0.6}
         onPress={() => onNavigate(item)}
-        style={{marginHorizontal: scale(10)}}>
+        style={{ marginHorizontal: scale(10) }}
+      >
         <CustomImage
           onImagePress={() => onNavigate(item)}
           imageUrl={item?.profileImage}
           width={50}
           height={50}
         />
-        <View style={{width: scale(55), alignItems: 'center'}}>
+        <View style={{ width: scale(55), alignItems: "center" }}>
           <CustomText
             label={item?.name}
             numberOfLines={1}
@@ -618,14 +657,15 @@ const UserProfile = ({navigation, route}) => {
     return (
       <View
         style={{
-          backgroundColor: 'transparent',
+          backgroundColor: "transparent",
           flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
+          justifyContent: "center",
+          alignItems: "center",
           zIndex: 999999999999,
-          height: '100%',
-          width: '100%',
-        }}>
+          height: "100%",
+          width: "100%",
+        }}
+      >
         <Loader file={loaderAnimation} />
       </View>
     );
@@ -639,7 +679,8 @@ const UserProfile = ({navigation, route}) => {
             style={{
               flex: 1,
               backgroundColor: colors.white,
-            }}>
+            }}
+          >
             {isLoading ? (
               <Loading />
             ) : (
@@ -664,7 +705,8 @@ const UserProfile = ({navigation, route}) => {
             style={{
               flex: 1,
               backgroundColor: colors.white,
-            }}>
+            }}
+          >
             {isLoading ? (
               <Loading />
             ) : (
@@ -690,7 +732,8 @@ const UserProfile = ({navigation, route}) => {
             style={{
               flex: 1,
               backgroundColor: colors.white,
-            }}>
+            }}
+          >
             {isLoading ? (
               <Loading />
             ) : (
@@ -770,9 +813,9 @@ export default UserProfile;
 
 const styles = StyleSheet.create({
   alignContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   txtWidth: {
     width: scale(170),

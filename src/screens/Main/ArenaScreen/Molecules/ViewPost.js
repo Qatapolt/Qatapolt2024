@@ -6,39 +6,44 @@ import {
   Platform,
   Animated,
   Image,
-} from 'react-native';
-import React, {useRef, useState, useEffect} from 'react';
-import {colors} from '../../../../utils/Colors';
-import CustomHeader from '../../../../components/CustomHeader';
-import {InterFont} from '../../../../utils/Fonts';
-import CustomText from '../../../../components/CustomText';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Spacer} from '../../../../components/Spacer';
-import {Avatar} from 'react-native-elements';
-import {icons} from '../../../../assets/icons';
-import Entypo from 'react-native-vector-icons/Entypo';
-import commonStyles, {PH10, PH20} from '../../../../utils/CommonStyles';
-import {images} from '../../../../assets/images';
-import PostHeader from './PostHeader';
-import PostItemBottom from './PostItemBottom';
-import Modal from 'react-native-modal';
-import {getSpecificUser} from '../../../services/UserServices';
-import CustomImage from '../../../../components/CustomImage';
-import moment from 'moment';
-import FastImage from 'react-native-fast-image';
-import PostBottomItem from '../../../../components/PostBottomItem';
-import VideoPlayer from 'react-native-video-player';
-import CustomPostOption from '../../../../components/CustomPostOption';
-import {useSelector} from 'react-redux';
-const ViewPost = props => {
+} from "react-native";
+import React, { useRef, useState, useEffect } from "react";
+import { colors } from "../../../../utils/Colors";
+import CustomHeader from "../../../../components/CustomHeader";
+import { InterFont } from "../../../../utils/Fonts";
+import CustomText from "../../../../components/CustomText";
+import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { Spacer } from "../../../../components/Spacer";
+import { Avatar } from "react-native-elements";
+import { icons } from "../../../../assets/icons";
+import Entypo from "react-native-vector-icons/Entypo";
+import commonStyles, { PH10, PH20 } from "../../../../utils/CommonStyles";
+import { images } from "../../../../assets/images";
+import PostHeader from "./PostHeader";
+import PostItemBottom from "./PostItemBottom";
+import Modal from "react-native-modal";
+import { getSpecificUser } from "../../../services/UserServices";
+import CustomImage from "../../../../components/CustomImage";
+import moment from "moment";
+import FastImage from "react-native-fast-image";
+import PostBottomItem from "../../../../components/PostBottomItem";
+import VideoPlayer from "react-native-video-player";
+import CustomPostOption from "../../../../components/CustomPostOption";
+import { useSelector } from "react-redux";
+import { useIsFocused } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
+const ViewPost = (props) => {
+  const isFocused = useIsFocused();
   const [hideImage, setShowImage] = useState(true);
   const [potionSheet, setPotionSheet] = useState(false);
-  const authData = useSelector(state => state?.auth?.currentUser);
+  const authData = useSelector((state) => state?.auth?.currentUser);
   // console.log('AllLikePost', props?.likePost);
 
   const [userProfileData, setUserProfileData] = useState({});
   // console.log('PostUserData', userProfileData);
+  const route = useRoute();
+  const navigation = useNavigation();
 
   useEffect(() => {
     getUserData();
@@ -78,24 +83,17 @@ const ViewPost = props => {
 
   const PostCreateAt = moment(new Date(props?.postObject?.createAt?.toDate()));
 
-  let dateFormat = '';
+  let dateFormat = "";
 
-  if (moment(PostCreateAt).isSame(moment(), 'day')) {
-    dateFormat = 'Today';
+  if (moment(PostCreateAt).isSame(moment(), "day")) {
+    dateFormat = "Today";
   } else {
-    dateFormat = 'not';
+    dateFormat = "not";
   }
 
   return (
-    <Modal
-      isVisible={props.viewPostModal}
-      onBackdropPress={() => props.setViewPostModal(false)}
-      style={{
-        flex: 1,
-        margin: 0,
-        overflow: 'hidden',
-      }}>
-      <View style={{flex: 1}}>
+    props.viewPostModal === true && (
+      <View style={{ height: "100%", width: "100%", overflow: "hidden" }}>
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
@@ -105,15 +103,17 @@ const ViewPost = props => {
             flex: 1,
             // width: '100%',
             // height: '100%',
-            backgroundColor: 'black',
-          }}>
-          <Spacer height={Platform.OS == 'ios' ? 50 : 10} />
+            backgroundColor: "black",
+          }}
+        >
+          <Spacer height={Platform.OS == "ios" ? 50 : 10} />
           <PH10>
             <CustomHeader
               LeftSide={() => (
-                <Animated.View style={{opacity: fadeAnim}}>
+                <Animated.View style={{ opacity: fadeAnim }}>
                   <TouchableOpacity
-                    onPress={() => props.setViewPostModal(false)}>
+                    onPress={() => props.setViewPostModal(false)}
+                  >
                     <Ionicons
                       name="chevron-back"
                       color={colors.white}
@@ -123,15 +123,18 @@ const ViewPost = props => {
                 </Animated.View>
               )}
               RightSide={() => (
-                <Animated.View style={{opacity: fadeAnim}}>
+                <Animated.View
+                  style={{ opacity: fadeAnim, zIndex: 999999999999 }}
+                >
                   <TouchableOpacity
                     onPress={() => {
-                      console.log('press');
+                      console.log("press");
                       // props.setViewPostModal(false);
                       props.setSelectPost(props?.postObject);
-                      props?.setShowPostPotions(true);
+                      props.onOpen();
                     }}
-                    style={{width: scale(40), alignItems: 'flex-end'}}>
+                    style={{ width: scale(40), alignItems: "flex-end" }}
+                  >
                     <Entypo
                       name="dots-three-horizontal"
                       color={colors.white}
@@ -143,27 +146,28 @@ const ViewPost = props => {
             />
           </PH10>
           <Spacer height={30} />
-          <View style={{alignSelf: 'center', height: '65%', width: '100%'}}>
+          <View style={{ alignSelf: "center", height: "65%", width: "100%" }}>
             <>
-              {!props?.postObject?.uriData?.type?.includes('image') ? (
+              {!props?.postObject?.uriData?.type?.includes("image") ? (
                 <>
                   <View
                     style={{
-                      height: '100%',
+                      height: "100%",
                       // position: 'absolute',
-                      justifyContent: 'center',
+                      justifyContent: "center",
                       // alignItems: 'center',
-                    }}>
+                    }}
+                  >
                     <VideoPlayer
                       autoplay={true}
-                      defaultMuted={true}
+                      // defaultMuted={true}
                       resizeMode="cover"
                       playButton={true}
                       pauseOnPress={true}
                       videoWidth={1400}
                       videoHeight={1100}
-                      video={{uri: props?.postObject?.uriData?.uri}}
-                      thumbnail={{uri: props?.postObject?.uriData?.thumbnail}}
+                      video={{ uri: props?.postObject?.uriData?.uri }}
+                      thumbnail={{ uri: props?.postObject?.uriData?.thumbnail }}
                     />
                   </View>
                 </>
@@ -171,7 +175,7 @@ const ViewPost = props => {
                 <>
                   <FastImage
                     style={commonStyles.img}
-                    source={{uri: props?.postObject.uriData?.uri}}
+                    source={{ uri: props?.postObject.uriData?.uri }}
                   />
                 </>
               )}
@@ -180,23 +184,24 @@ const ViewPost = props => {
 
           <Animated.View
             style={{
-              alignSelf: 'center',
+              alignSelf: "center",
               opacity: fadeAnim,
 
-              height: '25%',
-              width: '100%',
-              position: 'absolute',
+              height: "25%",
+              width: "100%",
+              position: "absolute",
               bottom: 0,
-              backgroundColor: '#00000090',
-            }}>
-            <View style={{padding: verticalScale(10)}}>
+              backgroundColor: "#00000090",
+            }}
+          >
+            <View style={{ padding: verticalScale(10) }}>
               <View style={commonStyles.rowContainer}>
                 <CustomImage
                   width={50}
                   height={50}
                   imageUrl={userProfileData?.profileImage}
                 />
-                <View style={{paddingLeft: scale(10)}}>
+                <View style={{ paddingLeft: scale(10) }}>
                   <CustomText
                     label={userProfileData?.name}
                     fontSize={14}
@@ -211,7 +216,7 @@ const ViewPost = props => {
                       color={colors.superLightGray}
                     />
                     <CustomText
-                      label={'-'}
+                      label={"-"}
                       marginLeft={5}
                       fontSize={11}
                       fontFamily={InterFont.medium}
@@ -220,13 +225,13 @@ const ViewPost = props => {
 
                     <CustomText
                       label={
-                        dateFormat == 'Today'
+                        dateFormat == "Today"
                           ? moment(
-                              new Date(props?.postObject?.createAt?.toDate()),
+                              new Date(props?.postObject?.createAt?.toDate())
                             ).fromNow()
                           : moment(
-                              new Date(props?.postObject?.createAt?.toDate()),
-                            ).format('DD MMM h:mm:A')
+                              new Date(props?.postObject?.createAt?.toDate())
+                            ).format("DD MMM h:mm:A")
                       }
                       fontSize={11}
                       marginLeft={5}
@@ -259,7 +264,18 @@ const ViewPost = props => {
           </Animated.View>
         </TouchableOpacity>
       </View>
-    </Modal>
+    )
+    // <Modal
+    //   isVisible={props.viewPostModal}
+    //   onBackdropPress={() => props.setViewPostModal(false)}
+    //   style={{
+    //     flex: 1,
+    //     margin: 0,
+    //     // overflow: "hidden",
+    //   }}
+    // >
+
+    // </Modal>
   );
 };
 

@@ -1,17 +1,24 @@
-import {Platform, StyleSheet, Text, View, FlatList} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import commonStyles, {PH20} from '../../../utils/CommonStyles';
-import CommentsHeader from './Molecules/CommentsHeader';
-import {Spacer} from '../../../components/Spacer';
-import CommentsMessage from './Molecules/CommentsMessage';
-import {images} from '../../../assets/images';
-import SendMessage from '../../../components/SendMessage';
-import {verticalScale} from 'react-native-size-matters';
-import {colors} from '../../../utils/Colors';
-import SendMessageContainer from './Molecules/SendMessageContainer';
-import {InterFont} from '../../../utils/Fonts';
-import CustomText from '../../../components/CustomText';
-import {firebase} from '@react-native-firebase/firestore';
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  SafeAreaView,
+} from "react-native";
+import React, { useEffect, useState } from "react";
+import commonStyles, { PH20 } from "../../../utils/CommonStyles";
+import CommentsHeader from "./Molecules/CommentsHeader";
+import { Spacer } from "../../../components/Spacer";
+import CommentsMessage from "./Molecules/CommentsMessage";
+import { images } from "../../../assets/images";
+import SendMessage from "../../../components/SendMessage";
+import { verticalScale } from "react-native-size-matters";
+import { colors } from "../../../utils/Colors";
+import SendMessageContainer from "./Molecules/SendMessageContainer";
+import { InterFont } from "../../../utils/Fonts";
+import CustomText from "../../../components/CustomText";
+import { firebase } from "@react-native-firebase/firestore";
 
 const PostComment = ({
   navigation,
@@ -35,9 +42,9 @@ const PostComment = ({
     if (newComment === true || isCommentsOpen === true) {
       firebase
         .firestore()
-        .collection('Posts')
+        .collection("Posts")
         .doc(postId)
-        .onSnapshot(snapshot => {
+        .onSnapshot((snapshot) => {
           if (snapshot.exists) {
             const postData = snapshot.data();
             const commentsData = postData.comments || [];
@@ -55,13 +62,20 @@ const PostComment = ({
   return (
     <View
       style={{
-        width: '100%',
+        width: "100%",
         height: verticalScale(270),
         backgroundColor: colors.white,
-      }}>
+      }}
+    >
       <CommentsHeader navigation={navigation} />
       {commentCounts === 0 || commentCounts === undefined ? (
-        <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
+        <View
+          style={{
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <CustomText
             fontSize={16}
             fontFamily={InterFont.bold}

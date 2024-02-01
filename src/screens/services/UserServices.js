@@ -1,12 +1,12 @@
-import firestore from '@react-native-firebase/firestore';
-import firebase from '@react-native-firebase/app';
-import uuid from 'react-native-uuid';
+import firestore from "@react-native-firebase/firestore";
+import firebase from "@react-native-firebase/app";
+import uuid from "react-native-uuid";
 export const SaveUser = async (authId, data) => {
   try {
     const response = await firestore()
-      .collection('users')
+      .collection("users")
       .doc(authId)
-      .set(data, {merge: true});
+      .set(data, { merge: true });
     return response;
   } catch (error) {
     throw error;
@@ -17,11 +17,11 @@ export const getAppFounder = async () => {
   try {
     let data;
     await firestore()
-      .collection('users')
-      .where('appFounder', '==', true)
+      .collection("users")
+      .where("appFounder", "==", true)
       .get()
-      .then(dataSnap => {
-        dataSnap?.forEach(snap => {
+      .then((dataSnap) => {
+        dataSnap?.forEach((snap) => {
           data = snap?.data();
         });
       });
@@ -32,12 +32,12 @@ export const getAppFounder = async () => {
   }
 };
 
-export const saveReportUser = async data => {
+export const saveReportUser = async (data) => {
   try {
     const response = await firestore()
-      .collection('reportUsers')
+      .collection("reportUsers")
       .doc(uuid.v4())
-      .set(data, {merge: true});
+      .set(data, { merge: true });
 
     // console.log('ResData', response);
 
@@ -47,16 +47,16 @@ export const saveReportUser = async data => {
   }
 };
 
-export const checkUsername = async username => {
-  console.log('UserBAme', username);
+export const checkUsername = async (username) => {
+  console.log("UserBAme", username);
   let TotalUsers = false;
   await firestore()
-    .collection('users')
-    .where('username', '==', username)
+    .collection("users")
+    .where("username", "==", username)
     .limit(1)
     .get()
-    .then(dataSnap => {
-      dataSnap?.forEach(snap => {
+    .then((dataSnap) => {
+      dataSnap?.forEach((snap) => {
         TotalUsers = snap?.exists;
       });
     });
@@ -69,11 +69,11 @@ export const getAllUSers = (setData, id) => {
 
   try {
     firestore()
-      .collection('users')
-      .where('uid', '!=', id)
+      .collection("users")
+      .where("uid", "!=", id)
       .get()
-      .then(Snapshot => {
-        Snapshot.forEach(da => {
+      .then((Snapshot) => {
+        Snapshot.forEach((da) => {
           postData.push(da.data());
         });
         setData(postData);
@@ -88,11 +88,11 @@ export const getAllFollowers = (setData, id) => {
 
   try {
     firestore()
-      .collection('users')
-      .where('uid', 'in', id)
+      .collection("users")
+      .where("uid", "in", id)
       .get()
-      .then(Snapshot => {
-        Snapshot.forEach(da => {
+      .then((Snapshot) => {
+        Snapshot.forEach((da) => {
           postData.push(da.data());
         });
         setData(postData);
@@ -108,11 +108,11 @@ export const getAllFollowRequest = (setData, id) => {
 
   try {
     firestore()
-      .collection('users')
-      .where('uid', 'in', id)
+      .collection("users")
+      .where("uid", "in", id)
       .get()
-      .then(Snapshot => {
-        Snapshot.forEach(da => {
+      .then((Snapshot) => {
+        Snapshot.forEach((da) => {
           postData.push(da.data());
         });
         setData(postData);
@@ -128,11 +128,11 @@ export const getAllViewBy = (setData, id) => {
 
   try {
     firestore()
-      .collection('users')
-      .where('uid', 'in', id)
+      .collection("users")
+      .where("uid", "in", id)
       .get()
-      .then(Snapshot => {
-        Snapshot.forEach(da => {
+      .then((Snapshot) => {
+        Snapshot.forEach((da) => {
           postData?.push(da.data());
         });
         setData(postData);
@@ -145,61 +145,61 @@ export const filterCustomTimeLine = (setCustomTimeLineIds, values) => {
   const postData = [];
 
   try {
-    const collectionRef = firestore().collection('users');
+    const collectionRef = firestore().collection("users");
     let query = collectionRef;
 
     if (values?.accountType) {
-      query = query.where('accountType', '==', values.accountType);
+      query = query.where("accountType", "==", values.accountType);
     }
     if (values?.position) {
-      query = query.where('position', '==', values.position);
+      query = query.where("position", "==", values.position);
     }
     if (values?.country) {
-      query = query.where('country', '==', values.country);
+      query = query.where("country", "==", values.country);
     }
     if (values?.age) {
-      query = query.where('age', '==', values.age);
+      query = query.where("age", "==", values.age);
     }
     if (values?.city) {
-      query = query.where('city', '==', values.city);
+      query = query.where("city", "==", values.city);
     }
     if (values?.height) {
-      query = query.where('height', '==', values.height);
+      query = query.where("height", "==", values.height);
     }
     if (values?.selectSport) {
-      query = query.where('selectSport', '==', values.selectSport);
+      query = query.where("selectSport", "==", values.selectSport);
     }
     if (values?.strongHand) {
-      query = query.where('strongHand', '==', values.strongHand);
+      query = query.where("strongHand", "==", values.strongHand);
     }
     if (values?.strongFoot) {
-      query = query.where('strongFoot', '==', values.strongFoot);
+      query = query.where("strongFoot", "==", values.strongFoot);
     }
     if (values?.skill1) {
-      query = query.where('skill1', '==', values.skill1);
+      query = query.where("skill1", "==", values.skill1);
     }
     if (values?.skill2) {
-      query = query.where('skill2', '==', values.skill2);
+      query = query.where("skill2", "==", values.skill2);
     }
     if (values?.skill3) {
-      query = query.where('skill3', '==', values.skill3);
+      query = query.where("skill3", "==", values.skill3);
     }
     if (values?.freeAgent) {
-      query = query.where('skill3', '==', values.freeAgent);
+      query = query.where("skill3", "==", values.freeAgent);
     }
     try {
-      query.get().then(snapshot => {
-        snapshot.forEach(doc => {
-          console.log('🚀 ~ file: UserServices.js:193 ~ query.get ~ doc:', doc);
+      query.get().then((snapshot) => {
+        snapshot.forEach((doc) => {
+          console.log("🚀 ~ file: UserServices.js:193 ~ query.get ~ doc:", doc);
           postData.push(doc.data().uid);
         });
         setCustomTimeLineIds(postData);
       });
     } catch (error) {
-      console.log('inner catch error:', error);
+      console.log("inner catch error:", error);
     }
   } catch (error) {
-    console.log('filterCustomTimeLine ~ error:', error);
+    console.log("filterCustomTimeLine ~ error:", error);
     throw error;
   }
 };
@@ -239,10 +239,10 @@ export const searchAllUser = (setData, txt) => {
   const postData = [];
   try {
     firestore()
-      .collection('users')
+      .collection("users")
       .get()
-      .then(Snapshot => {
-        Snapshot.forEach(da => {
+      .then((Snapshot) => {
+        Snapshot.forEach((da) => {
           if (da?.data().name === txt) {
             // console.log('nameDataDatat', da?.data().name);
 
@@ -262,15 +262,15 @@ export const FilterAdvanceSearchUser = (
   setData,
   signupValues,
   dispatch,
-  setAdvanceSearch,
+  setAdvanceSearch
 ) => {
   const postData = [];
   try {
     firestore()
-      .collection('users')
+      .collection("users")
       .get()
-      .then(Snapshot => {
-        Snapshot.forEach(da => {
+      .then((Snapshot) => {
+        Snapshot.forEach((da) => {
           if (
             da?.data().accountType === signupValues?.accountType ||
             da?.data().freeAgent === signupValues?.freeAgent ||
@@ -298,9 +298,9 @@ export const FilterAdvanceSearchUser = (
   }
 };
 
-export const getSpecificUser = async userId => {
+export const getSpecificUser = async (userId) => {
   try {
-    const user = await firestore().collection('users').doc(userId).get();
+    const user = await firestore().collection("users").doc(userId).get();
     return user.data();
   } catch (error) {
     // console.log('getUser line 51', error);
@@ -316,7 +316,7 @@ export const getSpecificUser = async userId => {
 
 export const UpdateFollower = async (userId, data) => {
   await firestore()
-    .collection('users')
+    .collection("users")
     .doc(userId)
     .update({
       AllFollowers: firebase.firestore.FieldValue.arrayUnion(data),
@@ -325,7 +325,7 @@ export const UpdateFollower = async (userId, data) => {
 
 export const UpdateFollowRequest = async (userId, data, notifiedId) => {
   await firestore()
-    .collection('users')
+    .collection("users")
     .doc(userId)
     .update({
       RequestIds: firebase.firestore.FieldValue.arrayUnion(data),
@@ -335,7 +335,7 @@ export const UpdateFollowRequest = async (userId, data, notifiedId) => {
 
 export const UpdateBlockUsers = async (userId, data) => {
   await firestore()
-    .collection('users')
+    .collection("users")
     .doc(userId)
     .update({
       BlockUsers: firebase.firestore.FieldValue.arrayUnion(data),
@@ -343,7 +343,7 @@ export const UpdateBlockUsers = async (userId, data) => {
 };
 export const UpdateBlockUsersOthers = async (userId, data) => {
   await firestore()
-    .collection('users')
+    .collection("users")
     .doc(userId)
     .update({
       BlockUsers: firebase.firestore.FieldValue.arrayUnion(data),
@@ -351,7 +351,7 @@ export const UpdateBlockUsersOthers = async (userId, data) => {
 };
 export const UpdateFollowing = async (userId, data) => {
   await firestore()
-    .collection('users')
+    .collection("users")
     .doc(userId)
     .update({
       AllFollowing: firebase.firestore.FieldValue.arrayUnion(data),
@@ -360,7 +360,7 @@ export const UpdateFollowing = async (userId, data) => {
 
 export const UpdateWatchList = async (authId, data) => {
   await firestore()
-    .collection('users')
+    .collection("users")
     .doc(authId)
     .update({
       WatchList: firebase.firestore.FieldValue.arrayUnion(data),
@@ -369,7 +369,7 @@ export const UpdateWatchList = async (authId, data) => {
 
 export const userPostId = async (authId, data) => {
   await firestore()
-    .collection('users')
+    .collection("users")
     .doc(authId)
     .update({
       PostIds: firebase.firestore.FieldValue.arrayUnion(data),
@@ -380,16 +380,16 @@ export const NotificationSender = (fcmToken, message, title) => {
   // console.log('FcmAohter', fcmToken, message, title);
 
   const NotificationData = {
-    method: 'POST',
-    url: 'https://fcm.googleapis.com/fcm/send',
+    method: "POST",
+    url: "https://fcm.googleapis.com/fcm/send",
     headers: {
       Authorization:
-        'key=AAAAntfCcWI:APA91bGvB4v_-ERQEr5c9uAUbgB4OO5eqzGklQtRDSy0nuBCl488yFVTM0VqfjJKVfg21ABmip856AK_R9x8rYqvTq3AMowRdEqdYj9wrCDajnNUEkpeN0lpVo-lEptGSZ3WAqyIPLV_',
-      'Content-Type': 'application/json',
+        "key=AAAAntfCcWI:APA91bGvB4v_-ERQEr5c9uAUbgB4OO5eqzGklQtRDSy0nuBCl488yFVTM0VqfjJKVfg21ABmip856AK_R9x8rYqvTq3AMowRdEqdYj9wrCDajnNUEkpeN0lpVo-lEptGSZ3WAqyIPLV_",
+      "Content-Type": "application/json",
     },
     data: {
       registration_ids: [fcmToken],
-      notification: {body: message, title: title},
+      notification: { body: message, title: title },
     },
   };
 
@@ -403,6 +403,6 @@ export const NotificationSender = (fcmToken, message, title) => {
         console.error(error);
       });
   } catch (error) {
-    console.log('NotificationError', error);
+    console.log("NotificationError", error);
   }
 };

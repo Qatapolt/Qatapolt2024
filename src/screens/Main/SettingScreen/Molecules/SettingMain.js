@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from "react";
 import {
   Platform,
   StyleSheet,
@@ -8,52 +8,52 @@ import {
   Image,
   Share,
   StatusBar,
-} from 'react-native';
-import Toast from 'react-native-root-toast';
-import CustomText from '../../../../components/CustomText';
-import {InterFont} from '../../../../utils/Fonts';
-import {colors} from '../../../../utils/Colors';
+} from "react-native";
+import Toast from "react-native-root-toast";
+import CustomText from "../../../../components/CustomText";
+import { InterFont } from "../../../../utils/Fonts";
+import { colors } from "../../../../utils/Colors";
 import {
   moderateScale,
   scale,
   ScaledSheet,
   verticalScale,
-} from 'react-native-size-matters';
-import {Spacer} from '../../../../components/Spacer';
-import Entypo from 'react-native-vector-icons/Entypo';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import SwitchToggle from 'react-native-switch-toggle';
-import Feather from 'react-native-vector-icons/Feather';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {icons} from '../../../../assets/icons';
-import SimpleLineIcons from 'react-native-vector-icons/SimpleLineIcons';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
-import {useNavigation} from '@react-navigation/native';
-import {useDispatch} from 'react-redux';
+} from "react-native-size-matters";
+import { Spacer } from "../../../../components/Spacer";
+import Entypo from "react-native-vector-icons/Entypo";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import SwitchToggle from "react-native-switch-toggle";
+import Feather from "react-native-vector-icons/Feather";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import { icons } from "../../../../assets/icons";
+import SimpleLineIcons from "react-native-vector-icons/SimpleLineIcons";
+import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
+import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
 import {
   authData,
   setIsBioVerified,
   setLogOut,
-} from '../../../../redux/reducers/authReducer';
+} from "../../../../redux/reducers/authReducer";
 import {
   getSpecificUser,
   SaveUser,
   UpdateFollower,
   UpdateFollowing,
-} from '../../../services/UserServices';
-import ImagePicker from 'react-native-image-crop-picker';
-import {uploadImage} from '../../../services/StorageServics';
-import {deleteImage} from '../../../services/PostServices';
-import {requestNotifications} from 'react-native-permissions';
-import {requestNotificationPermission} from '../../../../utils/Commons';
-import {deleteRequestNotification} from '../../../services/NotificationServices';
-import SimpleLoader from '../../../../utils/SimpleLoader';
-import loaderAnimation from '../../../../assets/Loaders';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import Loader from '../../../../utils/Loader';
+} from "../../../services/UserServices";
+import ImagePicker from "react-native-image-crop-picker";
+import { uploadImage } from "../../../services/StorageServics";
+import { deleteImage } from "../../../services/PostServices";
+import { requestNotifications } from "react-native-permissions";
+import { requestNotificationPermission } from "../../../../utils/Commons";
+import { deleteRequestNotification } from "../../../services/NotificationServices";
+import SimpleLoader from "../../../../utils/SimpleLoader";
+import loaderAnimation from "../../../../assets/Loaders";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import Loader from "../../../../utils/Loader";
 
-const SettingMain = props => {
+const SettingMain = (props) => {
   const [on, setOn] = useState(on);
   const [isBioMetric, setIsBioMetric] = useState(false);
   const [isUserIFollow, setIsUserIFollow] = useState(false);
@@ -86,7 +86,7 @@ const SettingMain = props => {
       const user = auth().currentUser;
 
       if (!user) {
-        console.error('No authenticated user found.');
+        console.error("No authenticated user found.");
         setIsLoading(true);
         return;
       }
@@ -95,12 +95,12 @@ const SettingMain = props => {
 
       // Delete user data from the GroupRequest collection
       const groupRequestQuerySnapshot = await firestore()
-        .collection('GroupRequest')
-        .where('participantsData.participantId', '==', uid)
+        .collection("GroupRequest")
+        .where("participantsData.participantId", "==", uid)
         .get();
 
       const groupRequestBatch = firestore().batch();
-      groupRequestQuerySnapshot.forEach(doc => {
+      groupRequestQuerySnapshot.forEach((doc) => {
         groupRequestBatch.delete(doc.ref);
       });
 
@@ -108,12 +108,12 @@ const SettingMain = props => {
 
       // Delete user posts
       const postsQuerySnapshot = await firestore()
-        .collection('Posts')
-        .where('userId', '==', uid)
+        .collection("Posts")
+        .where("userId", "==", uid)
         .get();
 
       const postsBatch = firestore().batch();
-      postsQuerySnapshot.forEach(doc => {
+      postsQuerySnapshot.forEach((doc) => {
         postsBatch.delete(doc.ref);
       });
 
@@ -134,19 +134,19 @@ const SettingMain = props => {
 
       // Delete user notifications
       const notificationsQuerySnapshot = firestore()
-        .collection('notifications')
-        .where('receiverId', '==', uid || 'senderId', '==', uid)
+        .collection("notifications")
+        .where("receiverId", "==", uid || "senderId", "==", uid)
         .get();
 
       const notificationsBatch = firestore().batch();
-      notificationsQuerySnapshot.forEach(doc => {
+      notificationsQuerySnapshot.forEach((doc) => {
         notificationsBatch.delete(doc.ref);
       });
 
       await notificationsBatch.commit();
 
       // Delete user from the Users collection
-      await firestore().collection('users').doc(uid).delete();
+      await firestore().collection("users").doc(uid).delete();
 
       // Finally, delete the user account
       await user.delete();
@@ -155,17 +155,17 @@ const SettingMain = props => {
 
       dispatch(setLogOut());
       setIsLoading(true);
-      console.log('User data deleted successfully.');
+      console.log("User data deleted successfully.");
     } catch (error) {
-      console.error('Error deleting user data:', error.message || error);
+      console.error("Error deleting user data:", error.message || error);
     }
   };
   const handelBioMetric = async () => {
     setIsLoading(true);
     try {
       setIsBioMetric(!isBioMetric);
-      await SaveUser(props.authUser?.uid, {isBioMetric: !isBioMetric});
-      await AsyncStorage.setItem('isBioMetric', JSON.stringify(!isBioMetric));
+      await SaveUser(props.authUser?.uid, { isBioMetric: !isBioMetric });
+      await AsyncStorage.setItem("isBioMetric", JSON.stringify(!isBioMetric));
       // dispatch(setIsBioVerified(true));
 
       const getAuthUser = await getSpecificUser(props.authUser?.uid);
@@ -176,13 +176,13 @@ const SettingMain = props => {
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      console.log('error: ' + error);
+      console.log("error: " + error);
     }
   };
 
   const handelFreeAgent = async () => {
     setIsFreeAgent(!isFreeAgent);
-    await SaveUser(props.authUser?.uid, {freeAgent: !isFreeAgent});
+    await SaveUser(props.authUser?.uid, { freeAgent: !isFreeAgent });
     const getAuthUser = await getSpecificUser(props.authUser?.uid);
 
     if (getAuthUser) {
@@ -192,7 +192,7 @@ const SettingMain = props => {
 
   const handelPrivateProfile = async () => {
     setIsPrivateProfile(!isPrivateProfile);
-    await SaveUser(props.authUser?.uid, {privateProfile: !isPrivateProfile});
+    await SaveUser(props.authUser?.uid, { privateProfile: !isPrivateProfile });
     const getAuthUser = await getSpecificUser(props.authUser?.uid);
 
     if (getAuthUser) {
@@ -217,7 +217,7 @@ const SettingMain = props => {
     // console.log('isNotification', isNotification);
     setIsNotification(!isNotification);
     requestNotificationPermission();
-    await SaveUser(props.authUser?.uid, {isNotification: !isNotification});
+    await SaveUser(props.authUser?.uid, { isNotification: !isNotification });
     const getAuthUser = await getSpecificUser(props.authUser?.uid);
     if (getAuthUser) {
       dispatch(authData(getAuthUser));
@@ -226,7 +226,7 @@ const SettingMain = props => {
 
   const handelUserIFollow = async () => {
     setIsUserIFollow(!isUserIFollow);
-    await SaveUser(props.authUser?.uid, {userIFollow: !isUserIFollow});
+    await SaveUser(props.authUser?.uid, { userIFollow: !isUserIFollow });
     const getAuthUser = await getSpecificUser(props.authUser?.uid);
 
     if (getAuthUser) {
@@ -237,14 +237,13 @@ const SettingMain = props => {
   const handelLogout = async () => {
     setIsLoading(true);
     try {
-      await SaveUser(props.authUser?.uid, {isLogin: false});
       await auth().signOut();
-
       dispatch(setLogOut());
+
       setIsLoading(false);
     } catch (error) {
       setIsLoading(false);
-      console.log('Logout Error', error);
+      console.log("Logout Error", error);
     }
   };
 
@@ -293,7 +292,7 @@ const SettingMain = props => {
     try {
       const result = await Share.share({
         message:
-          'React Native | A framework for building native apps using React',
+          "React Native | A framework for building native apps using React",
       });
       if (result.action === Share.sharedAction) {
         if (result.activityType) {
@@ -301,7 +300,7 @@ const SettingMain = props => {
         } else {
         }
       } else if (result.action === Share.dismissedAction) {
-        Alert.alert('cancelled');
+        Alert.alert("cancelled");
       }
     } catch (error) {
       Alert.alert(error.message);
@@ -311,14 +310,15 @@ const SettingMain = props => {
     return (
       <View
         style={{
-          backgroundColor: 'transparent',
+          backgroundColor: "transparent",
           flex: 1,
-          justifyContent: 'center',
-          alignItems: 'center',
+          justifyContent: "center",
+          alignItems: "center",
           zIndex: 999999999999,
-          height: '100%',
-          width: '100%',
-        }}>
+          height: "100%",
+          width: "100%",
+        }}
+      >
         <Loader file={loaderAnimation} />
       </View>
     );
@@ -328,7 +328,7 @@ const SettingMain = props => {
   ) : (
     <View>
       <CustomText
-        label={'SHARE'}
+        label={"SHARE"}
         fontSize={13}
         textAlign="center"
         fontFamily={InterFont.semiBold}
@@ -339,7 +339,7 @@ const SettingMain = props => {
         <View style={styles.innerView}>
           <Entypo name="share" size={moderateScale(27)} color={colors.green} />
           <CustomText
-            label={'Share App'}
+            label={"Share App"}
             fontSize={13}
             marginLeft={15}
             textAlign="center"
@@ -350,7 +350,7 @@ const SettingMain = props => {
       </TouchableOpacity>
       <Spacer height={10} />
       <CustomText
-        label={'Accounts'}
+        label={"Accounts"}
         fontSize={13}
         textAlign="center"
         fontFamily={InterFont.semiBold}
@@ -358,12 +358,13 @@ const SettingMain = props => {
       />
       <Spacer height={10} />
       <TouchableOpacity
-        onPress={() => props.navigation.navigate('BlockedAccounts')}
-        style={styles.box}>
+        onPress={() => props.navigation.navigate("BlockedAccounts")}
+        style={styles.box}
+      >
         <View style={styles.innerView}>
           <Entypo name="block" size={moderateScale(27)} color={colors.green} />
           <CustomText
-            label={'Blocked Accounts'}
+            label={"Blocked Accounts"}
             fontSize={13}
             marginLeft={15}
             textAlign="center"
@@ -434,7 +435,7 @@ const SettingMain = props => {
       {/* Free Agent */}
 
       <CustomText
-        label={'Free Agent'}
+        label={"Free Agent"}
         fontSize={13}
         textAlign="center"
         fontFamily={InterFont.semiBold}
@@ -457,7 +458,7 @@ const SettingMain = props => {
             source={icons.team}
           />
           <CustomText
-            label={'Free Agent'}
+            label={"Free Agent"}
             fontSize={13}
             marginLeft={15}
             textAlign="center"
@@ -488,7 +489,7 @@ const SettingMain = props => {
       <Spacer height={10} />
 
       <CustomText
-        label={'WHO CAN ADD ME TO GROUPS'}
+        label={"WHO CAN ADD ME TO GROUPS"}
         fontSize={13}
         textAlign="center"
         fontFamily={InterFont.semiBold}
@@ -508,7 +509,7 @@ const SettingMain = props => {
             color={colors.green}
           /> */}
           <CustomText
-            label={'Users I Follow'}
+            label={"Users I Follow"}
             fontSize={13}
             marginLeft={15}
             textAlign="center"
@@ -539,7 +540,7 @@ const SettingMain = props => {
       <Spacer height={10} />
 
       <CustomText
-        label={'NOTIFICATIONS'}
+        label={"NOTIFICATIONS"}
         fontSize={13}
         textAlign="center"
         fontFamily={InterFont.semiBold}
@@ -554,7 +555,7 @@ const SettingMain = props => {
             color={colors.green}
           />
           <CustomText
-            label={'Notifications'}
+            label={"Notifications"}
             fontSize={13}
             marginLeft={15}
             textAlign="center"
@@ -585,7 +586,7 @@ const SettingMain = props => {
       <Spacer height={10} />
 
       <CustomText
-        label={'PROFILE'}
+        label={"PROFILE"}
         fontSize={13}
         textAlign="center"
         fontFamily={InterFont.semiBold}
@@ -597,10 +598,10 @@ const SettingMain = props => {
           <Image
             resizeMode="contain"
             source={icons.settinguser}
-            style={{width: scale(25), height: scale(24)}}
+            style={{ width: scale(25), height: scale(24) }}
           />
           <CustomText
-            label={'Private Profile'}
+            label={"Private Profile"}
             fontSize={13}
             marginLeft={15}
             textAlign="center"
@@ -678,7 +679,7 @@ const SettingMain = props => {
       <Spacer height={10} />
 
       <CustomText
-        label={Platform.OS === 'android' ? 'TOUCH ID' : 'FACE ID'}
+        label={Platform.OS === "android" ? "TOUCH ID" : "FACE ID"}
         fontSize={13}
         textAlign="center"
         fontFamily={InterFont.semiBold}
@@ -695,9 +696,9 @@ const SettingMain = props => {
 
           <CustomText
             label={
-              Platform.OS == 'ios'
-                ? 'Lock App with Face ID'
-                : ' Lock App with Touch ID'
+              Platform.OS == "ios"
+                ? "Lock App with Face ID"
+                : " Lock App with Touch ID"
             }
             fontSize={13}
             marginLeft={15}
@@ -729,7 +730,7 @@ const SettingMain = props => {
       <Spacer height={10} />
 
       <CustomText
-        label={'LOGOUT'}
+        label={"LOGOUT"}
         fontSize={13}
         textAlign="center"
         fontFamily={InterFont.semiBold}
@@ -739,7 +740,8 @@ const SettingMain = props => {
       <TouchableOpacity
         activeOpacity={0.6}
         onPress={handelLogout}
-        style={styles.box}>
+        style={styles.box}
+      >
         <View style={styles.innerView}>
           <Feather
             name="log-out"
@@ -747,7 +749,7 @@ const SettingMain = props => {
             color={colors.green}
           />
           <CustomText
-            label={'Logout'}
+            label={"Logout"}
             fontSize={13}
             marginLeft={15}
             textAlign="center"
@@ -760,7 +762,7 @@ const SettingMain = props => {
       <Spacer height={10} />
 
       <CustomText
-        label={'CONTACT'}
+        label={"CONTACT"}
         fontSize={13}
         textAlign="center"
         fontFamily={InterFont.semiBold}
@@ -768,8 +770,9 @@ const SettingMain = props => {
       />
       <Spacer height={10} />
       <TouchableOpacity
-        onPress={() => props.navigation.navigate('ContactUS')}
-        style={styles.box}>
+        onPress={() => props.navigation.navigate("ContactUS")}
+        style={styles.box}
+      >
         <View style={styles.innerView}>
           <MaterialIcons
             name="contacts"
@@ -777,7 +780,7 @@ const SettingMain = props => {
             color={colors.green}
           />
           <CustomText
-            label={'Contact Us'}
+            label={"Contact Us"}
             fontSize={13}
             marginLeft={15}
             textAlign="center"
@@ -790,7 +793,7 @@ const SettingMain = props => {
       <Spacer height={10} />
 
       <CustomText
-        label={'DELETE ACCOUNT'}
+        label={"DELETE ACCOUNT"}
         fontSize={13}
         textAlign="center"
         fontFamily={InterFont.semiBold}
@@ -806,7 +809,7 @@ const SettingMain = props => {
             color={colors.green}
           />
           <CustomText
-            label={'Delete Account'}
+            label={"Delete Account"}
             fontSize={13}
             marginLeft={15}
             textAlign="center"
@@ -829,31 +832,31 @@ export default SettingMain;
 
 const styles = ScaledSheet.create({
   box: {
-    width: '100%',
+    width: "100%",
     height: verticalScale(38),
-    backgroundColor: '#F5F9F8',
+    backgroundColor: "#F5F9F8",
     borderRadius: scale(12),
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: scale(10),
-    justifyContent: 'space-between',
-    shadowColor: Platform.OS == 'ios' ? '#343a40' : colors.black,
+    justifyContent: "space-between",
+    shadowColor: Platform.OS == "ios" ? "#343a40" : colors.black,
     shadowRadius: 2,
     elevation: 5,
     shadowOpacity: 0.2,
-    shadowOffset: {width: -1, height: 2},
+    shadowOffset: { width: -1, height: 2 },
   },
   innerView: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   popupContainer: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "transparent",
     zIndex: 9999,
   },
 });
