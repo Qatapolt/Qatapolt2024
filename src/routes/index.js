@@ -53,7 +53,7 @@ const RootNavigator = () => {
   const [loading, setLoading] = useState(true);
   const Stack = createStackNavigator();
 
-  // console.log('currentAuth', currentAuth);
+  console.log('currentAuth', auth().currentUser);
 
   useEffect(() => {
     if (!auth().currentUser) {
@@ -158,7 +158,7 @@ const RootNavigator = () => {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{ headerShown: false }}
-        initialRouteName={"AuthStack"}
+        // initialRouteName={"AuthStack"}
       >
         {currentAuth?.isLogin ? (
           <>

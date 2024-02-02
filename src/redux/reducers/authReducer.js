@@ -27,8 +27,8 @@ const authSlice = createSlice({
     setNotificationAlert: (state, action) => {
       state.notificationAlert = action.payload;
     },
-    setLogOut: (state) => {
-      state.currentUser = initialState?.currentUser;
+    setLogOut: (state,action) => {
+      state.currentUser = action.payload
     },
     setCreatePostLocation: (state, action) => {
       state.createPostLocation = action.payload;

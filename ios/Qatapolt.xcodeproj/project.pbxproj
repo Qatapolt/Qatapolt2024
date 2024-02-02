@@ -12,10 +12,10 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		18B966D82B67C72A00901CC0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 18B966D72B67C72A00901CC0 /* GoogleService-Info.plist */; };
 		4468CC6F5F5778F92205359A /* libPods-Qatapolt.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 092BCBDDF5B63C3437606D2C /* libPods-Qatapolt.a */; };
 		7E26BE6D4683073CCB339C7F /* libPods-Qatapolt-QatapoltTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0E265A924AF9210BA795EBC4 /* libPods-Qatapolt-QatapoltTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		8A5826E02B6C0F4E003C7F10 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 8A5826DF2B6C0F4E003C7F10 /* GoogleService-Info.plist */; };
 		AF2121D4306F4FEE9218ACED /* Inter-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6189425C69094FA9B2123B4E /* Inter-Medium.ttf */; };
 		BF206C7AE84A4E8E94649C0D /* Inter-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5018644589E84DABB8E544ED /* Inter-Light.ttf */; };
 		CFA296AE4E564311AED1AA16 /* Inter-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4ECD7EBF90C84F7F84125AD5 /* Inter-SemiBold.ttf */; };
@@ -45,7 +45,6 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = Qatapolt/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = Qatapolt/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = Qatapolt/main.m; sourceTree = "<group>"; };
-		18B966D72B67C72A00901CC0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		2AA872BFE8AAF22D98DF060E /* Pods-Qatapolt.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Qatapolt.release.xcconfig"; path = "Target Support Files/Pods-Qatapolt/Pods-Qatapolt.release.xcconfig"; sourceTree = "<group>"; };
 		466117D4A6A54814A96BFB2B /* Inter-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Bold.ttf"; path = "../assets/fonts/Inter-Bold.ttf"; sourceTree = "<group>"; };
 		4ECD7EBF90C84F7F84125AD5 /* Inter-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-SemiBold.ttf"; path = "../assets/fonts/Inter-SemiBold.ttf"; sourceTree = "<group>"; };
@@ -54,6 +53,7 @@
 		6189425C69094FA9B2123B4E /* Inter-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Medium.ttf"; path = "../assets/fonts/Inter-Medium.ttf"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = Qatapolt/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		85D37B9230626EC23AD0D08D /* Pods-Qatapolt-QatapoltTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Qatapolt-QatapoltTests.debug.xcconfig"; path = "Target Support Files/Pods-Qatapolt-QatapoltTests/Pods-Qatapolt-QatapoltTests.debug.xcconfig"; sourceTree = "<group>"; };
+		8A5826DF2B6C0F4E003C7F10 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../GoogleService-Info.plist"; sourceTree = "<group>"; };
 		9D8725EEE78A4DC88C0ED873 /* Inter-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Regular.ttf"; path = "../assets/fonts/Inter-Regular.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		F4A6CC305500DF8C158C47C1 /* Pods-Qatapolt.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Qatapolt.debug.xcconfig"; path = "Target Support Files/Pods-Qatapolt/Pods-Qatapolt.debug.xcconfig"; sourceTree = "<group>"; };
@@ -101,8 +101,8 @@
 			children = (
 				044A92BA2B2AF8060059743B /* Qatapolt.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				18B966D72B67C72A00901CC0 /* GoogleService-Info.plist */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
+				8A5826DF2B6C0F4E003C7F10 /* GoogleService-Info.plist */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
@@ -273,7 +273,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
-				18B966D82B67C72A00901CC0 /* GoogleService-Info.plist in Resources */,
+				8A5826E02B6C0F4E003C7F10 /* GoogleService-Info.plist in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				E39E0031504745EBB16A0D9B /* Inter-Bold.ttf in Resources */,
 				BF206C7AE84A4E8E94649C0D /* Inter-Light.ttf in Resources */,
@@ -549,7 +549,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Qatapolt/Qatapolt.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = 8Y3946YJYV;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Qatapolt/Info.plist;
@@ -558,7 +560,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -566,6 +568,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.qatapolt.qatapolt;
 				PRODUCT_NAME = Qatapolt;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -579,7 +582,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = Qatapolt/Qatapolt.entitlements;
-				CURRENT_PROJECT_VERSION = 1;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 11;
 				DEVELOPMENT_TEAM = 8Y3946YJYV;
 				INFOPLIST_FILE = Qatapolt/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Qatapolt;
@@ -587,7 +592,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 2.1.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -595,6 +600,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.qatapolt.qatapolt;
 				PRODUCT_NAME = Qatapolt;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -669,12 +675,7 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-Wl",
-					"-ld_classic",
-					"-Wl -ld_classic ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 			};
@@ -744,12 +745,7 @@
 					"-DFOLLY_MOBILE=1",
 					"-DFOLLY_USE_LIBCPP=1",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-Wl",
-					"-ld_classic",
-					"-Wl -ld_classic ",
-				);
+				OTHER_LDFLAGS = "$(inherited)  ";
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../node_modules/react-native";
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;

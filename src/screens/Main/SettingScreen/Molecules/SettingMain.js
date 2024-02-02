@@ -235,16 +235,17 @@ const SettingMain = (props) => {
   };
 
   const handelLogout = async () => {
-    setIsLoading(true);
-    try {
-      await auth().signOut();
-      dispatch(setLogOut());
+    
+    // setIsLoading(true);
+    // try {
+    //   await auth().signOut();
+    //   dispatch(setLogOut({}));
 
-      setIsLoading(false);
-    } catch (error) {
-      setIsLoading(false);
-      console.log("Logout Error", error);
-    }
+    //   // setIsLoading(false);
+    // } catch (error) {
+    //   setIsLoading(false);
+    //   console.log("Logout Error", error);
+    // }
   };
 
   // const onPickImage = async () => {
