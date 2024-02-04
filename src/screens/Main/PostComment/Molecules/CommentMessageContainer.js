@@ -72,18 +72,14 @@ const CommentMessageContainer = ({
     }
   };
   const deleteComment = () => {
-    Alert.alert(
-      "Qatap[olt Instruction",
-      "Do you want to delete this comment?",
-      [
-        { text: "YES", onPress: () => deleteCommentAndUpdatePost() },
-        {
-          text: "NO",
-          onPress: () => console.log("no Pressed"),
-          style: "no",
-        },
-      ]
-    );
+    Alert.alert("Qatapolt Instruction", "Do you want to delete this comment?", [
+      { text: "YES", onPress: () => deleteCommentAndUpdatePost() },
+      {
+        text: "NO",
+        onPress: () => console.log("no Pressed"),
+        style: "no",
+      },
+    ]);
   };
   return (
     <TouchableOpacity
