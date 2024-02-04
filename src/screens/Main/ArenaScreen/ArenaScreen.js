@@ -132,6 +132,7 @@ const ArenaScreen = ({ navigation, route }) => {
   const [selectionType, setSelectionType] = useState("");
   const [allUsersData, setAllUsersData] = useState([]);
   const [optionSheet, setOptionSheet] = useState(false);
+
   useEffect(() => {
     if (viewPostModal || optionSheet) {
       navigation.getParent()?.setOptions({

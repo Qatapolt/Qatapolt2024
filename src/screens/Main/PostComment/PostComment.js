@@ -34,6 +34,7 @@ const PostComment = ({
   setPostID,
   isCommentsOpen,
   setIsCommentsOpen,
+  postCompleteData,
 }) => {
   const [comments, setComments] = useState(postData);
   const [commentCounts, setCommentCounts] = useState(commentCount);
@@ -97,6 +98,9 @@ const PostComment = ({
           setLikeComment={setLikeComment}
           likeComment={likeComment}
           setComments={setComments}
+          setNewComment={setNewComment}
+          postCompleteData={postCompleteData}
+          setPostID={setPostID}
         />
       )}
       <View>

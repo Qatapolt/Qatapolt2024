@@ -52,7 +52,7 @@ const PostItem = (props) => {
   const [userProfileData, setUserProfileData] = useState({});
   const image =
     currentUser?.profileImage == undefined ? null : currentUser?.profileImage;
-  const [commentCount, setCommentCount] = useState(props.commentCounts);
+  const [commentCount, setCommentCount] = useState(props.comments.length);
   const [newCommentAdd, setNewCommentAdd] = useState(false);
   const [isCommentsOpen, setIsCommentsOpen] = useState(false);
   const [postID, setPostID] = useState("");
@@ -70,8 +70,27 @@ const PostItem = (props) => {
       : icons.unFilledMedal;
     return defaultImageSource;
   });
+  const [postComments, setPostComments] = useState(props.comments);
   useEffect(() => {
+    console.log("running ===>", newCommentAdd, postID);
     if (newCommentAdd === true && postID !== "") {
+      firebase
+        .firestore()
+        .collection("Posts")
+        .doc(postID)
+        .onSnapshot((snapshot) => {
+          if (snapshot.exists) {
+            const postData = snapshot.data();
+            const commentsData = postData.comments || [];
+            setPostComments(commentsData);
+            setCommentCount(commentsData.length);
+            setNewCommentAdd(false);
+          }
+        });
+    }
+  }, [newCommentAdd]);
+  const handleCommentOpen = () => {
+    if (viewComments === false) {
       firebase
         .firestore()
         .collection("Posts")
@@ -84,8 +103,23 @@ const PostItem = (props) => {
             setNewCommentAdd(false);
           }
         });
+      setViewComments(true);
+    } else {
+      firebase
+        .firestore()
+        .collection("Posts")
+        .doc(postID)
+        .onSnapshot((snapshot) => {
+          if (snapshot.exists) {
+            const postData = snapshot.data();
+            const commentsData = postData.comments || [];
+            setCommentCount(commentsData.length);
+            setNewCommentAdd(false);
+          }
+        });
+      setViewComments(false);
     }
-  }, [newCommentAdd]);
+  };
   useEffect(() => {
     if (props?.repost === true && props.item?.postId !== "") {
       firebase
@@ -262,11 +296,7 @@ const PostItem = (props) => {
       </View>
     );
   };
-  const copyToClipboard = (text) => {
-    Clipboard.setString(text);
-    console.log(`Copied ${text}`);
-    Toast.show("Text Copied!");
-  };
+
   const handleUsernamePress = (mentiondUser) => {
     console.log("User with ID", mentiondUser?.uid, "was pressed.");
     if (currentUser?.BlockUsers?.includes(mentiondUser?.uid)) {
@@ -584,7 +614,8 @@ const PostItem = (props) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  setViewComments(!props.viewComments);
+                  setViewComments(!viewComments);
+                  setNewCommentAdd(true);
                 }}
                 style={{
                   flexDirection: "row",
@@ -733,7 +764,7 @@ const PostItem = (props) => {
           <>
             <View>
               <PostComment
-                postData={props.comments}
+                postData={postComments}
                 setViewComments={setViewComments}
                 postId={props?.item?.postId}
                 senderId={props?.authId}
@@ -746,6 +777,7 @@ const PostItem = (props) => {
                 setPostID={setPostID}
                 isCommentsOpen={isCommentsOpen}
                 setIsCommentsOpen={setIsCommentsOpen}
+                postCompleteData={props?.item}
               />
               <Divider width={5} color={colors.divider} />
             </View>

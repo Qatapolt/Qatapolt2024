@@ -1,55 +1,123 @@
-import {StyleSheet, Text, View, TouchableOpacity, Image} from 'react-native';
-import React, {useState} from 'react';
-import commonStyles from '../../../../utils/CommonStyles';
-import {scale, verticalScale} from 'react-native-size-matters';
-import CustomImage from '../../../../components/CustomImage';
-import CustomText from '../../../../components/CustomText';
-import {colors} from '../../../../utils/Colors';
-import {InterFont} from '../../../../utils/Fonts';
-import moment from 'moment';
-import {Spacer} from '../../../../components/Spacer';
-import {useSelector} from 'react-redux';
-import {icons} from '../../../../assets/icons';
-import {handleCommentLikePress} from '../../../services/PostServices';
-
-const CommentMessageContainer = ({item, likeComment}) => {
-  // console.log("Kbckbdc",item)
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+  Alert,
+} from "react-native";
+import React, { useState } from "react";
+import commonStyles from "../../../../utils/CommonStyles";
+import { scale, verticalScale } from "react-native-size-matters";
+import CustomImage from "../../../../components/CustomImage";
+import CustomText from "../../../../components/CustomText";
+import { colors } from "../../../../utils/Colors";
+import { InterFont } from "../../../../utils/Fonts";
+import moment from "moment";
+import { Spacer } from "../../../../components/Spacer";
+import { useSelector } from "react-redux";
+import { icons } from "../../../../assets/icons";
+import { handleCommentLikePress } from "../../../services/PostServices";
+import firestore from "@react-native-firebase/firestore";
+const CommentMessageContainer = ({
+  item,
+  likeComment,
+  setNewComment,
+  postCompleteData,
+  setPostID,
+}) => {
+  console.log("postCompleteData", postCompleteData);
   const [likeCount, setLikeCount] = useState(item.medals);
-  const currentUser = useSelector(state => state.auth?.currentUser);
+  const currentUser = useSelector((state) => state.auth?.currentUser);
   const [imageSource, setImageSource] = useState(
     item.medalsId.includes(currentUser.uid)
       ? icons.likemadel
-      : icons.unFilledMedal,
+      : icons.unFilledMedal
   );
+  const deleteCommentAndUpdatePost = async () => {
+    try {
+      // Reference to the post document
+      const postRef = firestore().collection("Posts").doc(item.postId);
+
+      // Fetch the current post data
+      const postDoc = await postRef.get();
+
+      if (postDoc.exists) {
+        // Get the current post data
+        const postData = postDoc.data();
+
+        // Filter out the comment to be deleted
+        const updatedComments = postData.comments.filter(
+          (comment) => comment.id !== item.id
+        );
+
+        // Update the post data with the modified comments array
+        await postRef.update({
+          comments: updatedComments,
+          comments_Count: updatedComments.length,
+        });
+
+        // Now, delete the comment document
+        const commentRef = firestore().collection("comments").doc(item.id);
+        await commentRef.delete();
+
+        console.log("Comment deleted and post updated successfully.");
+        setPostID(item.postId);
+        setNewComment(true);
+      } else {
+        console.error("Post not found.");
+      }
+    } catch (error) {
+      console.error("Error deleting comment and updating post:", error);
+    }
+  };
+  const deleteComment = () => {
+    Alert.alert(
+      "Qatap[olt Instruction",
+      "Do you want to delete this comment?",
+      [
+        { text: "YES", onPress: () => deleteCommentAndUpdatePost() },
+        {
+          text: "NO",
+          onPress: () => console.log("no Pressed"),
+          style: "no",
+        },
+      ]
+    );
+  };
   return (
-    <View
+    <TouchableOpacity
+      onLongPress={deleteComment}
       style={{
         ...commonStyles.rowContainer,
         // marginLeft: scale(10),
         marginVertical: verticalScale(10),
-      }}>
+      }}
+    >
       <View
         style={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          maxWidth: '95%',
-        }}>
+          alignItems: "center",
+          justifyContent: "center",
+          maxWidth: "95%",
+        }}
+      >
         <View
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
+            flexDirection: "row",
+            alignItems: "center",
             // justifyContent: 'space-around',
             marginHorizontal: 10,
-            width: '100%',
-          }}>
-          <View style={{justifyContent: 'center', alignItems: 'center'}}>
+            width: "100%",
+          }}
+        >
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
             <CustomImage width={30} height={30} imageUrl={item?.img} />
           </View>
           <Spacer width={10} />
 
           <View style={styles.commentContainer}>
-            <View style={{...commonStyles.rowContainer, width: '70%'}}>
-              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+            <View style={{ ...commonStyles.rowContainer, width: "70%" }}>
+              <View style={{ flexDirection: "row", alignItems: "center" }}>
                 <CustomText
                   label={item.name}
                   numberOfLines={1}
@@ -58,10 +126,10 @@ const CommentMessageContainer = ({item, likeComment}) => {
                   fontFamily={InterFont.semiBold}
                 />
                 <Spacer width={2} />
-                {item?.verified == 'verified' && (
+                {item?.verified == "verified" && (
                   <Image
                     resizeMode="contain"
-                    style={{width: 12, height: 12}}
+                    style={{ width: 12, height: 12 }}
                     source={icons.trophyIcon}
                   />
                 )}
@@ -95,12 +163,13 @@ const CommentMessageContainer = ({item, likeComment}) => {
 
         <View
           style={{
-            flexDirection: 'row',
-            alignSelf: 'flex-end',
+            flexDirection: "row",
+            alignSelf: "flex-end",
             marginRight: scale(40),
-            alignItems: 'center',
+            alignItems: "center",
             marginTop: verticalScale(5),
-          }}>
+          }}
+        >
           <TouchableOpacity
             onPress={() => {
               handleCommentLikePress(
@@ -109,10 +178,11 @@ const CommentMessageContainer = ({item, likeComment}) => {
                 setLikeCount,
                 setImageSource,
                 icons,
-                likeComment,
+                likeComment
               );
               // // likeComments
-            }}>
+            }}
+          >
             <Image
               resizeMode="contain"
               source={imageSource}
@@ -128,16 +198,9 @@ const CommentMessageContainer = ({item, likeComment}) => {
             fontSize={8}
             color={colors.inputGray}
           />
-
-          {/* <CustomText
-      label={"like"}
-      fontSize={9}
-      color={colors.black}
-      fontFamily={InterFont.semiBold}
-    /> */}
         </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 
