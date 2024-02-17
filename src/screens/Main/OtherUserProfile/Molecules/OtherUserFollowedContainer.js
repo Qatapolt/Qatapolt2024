@@ -1,17 +1,17 @@
-import {StyleSheet, Text, View, Image, TouchableOpacity} from 'react-native';
-import React, {useEffect, useState} from 'react';
-import commonStyles from '../../../../utils/CommonStyles';
-import {Avatar} from 'react-native-elements';
-import {icons} from '../../../../assets/icons';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {colors} from '../../../../utils/Colors';
-import CustomText from '../../../../components/CustomText';
-import {InterFont} from '../../../../utils/Fonts';
-import {useNavigation} from '@react-navigation/native';
-import CustomImage from '../../../../components/CustomImage';
-import {getSpecificUser} from '../../../services/UserServices';
+import { StyleSheet, Text, View, Image, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import commonStyles from "../../../../utils/CommonStyles";
+import { Avatar } from "react-native-elements";
+import { icons } from "../../../../assets/icons";
+import { scale, verticalScale } from "react-native-size-matters";
+import { colors } from "../../../../utils/Colors";
+import CustomText from "../../../../components/CustomText";
+import { InterFont } from "../../../../utils/Fonts";
+import { useNavigation } from "@react-navigation/native";
+import CustomImage from "../../../../components/CustomImage";
+import { getSpecificUser } from "../../../services/UserServices";
 
-const OtherUserFollowedContainer = props => {
+const OtherUserFollowedContainer = (props) => {
   const navigation = useNavigation();
   const [userData, setUserData] = useState({});
   // console.log('CurrentUserCurrentUser', props.CurrentUser);
@@ -26,13 +26,14 @@ const OtherUserFollowedContainer = props => {
     <TouchableOpacity
       activeOpacity={0.6}
       onPress={() =>
-        navigation.navigate('FollowedStack', {event: props.CurrentUser})
+        navigation.navigate("FollowedStack", { event: props.CurrentUser })
       }
       style={{
         ...commonStyles.rowContainer,
-        width: '100%',
+        width: "100%",
         // height: verticalScale(40),
-      }}>
+      }}
+    >
       <CustomImage
         imageUrl={userData?.profileImage}
         width={40}
@@ -71,8 +72,8 @@ const OtherUserFollowedContainer = props => {
       <CustomText
         label={
           props?.AllFollowers?.length >= 2
-            ? props?.AllFollowers?.length - 1 + ' ' + 'others'
-            : ''
+            ? props?.AllFollowers?.length - 1 + " " + "others"
+            : ""
         }
         // label="7 others"
         fontSize={11}

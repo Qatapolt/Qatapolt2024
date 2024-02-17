@@ -1,31 +1,30 @@
-import {StyleSheet, Text, View, TextInput, FlatList} from 'react-native';
-import React, {useState, useEffect, useRef} from 'react';
-import {BottomSheet} from 'react-native-btr';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {colors} from '../utils/Colors';
-import {Spacer} from './Spacer';
-import Octicons from 'react-native-vector-icons/Octicons';
-import CustomText from './CustomText';
-import {AlphabetList} from 'react-native-section-alphabet-list';
+import { StyleSheet, Text, View, TextInput, FlatList } from "react-native";
+import React, { useState, useEffect, useRef } from "react";
+import { BottomSheet } from "react-native-btr";
+import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import { colors } from "../utils/Colors";
+import { Spacer } from "./Spacer";
+import Octicons from "react-native-vector-icons/Octicons";
+import CustomText from "./CustomText";
+import { AlphabetList } from "react-native-section-alphabet-list";
 
-import {ScrollView} from 'react-native-gesture-handler';
-import {useDispatch, useSelector} from 'react-redux';
-import {setPositionsAndSkills} from '../redux/reducers/authReducer';
-import {positionSkillValidate} from '../utils/Commons';
-
-const CustomBottomSheet = props => {
-  const [search, setSearch] = useState('');
+import { ScrollView } from "react-native-gesture-handler";
+import { useDispatch, useSelector } from "react-redux";
+import { setPositionsAndSkills } from "../redux/reducers/authReducer";
+import { positionSkillValidate } from "../utils/Commons";
+import { Modalize } from "react-native-modalize";
+const CustomBottomSheet = (props) => {
+  const [search, setSearch] = useState("");
   const dispatch = useDispatch();
-  const selectData = useSelector(state => state?.auth?.positionsAndSkills);
+  const selectData = useSelector((state) => state?.auth?.positionsAndSkills);
   const flatListRef = useRef(null);
-  const onSearchFilter = txt => {
-    console.log('PropsValue', props?.value);
+  const onSearchFilter = (txt) => {
     setSearch(txt);
     if (txt.length == 0) {
       const data = positionSkillValidate(props?.value, props?.type);
       dispatch(setPositionsAndSkills(data));
     } else {
-      const filterSearch = selectData.filter(item => {
+      const filterSearch = selectData.filter((item) => {
         return `${item?.value}`
           .toLowerCase()
           .trim()
@@ -36,22 +35,17 @@ const CustomBottomSheet = props => {
     }
   };
 
-  const scrollToIndex = index => {
-    flatListRef.current.scrollToIndex({animated: true, index});
+  const scrollToIndex = (index) => {
+    flatListRef.current.scrollToIndex({ animated: true, index });
   };
 
-  const renderItemData = ({item, index}) => {
-    console.log('Knkcndkc', item);
-
+  const renderItemData = ({ item, index }) => {
     return (
       <View key={index}>
         <Spacer height={10} />
-        {/* skill1: '',
-    skill2: '',
-    skill3: '', */}
 
         <CustomText
-          fontWeight={'500'}
+          fontWeight={"500"}
           onPress={() => {
             if (
               props.type.skill1 == item.value ||
@@ -78,13 +72,13 @@ const CustomBottomSheet = props => {
     );
   };
 
-  const renderAlphabet = ({item, index}) => {
+  const renderAlphabet = ({ item, index }) => {
     return (
       <View key={index}>
         <Spacer height={10} />
 
         <CustomText
-          fontWeight={'500'}
+          fontWeight={"500"}
           onPress={() => scrollToIndex(index)}
           label={item.alphabet}
         />
@@ -96,18 +90,20 @@ const CustomBottomSheet = props => {
     <BottomSheet
       visible={props.modalVisible}
       onBackButtonPress={props.onCloseModal}
-      onBackdropPress={props.onCloseModal}>
+      onBackdropPress={props.onCloseModal}
+    >
       <View
-        flexDirection={'column'}
-        backgroundColor={'white'}
+        flexDirection={"column"}
+        backgroundColor={"white"}
         alignSelf="center"
-        maxHeight={'80%'}
+        maxHeight={"80%"}
         paddingHorizontal={scale(15)}
-        minHeight={'70%'}
-        width={'97%'}
+        minHeight={"70%"}
+        width={"97%"}
         borderTopLeftRadius={scale(15)}
         borderTopRightRadius={scale(15)}
-        overflow="hidden">
+        overflow="hidden"
+      >
         <Spacer height={5} />
 
         <View style={styles.topLine}></View>
@@ -122,29 +118,30 @@ const CustomBottomSheet = props => {
           <TextInput
             value={search}
             style={{
-              width: '86%',
+              width: "86%",
               padding: 0,
               paddingRight: scale(10),
               paddingLeft: scale(7),
             }}
             onChangeText={onSearchFilter}
             placeholder="Search..."
-            placeholderTextColor={'#6c757d'}
+            placeholderTextColor={"#6c757d"}
           />
         </View>
         <Spacer height={20} />
         <View
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-          }}>
-          <View style={{width: '90%'}}>
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-between",
+          }}
+        >
+          <View style={{ width: "90%" }}>
             <FlatList
               data={selectData}
               ref={flatListRef}
               showsVerticalScrollIndicator={false}
-              contentContainerStyle={{paddingBottom: verticalScale(100)}}
+              contentContainerStyle={{ paddingBottom: verticalScale(100) }}
               // style={{height: '90%'}}
               // indexLetterStyle={{
               //   color: colors.black,
@@ -181,9 +178,9 @@ const CustomBottomSheet = props => {
             />
           </View>
 
-          <View style={{alignSelf: 'flex-end'}}>
+          <View style={{ alignSelf: "flex-end" }}>
             <FlatList
-              data={selectData.filter(data => data?.alphabet)}
+              data={selectData.filter((data) => data?.alphabet)}
               // contentContainerStyle={{paddingBottom: verticalScale(100)}}
               // style={{height: '90%'}}
               // indexLetterStyle={{
@@ -232,15 +229,15 @@ const styles = StyleSheet.create({
   topLine: {
     width: scale(80),
     height: 5,
-    backgroundColor: '#dee2e6',
-    alignSelf: 'center',
+    backgroundColor: "#dee2e6",
+    alignSelf: "center",
     borderRadius: 10,
   },
   searchBody: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    width: '100%',
-    backgroundColor: '#dee2e6',
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    backgroundColor: "#dee2e6",
     height: verticalScale(30),
     borderRadius: 10,
     paddingHorizontal: 10,

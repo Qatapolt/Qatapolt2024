@@ -121,16 +121,8 @@ export const getWatchListPosts = (setData, followingIds) => {
               postData.push(da.data());
             }
           });
-
-          // followingIds.forEach(id=>{
-          //   if( da.data()){
-          //     postData.push(da.data());
-
-          //   }
-
-          // })
         });
-        // postData.sort((a, b) => a?.createAt?.localeCompare(b?.createAt));
+        console.log("postData", postData);
         setData(postData);
       });
   } catch (error) {

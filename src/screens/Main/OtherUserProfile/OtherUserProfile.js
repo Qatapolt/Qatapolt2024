@@ -132,11 +132,11 @@ const OtherUserProfile = ({ navigation, route }) => {
       value: userData?.age ? userData?.age + " " + "years" : "",
     },
 
-    {
-      id: 9,
-      name: "Email",
-      value: userData?.email ? userData?.email : "____________",
-    },
+    // {
+    //   id: 9,
+    //   name: "Email",
+    //   value: userData?.email ? userData?.email : "____________",
+    // },
     { id: 10, name: "Height", value: userData?.height },
     { id: 11, name: "Strong Hand", value: userData?.strongHand },
     { id: 12, name: "Strong Foot", value: userData?.strongFoot },
@@ -394,38 +394,40 @@ const OtherUserProfile = ({ navigation, route }) => {
   const renderStats = ({ item }) => {
     return (
       <>
-        <View
-          style={{
-            marginVertical: verticalScale(15),
-            width: "100%",
-            flexDirection: "row",
-            marginHorizontal: 30,
-          }}
-        >
-          <View style={{ width: "30%" }}>
-            <CustomText
-              label={`${item.name}:`}
-              fontSize={11}
-              marginLeft={5}
-              textAlign="center"
-              color={colors.inputGray}
-              fontFamily={InterFont.semiBold}
-            />
-          </View>
-          <View style={{ width: "70%" }}>
-            <CustomText
-              label={item.value}
-              fontSize={11}
-              alignSelf="center"
-              marginLeft={5}
-              textAlign="center"
-              color={colors.black}
-              fontFamily={InterFont.semiBold}
-            />
-          </View>
+        {item.value !== "" && (
+          <View
+            style={{
+              marginVertical: verticalScale(15),
+              width: "100%",
+              flexDirection: "row",
+              marginHorizontal: 30,
+            }}
+          >
+            <View style={{ width: "30%" }}>
+              <CustomText
+                label={`${item.name}:`}
+                fontSize={11}
+                marginLeft={5}
+                textAlign="center"
+                color={colors.inputGray}
+                fontFamily={InterFont.semiBold}
+              />
+            </View>
+            <View style={{ width: "70%" }}>
+              <CustomText
+                label={item.value}
+                fontSize={11}
+                alignSelf="center"
+                marginLeft={5}
+                textAlign="center"
+                color={colors.black}
+                fontFamily={InterFont.semiBold}
+              />
+            </View>
 
-          <Spacer height={10} />
-        </View>
+            <Spacer height={10} />
+          </View>
+        )}
       </>
     );
   };

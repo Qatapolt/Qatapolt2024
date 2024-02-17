@@ -74,7 +74,14 @@ const RootNavigator = () => {
         backgroundColor: "#000",
         duration: 5000,
         floating: true,
-        icon: (props) => <FastImage source={images.appIcon} {...props} />,
+        icon: (props) => (
+          <FastImage
+            source={images.appIcon}
+            {...props}
+            resizeMode={FastImage.resizeMode.contain}
+            style={{ width: 40, height: 40, marginHorizontal: 10 }}
+          />
+        ),
       });
     });
     messaging().onNotificationOpenedApp((data) => {

@@ -5,30 +5,30 @@ import {
   Image,
   ScrollView,
   FlatList,
-} from 'react-native';
-import React, {useState, useEffect} from 'react';
-import {colors} from '../../../utils/Colors';
-import {moderateScale, verticalScale} from 'react-native-size-matters';
+} from "react-native";
+import React, { useState, useEffect } from "react";
+import { colors } from "../../../utils/Colors";
+import { moderateScale, verticalScale } from "react-native-size-matters";
 import {
   getAllFollowers,
   getSpecificUser,
   SaveUser,
   UpdateFollower,
   UpdateFollowing,
-} from '../../services/UserServices';
-import {useDispatch, useSelector} from 'react-redux';
-import {authData} from '../../../redux/reducers/authReducer';
-import UserFollowedContainer from '../UserProfile/Molecules/UserFollowedContainer';
-import UserFollowerHeader from '../UserFollowers/Molecules/UserFollowerHeader';
-import UserFollowingContainer from './Molecules/UserFollowingContainer';
-import {sendFollowerNotification} from '../../services/NotificationServices';
-import uuid from 'react-native-uuid';
+} from "../../services/UserServices";
+import { useDispatch, useSelector } from "react-redux";
+import { authData } from "../../../redux/reducers/authReducer";
+import UserFollowedContainer from "../UserProfile/Molecules/UserFollowedContainer";
+import UserFollowerHeader from "../UserFollowers/Molecules/UserFollowerHeader";
+import UserFollowingContainer from "./Molecules/UserFollowingContainer";
+import { sendFollowerNotification } from "../../services/NotificationServices";
+import uuid from "react-native-uuid";
 
-const UserFollowing = ({navigation, route}) => {
+const UserFollowing = ({ navigation, route }) => {
   const [allFollower, setAllFollower] = useState([]);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const dispatch = useDispatch();
-  const authState = useSelector(state => state.auth.currentUser);
+  const authState = useSelector((state) => state.auth.currentUser);
   const AllFollowers = route?.params?.AllFollowing;
   const [refreshState, setRefreshState] = useState(false);
   const [followerState, setFollowerState] = useState(false);
@@ -45,28 +45,28 @@ const UserFollowing = ({navigation, route}) => {
     getAllFollowers(setAllFollower, AllFollowers);
   };
 
-  const navigateTo = item => {
-    let BlockExist = authState?.BlockUsers?.map(item => item).includes(
-      authState.uid,
+  const navigateTo = (item) => {
+    let BlockExist = authState?.BlockUsers?.map((item) => item).includes(
+      authState.uid
     );
     if (BlockExist) {
-      navigation.navigate('BlockScreen');
+      navigation.navigate("BlockScreen");
 
       return;
     }
 
     if (authState.uid == item.uid) {
-      navigation.navigate('Profile', {
+      navigation.navigate("Profile", {
         event: authState.uid,
       });
       return;
     }
-    navigation.navigate('UserProfile', {
+    navigation.navigate("UserProfile", {
       event: item.uid,
     });
   };
 
-  const RenderFollowerData = ({item, index}) => {
+  const RenderFollowerData = ({ item, index }) => {
     return (
       <UserFollowingContainer
         authId={authState.uid}
@@ -82,19 +82,19 @@ const UserFollowing = ({navigation, route}) => {
       />
     );
   };
-  const onRemove = async item => {
-    let userFollowExist = item?.AllFollowers?.map(data => data)?.includes(
-      authState?.uid,
+  const onRemove = async (item) => {
+    let userFollowExist = item?.AllFollowers?.map((data) => data)?.includes(
+      authState?.uid
     );
     try {
       if (userFollowExist) {
         // check auth following
         let authFollowingExist = authState?.AllFollowing?.map(
-          data => data,
+          (data) => data
         )?.includes(item?.uid);
         // filter user followers
         let filterUserFollowerList = item?.AllFollowers.filter(
-          data => data != authState.uid,
+          (data) => data != authState.uid
         );
         await SaveUser(item.uid, {
           followers: item.followers - 1,
@@ -103,7 +103,7 @@ const UserFollowing = ({navigation, route}) => {
         // check auth following
         if (authFollowingExist) {
           let filterFollowingList = authState?.AllFollowing.filter(
-            data => data != item.uid,
+            (data) => data != item.uid
           );
           await SaveUser(authState?.uid, {
             following: authState?.uid.following - 1,
@@ -124,7 +124,7 @@ const UserFollowing = ({navigation, route}) => {
 
           // filter user followers
           let filterUserFollowRequest = item?.RequestIds.filter(
-            data => data != authState?.uid,
+            (data) => data != authState?.uid
           );
           await SaveUser(item?.uid, {
             RequestIds: filterUserFollowRequest,
@@ -138,18 +138,18 @@ const UserFollowing = ({navigation, route}) => {
           sendFollowerNotification(
             authState,
             item,
-            'Follow Request',
-            'FOLLOW__REQUEST',
-            id,
+            "Follow Request",
+            "FOLLOW__REQUEST",
+            id
           );
         }
         return;
       }
       // update user followers
       await UpdateFollower(item.uid, authState.uid);
-      await SaveUser(item.uid, {followers: item.followers + 1});
+      await SaveUser(item.uid, { followers: item.followers + 1 });
       //  update auth following
-      await SaveUser(authState?.uid, {following: authState.following + 1});
+      await SaveUser(authState?.uid, { following: authState.following + 1 });
       await UpdateFollowing(authState?.uid, item.uid);
 
       const data = await getSpecificUser(authState?.uid);
@@ -157,9 +157,9 @@ const UserFollowing = ({navigation, route}) => {
       sendFollowerNotification(
         authState,
         item,
-        'Follow You',
-        'FOLLOW',
-        uuid.v4(),
+        "Follow You",
+        "FOLLOW",
+        uuid.v4()
       );
 
       setFollowerState(!followerState);
@@ -167,10 +167,10 @@ const UserFollowing = ({navigation, route}) => {
 
       // console.log('UpdateSttae');
     } catch (error) {
-      console.log('ErrorHai', error);
+      console.log("ErrorHai", error);
     }
   };
-  const onFilerFollowers = txt => {
+  const onFilerFollowers = (txt) => {
     setSearch(txt);
     // console.log('TxtData', txt);
     if (txt.length == 0) {
@@ -184,7 +184,7 @@ const UserFollowing = ({navigation, route}) => {
 
       getAllFollowers(setAllFollower, authState?.AllFollowers);
     } else {
-      let filterSearch = allFollower.filter(item => {
+      let filterSearch = allFollower.filter((item) => {
         return `${item.name} ${item.username}`
           .toLowerCase()
           .trim()
@@ -200,12 +200,17 @@ const UserFollowing = ({navigation, route}) => {
       <UserFollowerHeader
         onFilerFollowers={onFilerFollowers}
         search={search}
-        label={'Following'}
+        label={"Following"}
       />
       <ScrollView
         showsVerticalScrollIndicator={false}
-        style={{display: 'flex', height: '90%', backgroundColor: colors.white}}>
-        <View style={{padding: 15}}>
+        style={{
+          display: "flex",
+          height: "90%",
+          backgroundColor: colors.white,
+        }}
+      >
+        <View style={{ padding: 15 }}>
           <FlatList
             data={allFollower}
             contentContainerStyle={{

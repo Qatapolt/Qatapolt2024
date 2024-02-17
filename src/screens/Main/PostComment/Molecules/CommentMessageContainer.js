@@ -83,6 +83,7 @@ const CommentMessageContainer = ({
   };
   return (
     <TouchableOpacity
+      disabled={currentUser.uid !== item.senderId}
       onLongPress={deleteComment}
       style={{
         ...commonStyles.rowContainer,

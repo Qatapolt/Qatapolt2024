@@ -1,46 +1,42 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React, {useState, useEffect} from 'react';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import LinearGradient from 'react-native-linear-gradient';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import CustomText from '../../../../../components/CustomText';
-import {InterFont} from '../../../../../utils/Fonts';
-import {colors} from '../../../../../utils/Colors';
-import ProfilePhoto from '../../../../../components/ProfilePhoto';
-import {Spacer} from '../../../../../components/Spacer';
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React from "react";
+import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import CustomText from "../../../../../components/CustomText";
+import { InterFont } from "../../../../../utils/Fonts";
+import { colors } from "../../../../../utils/Colors";
+import ProfilePhoto from "../../../../../components/ProfilePhoto";
+import { Spacer } from "../../../../../components/Spacer";
 
-const GroupChatHeader = props => {
-  // const [groupData, setGroupData] = useState({})
-
-  // useEffect(() => {
-
-  //   setGroupData(props?.groupData)
-
-  // }, [props?.groupData])
-
+const GroupChatHeader = (props) => {
   return (
     <View
       style={{
-        flexDirection: 'row',
-        alignItems: 'flex-end',
+        flexDirection: "row",
+        alignItems: "flex-end",
         paddingBottom: scale(10),
         height: verticalScale(105),
-        justifyContent: 'space-between',
+        justifyContent: "space-between",
         backgroundColor: colors.green,
-      }}>
+      }}
+    >
       <TouchableOpacity
         activeOpacity={0.6}
         onPress={() =>
-          props.navigation.navigate('GroupInfo', {groupData: props?.groupData})
+          props.navigation.navigate("GroupInfo", {
+            groupData: props?.groupData,
+          })
         }
-        style={{flexDirection: 'row', width: '70%', alignItems: 'center'}}>
+        style={{ flexDirection: "row", width: "70%", alignItems: "center" }}
+      >
         <TouchableOpacity
-          onPress={() => props.navigation.navigate('GroupChat')}>
+          onPress={() => props.navigation.navigate("GroupChat")}
+        >
           <Ionicons
-            name="md-chevron-back"
-            size={moderateScale(30)}
+            name="chevron-back"
             color={colors.white}
+            size={moderateScale(30)}
           />
         </TouchableOpacity>
         <Spacer width={10} />
@@ -52,7 +48,7 @@ const GroupChatHeader = props => {
           height={scale(55)}
         />
 
-        <View style={{paddingLeft: scale(10), maxWidth: '70%'}}>
+        <View style={{ paddingLeft: scale(10), maxWidth: "70%" }}>
           <CustomText
             label={props?.groupData?.groupName}
             numberOfLines={1}
@@ -74,7 +70,8 @@ const GroupChatHeader = props => {
       <TouchableOpacity
         onPress={() => props.setLeaveChatModal(true)}
         activeOpacity={0.6}
-        style={{paddingRight: scale(10), paddingBottom: scale(11)}}>
+        style={{ paddingRight: scale(10), paddingBottom: scale(11) }}
+      >
         <MaterialCommunityIcons
           name="dots-horizontal"
           size={moderateScale(25)}

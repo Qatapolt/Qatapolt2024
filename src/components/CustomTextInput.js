@@ -6,21 +6,21 @@ import {
   Image,
   TextInput,
   Platform,
-} from 'react-native';
-import React from 'react';
+} from "react-native";
+import React from "react";
 import {
   moderateScale,
   scale,
   ScaledSheet,
   verticalScale,
-} from 'react-native-size-matters';
-import CustomText from './CustomText';
-import {colors} from '../utils/Colors';
-import commonStyles from '../utils/CommonStyles';
-import {InterFont} from '../utils/Fonts';
-import {images} from '../assets/images';
+} from "react-native-size-matters";
+import CustomText from "./CustomText";
+import { colors } from "../utils/Colors";
+import commonStyles from "../utils/CommonStyles";
+import { InterFont } from "../utils/Fonts";
+import { images } from "../assets/images";
 
-const CustomTextInput = ({...props}) => {
+const CustomTextInput = ({ ...props }) => {
   return (
     <TouchableOpacity
       activeOpacity={0.6}
@@ -28,7 +28,7 @@ const CustomTextInput = ({...props}) => {
       disabled={!props.onPress}
       style={[
         {
-          width: props.width || '100%',
+          width: props.width || "100%",
           height: props.height || verticalScale(50),
           borderRadius: props.borderRadius || moderateScale(12),
           backgroundColor: props.backgroundColor || colors.white,
@@ -39,11 +39,12 @@ const CustomTextInput = ({...props}) => {
           zIndex: 1,
         },
         props.inputStyle,
-      ]}>
-      <View style={{flexDirection: 'row'}}>
+      ]}
+    >
+      <View style={{ flexDirection: "row" }}>
         {props.compulsory && (
           <CustomText
-            label={'*'}
+            label={"*"}
             color={colors.red}
             // marginBottosm={10}
             marginRight={3}
@@ -61,20 +62,21 @@ const CustomTextInput = ({...props}) => {
 
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
+          flexDirection: "row",
+          alignItems: "center",
           // backgroundColor:"red",
-          width: '100%',
+          width: "100%",
           height: verticalScale(props.inputContainerHeight || 24),
           // marginTop: props.inputMarginTop || verticalScale(5),
-        }}>
+        }}
+      >
         <TextInput
           editable={props.editable}
           style={{
-            width: props.rigthIcon ? '90%' : '95%',
-            height: props.inputHeight || '100%',
+            width: props.rigthIcon ? "90%" : "95%",
+            height: props.inputHeight || "100%",
             paddingRight: props.paddingRight || 10,
-            alignSelf: 'flex-end',
+            alignSelf: "flex-end",
             paddingHorizontal: props.paddingHorizontal,
             paddingTop: verticalScale(1),
             fontFamily: props.fontFamily || InterFont.regular,
@@ -91,7 +93,7 @@ const CustomTextInput = ({...props}) => {
           placeholder={props.placeholder}
           placeholderTextColor={colors.inputGray}
           secureTextEntry={props.secureTextEntry}
-          textAlignVertical={props.textAlignVertical}
+          textAlignVertical="top"
         />
         {props.rigthIcon ? (
           <TouchableOpacity
@@ -101,7 +103,8 @@ const CustomTextInput = ({...props}) => {
               width: props.iconWidth || scale(20),
               height: props.iconHeight || verticalScale(20),
               marginLeft: verticalScale(12),
-            }}>
+            }}
+          >
             <Image
               style={commonStyles.img}
               resizeMode="contain"
@@ -118,8 +121,8 @@ const CustomTextInput = ({...props}) => {
 export default CustomTextInput;
 const styles = ScaledSheet.create({
   icon: {
-    width: '20@s',
-    height: '20@vs',
+    width: "20@s",
+    height: "20@vs",
     marginLeft: verticalScale(10),
   },
 });

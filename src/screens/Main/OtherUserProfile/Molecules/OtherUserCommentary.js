@@ -90,41 +90,41 @@
 
 // const styles = StyleSheet.create({})
 
-import React, {useState, useEffect, useRef} from 'react';
-import {Alert, FlatList, ScrollView, View} from 'react-native';
-import {verticalScale} from 'react-native-size-matters';
-import UserCommentryConatiner from '../../UserProfile/Molecules/UserCommentryConatiner';
-import commonStyles from '../../../../utils/CommonStyles';
-import _ from 'lodash';
-import moment from 'moment';
-import {colors} from '../../../../utils/Colors';
-import PostItem from '../../ArenaScreen/Molecules/PostItem';
+import React, { useState, useEffect, useRef } from "react";
+import { Alert, FlatList, ScrollView, View } from "react-native";
+import { verticalScale } from "react-native-size-matters";
+import UserCommentryConatiner from "../../UserProfile/Molecules/UserCommentryConatiner";
+import commonStyles from "../../../../utils/CommonStyles";
+import _ from "lodash";
+import moment from "moment";
+import { colors } from "../../../../utils/Colors";
+import PostItem from "../../ArenaScreen/Molecules/PostItem";
 import {
   deleteImage,
   deletePost,
   generateLink,
   getFeeAgentPosts,
   getPosts,
-} from '../../../services/PostServices';
-import ReportSheet from '../../ArenaScreen/Molecules/ReportSheet';
-import PostOptionsSheet from '../../ArenaScreen/Molecules/PostOptionsSheet';
-import ViewPost from '../../ArenaScreen/Molecules/ViewPost';
-import {useDispatch, useSelector} from 'react-redux';
-import {SaveUser} from '../../../services/UserServices';
-import {authData} from '../../../../redux/reducers/authReducer';
-import Clipboard from '@react-native-clipboard/clipboard';
-import Toast from 'react-native-root-toast';
-import SimpleLoader from '../../../../utils/SimpleLoader';
-import loaderAnimation from '../../../../assets/Loaders';
-import {useIsFocused, useFocusEffect} from '@react-navigation/native';
-const OtherUserCommentary = ({navigation, route}) => {
-  const authData = useSelector(state => state.auth?.currentUser);
+} from "../../../services/PostServices";
+import ReportSheet from "../../ArenaScreen/Molecules/ReportSheet";
+import PostOptionsSheet from "../../ArenaScreen/Molecules/PostOptionsSheet";
+import ViewPost from "../../ArenaScreen/Molecules/ViewPost";
+import { useDispatch, useSelector } from "react-redux";
+import { SaveUser } from "../../../services/UserServices";
+import { authData } from "../../../../redux/reducers/authReducer";
+import Clipboard from "@react-native-clipboard/clipboard";
+import Toast from "react-native-root-toast";
+import SimpleLoader from "../../../../utils/SimpleLoader";
+import loaderAnimation from "../../../../assets/Loaders";
+import { useIsFocused, useFocusEffect } from "@react-navigation/native";
+const OtherUserCommentary = ({ navigation, route }) => {
+  const authData = useSelector((state) => state.auth?.currentUser);
   const [commentaryData, setCommentaryData] = useState([]);
   const [likePost, setLikePost] = useState(false);
   const [showPost, setShowPost] = useState(false);
   const dispatch = useDispatch();
   const [heartPost, setHeartPost] = useState(false);
-  const CurrentUser = useSelector(state => state.auth?.currentUser);
+  const CurrentUser = useSelector((state) => state.auth?.currentUser);
   const postOptionRef = useRef();
   const [viewPostModal, setViewPostModal] = useState(false);
   const [postIndex, setPostIndex] = useState(-1);
@@ -146,9 +146,9 @@ const OtherUserCommentary = ({navigation, route}) => {
         setIsLoading(true);
         let allPostByUser = [];
         getAllPost();
-        route.params?.PostIds.forEach(element => {
+        route.params?.PostIds.forEach((element) => {
           const userPosts = postData.find(
-            post => post?.postId === element?.postId,
+            (post) => post?.postId === element?.postId
           );
           if (userPosts !== undefined) {
             allPostByUser.push(userPosts);
@@ -164,12 +164,12 @@ const OtherUserCommentary = ({navigation, route}) => {
       };
       fetchUserPosts();
       return () => {};
-    }, [getAllPost, CurrentUser, postData]),
+    }, [getAllPost, CurrentUser, postData])
   );
   const getAllPost = () => {
     getPosts(setPostData);
   };
-  const RenderPostData = ({item, index}) => {
+  const RenderPostData = ({ item, index }) => {
     return (
       <View>
         <PostItem
@@ -219,9 +219,9 @@ const OtherUserCommentary = ({navigation, route}) => {
     setShowReportPotions(false);
   };
   const delPost = () => {
-    Alert.alert('Delete Post', 'Are you sure you want to delete?', [
+    Alert.alert("Delete Post", "Are you sure you want to delete?", [
       {
-        text: 'Yes',
+        text: "Yes",
         onPress: async () => {
           if (selectPost.uriData.uri) {
             deleteImage(selectPost?.uriData.uri);
@@ -230,7 +230,7 @@ const OtherUserCommentary = ({navigation, route}) => {
           deletePost(selectPost?.postId);
 
           let filterDeletePost = CurrentUser?.PostIds.filter(
-            data => data.postId != selectPost?.postId,
+            (data) => data.postId != selectPost?.postId
           );
           await SaveUser(CurrentUser.uid, {
             PostIds: filterDeletePost,
@@ -245,7 +245,7 @@ const OtherUserCommentary = ({navigation, route}) => {
         // getMedia();
       },
       {
-        text: 'No',
+        text: "No",
         onPress: () => {
           onCloseModal();
           // getMedia();
@@ -259,7 +259,7 @@ const OtherUserCommentary = ({navigation, route}) => {
     if (postLink) {
       Clipboard.setString(postLink);
       setShowPostPotions(false);
-      Toast.show('Link Copied!');
+      Toast.show("Link Copied!");
     }
   };
   return (
@@ -268,14 +268,15 @@ const OtherUserCommentary = ({navigation, route}) => {
         backgroundColor: colors.white,
         flex: 1,
         bottom: 5,
-      }}>
+      }}
+    >
       <FlatList
         data={commentaryData}
         keyExtractor={(item, index) => item?.postId?.toString()}
         renderItem={RenderPostData}
         style={{
-          width: '100%',
-          height: '100%',
+          width: "100%",
+          height: "100%",
         }}
         nestedScrollEnabled
       />

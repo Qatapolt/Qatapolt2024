@@ -57,7 +57,7 @@ const MainStack = () => {
 
   const getIsBioVerified = async () => {
     const res = await AsyncStorage.getItem("isBioMetric");
-    console.log("BioVer", res);
+    // console.log("BioVer", res);
     setIsBioVerified(res);
   };
   // useEffect(() => {

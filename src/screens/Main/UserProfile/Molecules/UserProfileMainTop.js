@@ -1,24 +1,31 @@
-import {StyleSheet, Text, View, TouchableOpacity, Platform,Image} from 'react-native';
-import React, {useState, useEffect} from 'react';
-import CustomText from '../../../../components/CustomText';
-import {colors} from '../../../../utils/Colors';
-import {InterFont} from '../../../../utils/Fonts';
-import uuid from 'react-native-uuid';
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Platform,
+  Image,
+} from "react-native";
+import React, { useState, useEffect } from "react";
+import CustomText from "../../../../components/CustomText";
+import { colors } from "../../../../utils/Colors";
+import { InterFont } from "../../../../utils/Fonts";
+import uuid from "react-native-uuid";
 import {
   moderateScale,
   scale,
   ScaledSheet,
   verticalScale,
-} from 'react-native-size-matters';
-import {Spacer} from '../../../../components/Spacer';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import commonStyles, {PH10, PH20} from '../../../../utils/CommonStyles';
-import Feather from 'react-native-vector-icons/Feather';
-import CustomButton from '../../../../components/CustomButton';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import {CheckBox, Icon} from '@rneui/themed';
-import {useNavigation} from '@react-navigation/native';
-import FollowedContainer from './UserFollowedContainer';
+} from "react-native-size-matters";
+import { Spacer } from "../../../../components/Spacer";
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import commonStyles, { PH10, PH20 } from "../../../../utils/CommonStyles";
+import Feather from "react-native-vector-icons/Feather";
+import CustomButton from "../../../../components/CustomButton";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import { CheckBox, Icon } from "@rneui/themed";
+import { useNavigation } from "@react-navigation/native";
+import FollowedContainer from "./UserFollowedContainer";
 import {
   getSpecificUser,
   SaveUser,
@@ -27,15 +34,15 @@ import {
   UpdateFollowRequest,
   UpdateUser,
   UpdateWatchList,
-} from '../../../services/UserServices';
-import {useDispatch} from 'react-redux';
-import {authData} from '../../../../redux/reducers/authReducer';
+} from "../../../services/UserServices";
+import { useDispatch } from "react-redux";
+import { authData } from "../../../../redux/reducers/authReducer";
 import {
   NotificationSender,
   postNotification,
   sendNotification,
-} from '../../../services/NotificationServices';
-import { icons } from '../../../../assets/icons';
+} from "../../../services/NotificationServices";
+import { icons } from "../../../../assets/icons";
 
 const UserProfileMainTop = ({
   CurrentUser,
@@ -54,24 +61,24 @@ const UserProfileMainTop = ({
   const dispatch = useDispatch();
   const [check1, setCheck1] = useState(false);
   const followArray = [
-    {id: 1, follow: CurrentUser?.followers, following: 'Followers'},
-    {id: 2, follow: CurrentUser?.following, following: 'Following'},
+    { id: 1, follow: CurrentUser?.followers, following: "Followers" },
+    { id: 2, follow: CurrentUser?.following, following: "Following" },
   ];
   let userFollowExist = CurrentUser?.AllFollowers?.includes(authId);
   let followRequestExist = CurrentUser?.RequestIds?.includes(authId);
 
-  let authWatchListExist = authUser?.WatchList?.map(data => data)?.includes(
-    CurrentUser?.uid,
+  let authWatchListExist = authUser?.WatchList?.map((data) => data)?.includes(
+    CurrentUser?.uid
   );
   const onUserFollower = async () => {
     if (userFollowExist) {
       // check auth following
       let authFollowingExist = authUser?.AllFollowing?.map(
-        data => data,
+        (data) => data
       )?.includes(CurrentUser?.uid);
       // filter user followers
       let filterUserFollowerList = CurrentUser?.AllFollowers.filter(
-        data => data != authId,
+        (data) => data != authId
       );
       await SaveUser(CurrentUser?.uid, {
         followers: CurrentUser?.followers - 1,
@@ -80,7 +87,7 @@ const UserProfileMainTop = ({
       // check auth following
       if (authFollowingExist) {
         let filterFollowingList = authUser?.AllFollowing.filter(
-          data => data != CurrentUser?.uid,
+          (data) => data != CurrentUser?.uid
         );
         await SaveUser(authId, {
           following: authUser?.following - 1,
@@ -100,7 +107,7 @@ const UserProfileMainTop = ({
 
         // filter user followers
         let filterUserFollowRequest = CurrentUser?.RequestIds.filter(
-          data => data != authId,
+          (data) => data != authId
         );
         await SaveUser(CurrentUser?.uid, {
           RequestIds: filterUserFollowRequest,
@@ -110,7 +117,7 @@ const UserProfileMainTop = ({
       } else {
         const id = uuid.v4();
         await UpdateFollowRequest(CurrentUser.uid, authUser?.uid, id);
-        sendFollowerNotification('Follow Request', 'FOLLOW__REQUEST', id);
+        sendFollowerNotification("Follow Request", "FOLLOW__REQUEST", id);
         setFollowerState(!followerState);
       }
       return;
@@ -118,9 +125,11 @@ const UserProfileMainTop = ({
     try {
       // update user followers
       await UpdateFollower(CurrentUser.uid, authUser?.uid);
-      await SaveUser(CurrentUser?.uid, {followers: CurrentUser?.followers + 1});
+      await SaveUser(CurrentUser?.uid, {
+        followers: CurrentUser?.followers + 1,
+      });
       //  update auth following
-      await SaveUser(authId, {following: authUser?.following + 1});
+      await SaveUser(authId, { following: authUser?.following + 1 });
       await UpdateFollowing(authId, CurrentUser?.uid);
 
       const data = await getSpecificUser(authId);
@@ -128,11 +137,9 @@ const UserProfileMainTop = ({
 
       setFollowerState(!followerState);
 
-      // sendNotification(authUser,  CurrentUser, authUser?.profileImage?authUser?.profileImage:undefined, "Follow You", "Follow You")
-
-      sendFollowerNotification('Follow You', 'FOLLOW', uuid.v4());
+      sendFollowerNotification("Follow You", "FOLLOW", uuid.v4());
     } catch (error) {
-      console.log('ErrorHai', error);
+      console.log("ErrorHai", error);
     }
   };
 
@@ -143,7 +150,7 @@ const UserProfileMainTop = ({
 
     const senderData = {
       message: message,
-      thumbnail: CurrentUser?.profileImage ? CurrentUser?.profileImage : '',
+      thumbnail: CurrentUser?.profileImage ? CurrentUser?.profileImage : "",
       senderName: authUser?.name,
       senderId: authUser?.uid,
       senderUsername: authUser?.username,
@@ -151,7 +158,7 @@ const UserProfileMainTop = ({
       id: id,
       receiverId: CurrentUser?.uid,
       createdAt: new Date(),
-      senderImage: authUser?.profileImage ? authUser?.profileImage : '',
+      senderImage: authUser?.profileImage ? authUser?.profileImage : "",
     };
 
     await postNotification(senderData);
@@ -161,7 +168,7 @@ const UserProfileMainTop = ({
     try {
       if (authWatchListExist) {
         let filterAuthWatchList = authUser?.WatchList.filter(
-          data => data != CurrentUser?.uid,
+          (data) => data != CurrentUser?.uid
         );
         await SaveUser(authId, {
           WatchList: filterAuthWatchList,
@@ -177,10 +184,10 @@ const UserProfileMainTop = ({
       setWatchListState(!watchListState);
     } catch (error) {}
   };
-  const onNavigate = item => {
+  const onNavigate = (item) => {
     // console.log('ItemFollower', item);
-    if (item?.following == 'Followers') {
-      navigation.navigate('UserFollowers', {
+    if (item?.following == "Followers") {
+      navigation.navigate("UserFollowers", {
         data: item,
         AllFollowers: CurrentUser?.AllFollowers,
       });
@@ -188,8 +195,8 @@ const UserProfileMainTop = ({
       return;
     }
 
-    if (item?.following == 'Following') {
-      navigation.navigate('UserFollowing', {
+    if (item?.following == "Following") {
+      navigation.navigate("UserFollowing", {
         data: item,
         AllFollowing: CurrentUser?.AllFollowing,
       });
@@ -197,15 +204,15 @@ const UserProfileMainTop = ({
     }
   };
 
-  const Tab = ({onPress, index, ...props}) => (
+  const Tab = ({ onPress, index, ...props }) => (
     <TouchableOpacity
       onPress={onPress}
       style={{
-        alignSelf: 'center',
+        alignSelf: "center",
         // flex: 1,
         paddingHorizontal: 10,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems: "center",
+        justifyContent: "center",
         width: scale(80),
         maxWidth: scale(100),
         // borderWidth: index === indexMain ? 1 : 0,
@@ -214,7 +221,8 @@ const UserProfileMainTop = ({
         backgroundColor: colors.superLightGray,
         // padding:20
         height: verticalScale(30),
-      }}>
+      }}
+    >
       <CustomText
         label={CurrentUser?.accountType}
         color={colors.black}
@@ -223,25 +231,27 @@ const UserProfileMainTop = ({
       />
     </TouchableOpacity>
   );
-  const FollowUser = ({onFollowUser, onWatchList}) => {
+  const FollowUser = ({ onFollowUser, onWatchList }) => {
     return (
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          alignSelf: 'center',
-        }}>
+          flexDirection: "row",
+          alignItems: "center",
+          alignSelf: "center",
+        }}
+      >
         {/* userId={item.from==currentUser.uid?item.to:item.from}
       formId={item.from} */}
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate('ChatDetail', {
+            navigation.navigate("ChatDetail", {
               userId: CurrentUser.uid,
               formId: authId,
             })
           }
           activeOpacity={0.6}
-          style={styles.followContainer}>
+          style={styles.followContainer}
+        >
           <MaterialCommunityIcons
             name="message-text-outline"
             size={moderateScale(25)}
@@ -263,19 +273,19 @@ const UserProfileMainTop = ({
           }
           title={
             followRequestExist
-              ? 'Requested'
+              ? "Requested"
               : userFollowExist
-              ? 'Unfollow'
-              : 'Follow'
+              ? "Unfollow"
+              : "Follow"
           }
-          width={'40%'}
+          width={"40%"}
           marginHorizontal={20}
           btnStyle={{
-            shadowColor: Platform.OS == 'ios' ? '#343a40' : colors.black,
+            shadowColor: Platform.OS == "ios" ? "#343a40" : colors.black,
             shadowRadius: 2,
             elevation: 5,
             shadowOpacity: 0.4,
-            shadowOffset: {width: -1, height: 1},
+            shadowOffset: { width: -1, height: 1 },
           }}
           // backgroundColor={ userFollowExist? colors.green : colors.divider}
 
@@ -291,9 +301,10 @@ const UserProfileMainTop = ({
         <TouchableOpacity
           onPress={onWatchList}
           activeOpacity={0.6}
-          style={styles.followContainer}>
+          style={styles.followContainer}
+        >
           <AntDesign
-            name={authWatchListExist ? 'star' : 'staro'}
+            name={authWatchListExist ? "star" : "staro"}
             size={moderateScale(25)}
             color={colors.green}
           />
@@ -302,26 +313,27 @@ const UserProfileMainTop = ({
     );
   };
 
-  const FollowContainer = ({length, follow, onNavigate}) => {
+  const FollowContainer = ({ length, follow, onNavigate }) => {
     return (
       <TouchableOpacity
         onPress={onNavigate}
         style={{
-          width: '28%',
+          width: "28%",
           height: verticalScale(70),
-          alignItems: 'center',
-          justifyContent: 'space-evenly',
+          alignItems: "center",
+          justifyContent: "space-evenly",
           borderRadius: scale(7),
           backgroundColor: colors.white,
           borderWidth: 0.3,
           borderColor: colors.inputGray,
-          shadowColor: Platform.OS == 'ios' ? '#343a40' : colors.black,
+          shadowColor: Platform.OS == "ios" ? "#343a40" : colors.black,
           shadowRadius: 2,
           elevation: 5,
           shadowOpacity: 0.2,
           // inputMarginTop:-20,
-          shadowOffset: {width: -1, height: 2},
-        }}>
+          shadowOffset: { width: -1, height: 2 },
+        }}
+      >
         {/* <View
         > */}
         <CustomText
@@ -349,13 +361,13 @@ const UserProfileMainTop = ({
       <Spacer height={10} />
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
+          flexDirection: "row",
+          alignItems: "center",
           width: 200,
-          alignSelf: 'center',
-          justifyContent: 'center',
-
-        }}>
+          alignSelf: "center",
+          justifyContent: "center",
+        }}
+      >
         <CustomText
           label={`${CurrentUser?.username}`}
           // textTransform={'capitalize'}
@@ -369,13 +381,12 @@ const UserProfileMainTop = ({
           fontFamily={InterFont.semiBold}
         />
         <Spacer width={10} />
-        {CurrentUser?.trophy == 'verified' && (
-           <Image
-           resizeMode="contain"
-           style={{width:17,height:17,marginTop:25}}
-           source={icons.trophyIcon}
-           />
-          
+        {CurrentUser?.trophy == "verified" && (
+          <Image
+            resizeMode="contain"
+            style={{ width: 17, height: 17, marginTop: 25 }}
+            source={icons.trophyIcon}
+          />
         )}
       </View>
 
@@ -385,10 +396,11 @@ const UserProfileMainTop = ({
       <Spacer height={10} />
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          alignSelf: 'center',
-        }}>
+          flexDirection: "row",
+          alignItems: "center",
+          alignSelf: "center",
+        }}
+      >
         <CustomText
           label={CurrentUser?.sportEmoji}
           fontSize={10}
@@ -419,15 +431,16 @@ const UserProfileMainTop = ({
       <PH10>
         <View
           style={{
-            flexDirection: 'row',
-            alignSelf: 'center',
-            width: '100%',
-            justifyContent: 'center',
-            justifyContent: 'space-around',
-          }}>
+            flexDirection: "row",
+            alignSelf: "center",
+            width: "100%",
+            justifyContent: "center",
+            justifyContent: "space-around",
+          }}
+        >
           <FollowContainer
             onNavigate={() => {
-              navigation.navigate('UserFollowers', {
+              navigation.navigate("UserFollowers", {
                 // authId: authId,
                 AllFollowers: CurrentUser?.AllFollowers,
               });
@@ -439,12 +452,12 @@ const UserProfileMainTop = ({
                 ? 0
                 : CurrentUser?.AllFollowers.length
             }
-            follow={'Followers'}
+            follow={"Followers"}
           />
 
           <FollowContainer
             onNavigate={() => {
-              navigation.navigate('UserFollowing', {
+              navigation.navigate("UserFollowing", {
                 AllFollowing: CurrentUser?.AllFollowing,
               });
             }}
@@ -455,7 +468,7 @@ const UserProfileMainTop = ({
                 ? 0
                 : CurrentUser?.AllFollowing.length
             }
-            follow={'Following'}
+            follow={"Following"}
           />
 
           {/* {followArray.map((item, index) => {
@@ -481,8 +494,8 @@ const UserProfileMainTop = ({
       {CurrentUser?.AllFollowers?.length != 0 && CurrentUser?.AllFollowers && (
         <>
           <Spacer height={30} />
-          <View style={{flexDirection: 'row', alignItems: 'center'}}>
-            {CurrentUser.AllFollowers.map(id => {
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            {CurrentUser.AllFollowers.map((id) => {
               return (
                 <FollowedContainer
                   CurrentUser={id}
@@ -505,16 +518,16 @@ const styles = ScaledSheet.create({
     width: scale(40),
     height: scale(40),
 
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 100,
     backgroundColor: colors.white,
     borderWidth: 0.3,
     borderColor: colors.inputGray,
-    shadowColor: Platform.OS == 'ios' ? '#343a40' : colors.black,
+    shadowColor: Platform.OS == "ios" ? "#343a40" : colors.black,
     shadowRadius: 2,
     elevation: 5,
     shadowOpacity: 0.2,
-    shadowOffset: {width: -1, height: 2},
+    shadowOffset: { width: -1, height: 2 },
   },
 });

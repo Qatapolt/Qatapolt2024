@@ -533,6 +533,7 @@ const PostItem = (props) => {
                           ? { uri: props?.item?.uriData?.uri }
                           : images.postPic
                       }
+                      resizeMode={FastImage.resizeMode.cover}
                       style={styles.postContainer}
                     />
                   </>
@@ -593,6 +594,7 @@ const PostItem = (props) => {
                   flexDirection: "row",
                   // width: 33,
                   alignItems: "center",
+                  top: 2,
                 }}
               >
                 <Image
@@ -601,13 +603,12 @@ const PostItem = (props) => {
                   style={{
                     width: scale(16),
                     height: scale(14),
-                    // top: 4,
+                    top: -2,
                   }}
                 />
                 <CustomText
                   label={likeCount}
                   fontSize={12}
-                  marginTop={5}
                   // marginLeft={-1}
                   color={colors.black}
                 />
@@ -620,6 +621,7 @@ const PostItem = (props) => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
+                  top: 3,
                 }}
               >
                 <Image
@@ -634,7 +636,6 @@ const PostItem = (props) => {
                 <CustomText
                   label={commentCount}
                   fontSize={12}
-                  marginTop={3}
                   marginLeft={2}
                   color={colors.black}
                 />
@@ -655,6 +656,7 @@ const PostItem = (props) => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
+                  top: 3,
                 }}
               >
                 <Image
@@ -673,13 +675,13 @@ const PostItem = (props) => {
                         ? // && repostIds.includes(currentUser.uid)
                           colors.green
                         : colors.black,
+                    top: 1,
                   }}
                 />
                 <Spacer width={5} />
                 <CustomText
                   label={repostCount}
                   fontSize={12}
-                  marginTop={3}
                   color={colors.black}
                 />
               </TouchableOpacity>
@@ -688,6 +690,7 @@ const PostItem = (props) => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
+                  top: 4,
                 }}
               >
                 <View>
@@ -697,20 +700,28 @@ const PostItem = (props) => {
                     style={{
                       width: scale(16),
                       height: scale(11),
-                      top: 3,
                     }}
                   />
                 </View>
 
                 <Spacer width={5} />
-                <View>
-                  <CustomText
-                    label={viewCount}
-                    fontSize={12}
-                    marginTop={5}
-                    color={colors.black}
-                  />
-                </View>
+                {props.item?.uriData?.type?.includes("image") ? (
+                  <View>
+                    <CustomText
+                      label={viewCount}
+                      fontSize={12}
+                      color={colors.black}
+                    />
+                  </View>
+                ) : props.item?.uriData?.type?.includes("video") ? (
+                  <>
+                    <CustomText
+                      label={viewCount}
+                      fontSize={12}
+                      color={colors.black}
+                    />
+                  </>
+                ) : null}
               </View>
 
               <TouchableOpacity
@@ -730,6 +741,7 @@ const PostItem = (props) => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
+                  top: 4,
                 }}
               >
                 <Image
@@ -738,7 +750,6 @@ const PostItem = (props) => {
                   style={{
                     width: scale(16),
                     height: scale(14),
-                    top: 3,
                   }}
                 />
 
@@ -750,7 +761,6 @@ const PostItem = (props) => {
                       : internalShareCount
                   }
                   fontSize={12}
-                  marginTop={3}
                   marginLeft={-2}
                   color={colors.black}
                 />

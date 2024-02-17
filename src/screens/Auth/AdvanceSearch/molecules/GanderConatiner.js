@@ -22,14 +22,14 @@ const GanderConatiner = ({
   const [genderIndex, setGenderIndex] = useState(-1);
   const [checkBox, setCheckBox] = useState(false);
 
-  useEffect(() => {
-    if (type === "FreeAgentPostScreen") {
-      setSignupValues({
-        ...signupValues,
-        freeAgent: true,
-      });
-    }
-  }, [type]);
+  // useEffect(() => {
+  //   if (type === "FreeAgentPostScreen") {
+  //     setSignupValues({
+  //       ...signupValues,
+  //       freeAgent: true,
+  //     });
+  //   }
+  // }, [type]);
   const onPressFreeAgent = () => {
     try {
       if (signupValues?.freeAgent === false) {

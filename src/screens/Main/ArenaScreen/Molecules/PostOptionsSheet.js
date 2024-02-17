@@ -15,7 +15,6 @@ import { Modalize } from "react-native-modalize";
 const PostOptionsSheet = (props) => {
   const dispatch = useDispatch();
 
-  // props?.postData.userId == props?.authData.uid
   return (
     <Modalize
       ref={props.modalizeRef}
@@ -24,19 +23,32 @@ const PostOptionsSheet = (props) => {
         flex: 1,
         width: "100%",
         zIndex: 9999999,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
       }}
       useNativeDriver
-      modalHeight={props.viewPostModal === true ? 170 : 150}
+      modalHeight={170}
       handlePosition="inside"
       panGestureComponentProps={{ enabled: true }}
       onClosed={() => {
         props.setOptionSheet(false);
+        props.setViewPostModal(false);
       }}
       // visible={props.modalVisible}
       // onBackButtonPress={props.onCloseModal}
       // onBackdropPress={props.onCloseModal}
     >
-      <View>
+      <View
+        style={{
+          backgroundColor: "#FFFFFF",
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          paddingHorizontal: scale(15),
+        }}
+      >
         <Spacer height={5} />
 
         {/* <View style={styles.topLine}></View> */}

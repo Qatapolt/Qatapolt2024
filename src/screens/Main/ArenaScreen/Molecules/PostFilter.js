@@ -24,6 +24,7 @@ const PostFilter = ({
   onFilterTimeLine,
   setHeightModalVisible,
   type,
+  freeAgent,
 }) => {
   const [minAge, setMinAge] = useState(null);
   const [maxAge, setMaxAge] = useState(null);
@@ -31,7 +32,6 @@ const PostFilter = ({
   const [minHeight, setMinHeight] = useState(null);
   const [maxHeight, setMaxHeight] = useState(null);
   const [finalHeight, setFinalHeight] = useState(null);
-
   const [signupValues, setSignupValues] = useState({
     selectSport: "",
     accountType: "",
@@ -46,7 +46,7 @@ const PostFilter = ({
     skill1: "",
     skill2: "",
     skill3: "",
-    freeAgent: false,
+    freeAgent: freeAgent === false ? false : true,
   });
   const dispatch = useDispatch();
 
@@ -61,9 +61,15 @@ const PostFilter = ({
       editable: false,
       rigthIcon: icons.dropdown,
       onPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setCountryModalVisible(true);
       },
       onRightPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setCountryModalVisible(true);
       },
     },
@@ -77,9 +83,15 @@ const PostFilter = ({
       editable: false,
       rigthIcon: icons.dropdown,
       onPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setCityModalVisible(true);
       },
       onRightPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setCityModalVisible(true);
       },
     },
@@ -93,9 +105,15 @@ const PostFilter = ({
       editable: false,
       rigthIcon: icons.dropdown,
       onPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setModalVisible(true);
       },
       onRightPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setModalVisible(true);
       },
     },
@@ -109,9 +127,15 @@ const PostFilter = ({
       editable: false,
       rigthIcon: icons.dropdown,
       onPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setModalVisible(true);
       },
       onRightPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setModalVisible(true);
       },
     },
@@ -126,9 +150,15 @@ const PostFilter = ({
       editable: false,
       rigthIcon: icons.dropdown,
       onPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setModalVisible(true);
       },
       onRightPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setModalVisible(true);
       },
     },
@@ -142,9 +172,15 @@ const PostFilter = ({
       editable: false,
       rigthIcon: icons.dropdown,
       onPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setModalVisible(true);
       },
       onRightPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setModalVisible(true);
       },
     },
@@ -159,9 +195,15 @@ const PostFilter = ({
       editable: false,
       rigthIcon: icons.dropdown,
       onPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setModalVisible(true);
       },
       onRightPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setModalVisible(true);
       },
     },
@@ -175,9 +217,15 @@ const PostFilter = ({
       editable: false,
       rigthIcon: icons.dropdown,
       onPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setModalVisible(true);
       },
       onRightPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setModalVisible(true);
       },
     },
@@ -191,6 +239,9 @@ const PostFilter = ({
       editable: false,
       rigthIcon: icons.dropdown,
       onPress: () => {
+        setSignupValues({
+          ...signupValues,
+        });
         setModalVisible(true);
       },
       // onRightPress: () => {
@@ -198,6 +249,7 @@ const PostFilter = ({
       // },
     },
   ];
+
   const onResetValues = async () => {
     if (type === "FreeAgentPostScreen") {
       try {
@@ -244,6 +296,15 @@ const PostFilter = ({
       }
     }
   };
+  const onSelectFinalAge = (selectedItem, index) => {
+    setMaxAge(selectedItem);
+    const age = parseInt((minAge + selectedItem) / 2);
+    setFinalAge(age);
+    setSignupValues({
+      ...signupValues,
+      age: age,
+    });
+  };
   return (
     <View style={{ padding: 10 }}>
       <CustomTextInput
@@ -256,7 +317,7 @@ const PostFilter = ({
           shadowOffset: { width: 1, height: 1 },
         }}
         withLabel={"Account Type"}
-        value={signupValues.accountType}
+        value={signupValues?.accountType}
         editable={false}
         iconWidth={scale(11)}
         iconHeight={verticalScale(11)}
@@ -342,24 +403,7 @@ const PostFilter = ({
                   { length: 60 - minAge + 1 },
                   (_, i) => minAge + i
                 )}
-                onSelect={(selectedItem, index) => {
-                  setMaxAge(selectedItem);
-                  try {
-                    if (minAge !== undefined && selectedItem !== undefined) {
-                      const age = parseInt((minAge + selectedItem) / 2);
-
-                      setFinalAge(age);
-                      setSignupValues({
-                        ...signupValues,
-                        age: age,
-                      });
-
-                      console.log("selectedValue: " + selectedItem);
-                    }
-                  } catch (error) {
-                    console.log("error", error);
-                  }
-                }}
+                onSelect={onSelectFinalAge}
                 defaultButtonText={"Max Age"}
                 buttonTextAfterSelection={(selectedItem, index) => {
                   return selectedItem + "  years";
@@ -535,11 +579,17 @@ const PostFilter = ({
                 height={item.height}
                 onPress={() => {
                   if (item.id == 2) {
+                    setSignupValues({
+                      ...signupValues,
+                    });
                     setCountryModalVisible(true);
 
                     return;
                   }
                   if (item.id == 3) {
+                    setSignupValues({
+                      ...signupValues,
+                    });
                     setCityModalVisible(true);
 
                     return;

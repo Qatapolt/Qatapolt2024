@@ -25,7 +25,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import CustomText from "../../../components/CustomText";
 import { useDispatch, useSelector } from "react-redux";
 import CustomImage from "../../../components/CustomImage";
-import { getSpecificUser } from "../../services/UserServices";
+import { SaveUser, getSpecificUser } from "../../services/UserServices";
 import { useIsFocused } from "@react-navigation/native";
 import { TourGuideZoneByPosition, useTourGuideController } from "rn-tourguide";
 import AppTour from "../../../components/AppTour";
@@ -35,7 +35,7 @@ import SetBackgroundSheet from "./Molecules/SetBackgroundSheet";
 import SepratorLine from "../../../components/SepratorLine";
 import { InterFont } from "../../../utils/Fonts";
 import ProfileTabs from "../../../components/ProfileTabs";
-import { deletePost, getPosts } from "../../services/PostServices";
+import { deleteImage, deletePost, getPosts } from "../../services/PostServices";
 import Clipboard from "@react-native-clipboard/clipboard";
 import Toast from "react-native-root-toast";
 import ReportSheet from "../ArenaScreen/Molecules/ReportSheet";
@@ -51,7 +51,10 @@ import Loader from "../../../utils/Loader";
 import firestore from "@react-native-firebase/firestore";
 import { firebase } from "@react-native-firebase/firestore";
 import moment from "moment";
+import { authData } from "../../../redux/reducers/authReducer";
+
 const ProfileScreen = ({ navigation, route }) => {
+  const freeAgent = route?.params?.freeAgent;
   const CurrentUser = useSelector((state) => state.auth?.currentUser);
   const modalizeRef = useRef(null);
   const modalizeRefReport = useRef(null);
@@ -88,7 +91,9 @@ const ProfileScreen = ({ navigation, route }) => {
   const [imageIndex, setImageIndex] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
   const [optionSheet, setOptionSheet] = useState(false);
+
   useEffect(() => {
+    console.log("check=====>", viewPostModal, optionSheet);
     if (viewPostModal || optionSheet) {
       navigation.getParent()?.setOptions({
         tabBarStyle: { display: "none" },
@@ -111,6 +116,7 @@ const ProfileScreen = ({ navigation, route }) => {
       });
     }
   }, [navigation, viewPostModal, optionSheet]);
+
   const statsArray = [
     { id: 1, name: "Sport", value: CurrentUser?.selectSport },
     { id: 2, name: "Account Type", value: CurrentUser?.accountType },
@@ -125,11 +131,11 @@ const ProfileScreen = ({ navigation, route }) => {
       value: CurrentUser?.age ? CurrentUser?.age + " " + "years" : "",
     },
 
-    {
-      id: 9,
-      name: "Email",
-      value: CurrentUser?.email ? CurrentUser?.email : "____________",
-    },
+    // {
+    //   id: 9,
+    //   name: "Email",
+    //   value: CurrentUser?.email ? CurrentUser?.email : "____________",
+    // },
     { id: 10, name: "Height", value: CurrentUser.height },
     { id: 11, name: "Strong Hand", value: CurrentUser?.strongHand },
     { id: 12, name: "Strong Foot", value: CurrentUser?.strongFoot },
@@ -140,27 +146,43 @@ const ProfileScreen = ({ navigation, route }) => {
     // Change the key to force a fresh render when the number of columns changes
     setNumColumns(newNumColumns + 1);
   };
+  const fetchData = async () => {
+    modalizeRef?.current?.close();
+    modalizeRefReport?.current?.close();
 
+    await getUserAllData();
+    SetTabIndex(0);
+    setTimeout(() => {
+      checkAppTour();
+    }, 2000);
+
+    try {
+      fetchUserPosts();
+      fetchHighlights();
+      fetchSquad();
+    } catch (error) {
+      console.error("Error during focus effect:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useFocusEffect(
     React.useCallback(() => {
       const fetchData = async () => {
         modalizeRef?.current?.close();
         modalizeRefReport?.current?.close();
-        console.log("running focus profile", isLoading);
+
         setIsLoading(true);
-        await getUserAllData();
+        getUserAllData();
         SetTabIndex(0);
         setTimeout(() => {
           checkAppTour();
         }, 2000);
 
         try {
-          setTimeout(() => {
-            fetchUserPosts(),
-              fetchHighlights(),
-              fetchSquad(),
-              setIsLoading(false);
-          }, 500);
+          fetchUserPosts();
+          fetchHighlights();
+          fetchSquad();
         } catch (error) {
           console.error("Error during focus effect:", error);
         } finally {
@@ -177,16 +199,7 @@ const ProfileScreen = ({ navigation, route }) => {
         modalizeRef?.current?.close();
         modalizeRefReport?.current?.close();
       };
-    }, [
-      getUserAllData,
-      checkAppTour,
-      SetTabIndex,
-      fetchUserPosts,
-      fetchHighlights,
-      fetchSquad,
-      setUserEvent,
-      route?.params?.event,
-    ])
+    }, [route?.params?.event])
   );
 
   const getAllPost = () => {
@@ -215,8 +228,6 @@ const ProfileScreen = ({ navigation, route }) => {
 
         // Sort squadData based on the number of followers each user has
         squadData.sort((a, b) => (b.followers || 0) - (a.followers || 0));
-
-        console.log("squadData", squadData);
       }
 
       setSquadData(squadData);
@@ -295,26 +306,32 @@ const ProfileScreen = ({ navigation, route }) => {
       {
         text: "Yes",
         onPress: async () => {
-          if (selectPost.uriData.uri) {
-            deleteImage(selectPost?.uriData?.uri);
+          try {
+            onClose();
+
+            if (selectPost.uriData.uri) {
+              deleteImage(selectPost?.uriData?.uri);
+            }
+            deletePost(selectPost?.postId);
+            let filterDeletePost = CurrentUser?.PostIds.filter(
+              (data) => data.postId != selectPost?.postId
+            );
+            await SaveUser(CurrentUser.uid, {
+              PostIds: filterDeletePost,
+            });
+            const data = await getSpecificUser(CurrentUser?.uid);
+            dispatch(authData(data));
+            fetchData();
+            Toast.show("Post deleted successfully!");
+          } catch (error) {
+            console.error(error);
           }
-          deletePost(selectPost?.postId);
-          let filterDeletePost = CurrentUser?.PostIds.filter(
-            (data) => data.postId != selectPost?.postId
-          );
-          await SaveUser(CurrentUser.uid, {
-            PostIds: filterDeletePost,
-          });
-          const data = await getSpecificUser(CurrentUser?.uid);
-          dispatch(CurrentUser(data));
-          onCloseModal();
-          setRepost(true);
         },
       },
       {
         text: "No",
         onPress: () => {
-          onCloseModal();
+          onClose();
         },
       },
     ]);
@@ -408,38 +425,40 @@ const ProfileScreen = ({ navigation, route }) => {
   const renderStats = ({ item }) => {
     return (
       <>
-        <View
-          style={{
-            marginVertical: verticalScale(15),
-            width: "100%",
-            flexDirection: "row",
-            marginHorizontal: 30,
-          }}
-        >
-          <View style={{ width: "30%" }}>
-            <CustomText
-              label={`${item.name}:`}
-              fontSize={11}
-              marginLeft={5}
-              textAlign="center"
-              color={colors.inputGray}
-              fontFamily={InterFont.semiBold}
-            />
-          </View>
-          <View style={{ width: "70%" }}>
-            <CustomText
-              label={item.value}
-              fontSize={11}
-              alignSelf="center"
-              marginLeft={5}
-              textAlign="center"
-              color={colors.black}
-              fontFamily={InterFont.semiBold}
-            />
-          </View>
+        {item.value !== "" && (
+          <View
+            style={{
+              marginVertical: verticalScale(15),
+              width: "100%",
+              flexDirection: "row",
+              marginHorizontal: 30,
+            }}
+          >
+            <View style={{ width: "30%" }}>
+              <CustomText
+                label={`${item.name}:`}
+                fontSize={11}
+                marginLeft={5}
+                textAlign="center"
+                color={colors.inputGray}
+                fontFamily={InterFont.semiBold}
+              />
+            </View>
+            <View style={{ width: "70%" }}>
+              <CustomText
+                label={item.value}
+                fontSize={11}
+                alignSelf="center"
+                marginLeft={5}
+                textAlign="center"
+                color={colors.black}
+                fontFamily={InterFont.semiBold}
+              />
+            </View>
 
-          <Spacer height={10} />
-        </View>
+            <Spacer height={10} />
+          </View>
+        )}
       </>
     );
   };
@@ -448,7 +467,15 @@ const ProfileScreen = ({ navigation, route }) => {
       <>
         <View>
           <ImageBackground
-            style={{ width: "100%", height: 250 }}
+            style={{
+              width: "100%",
+              height: 250,
+              shadowColor: "black",
+              shadowOffset: { width: 0, height: 2 },
+              shadowOpacity: 0.5,
+              shadowRadius: 4,
+              elevation: 5,
+            }}
             resizeMode={"cover"}
             source={
               userData?.profileBackground
@@ -586,23 +613,6 @@ const ProfileScreen = ({ navigation, route }) => {
       </>
     );
   };
-  const emptyListComponent = () => {
-    return (
-      <>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <CustomText
-            label={isLoading ? "Fetching Posts" : "no Recods Found"}
-            fontSize={12}
-            textAlign="center"
-            color={colors.black}
-            fontFamily={InterFont.semiBold}
-          />
-        </View>
-      </>
-    );
-  };
 
   const onNavigate = (item) => {
     if (userData?.BlockUsers?.includes(item?.uid)) {
@@ -669,7 +679,7 @@ const ProfileScreen = ({ navigation, route }) => {
           width: "100%",
         }}
       >
-        <Loader file={loaderAnimation} />
+        <SimpleLoader file={loaderAnimation} />
       </View>
     );
   };
@@ -677,11 +687,18 @@ const ProfileScreen = ({ navigation, route }) => {
     modalizeRef.current?.open();
     setOptionSheet(true);
   };
+  const onClose = () => {
+    modalizeRef?.current?.close();
+    setOptionSheet(true);
+  };
   const onOpenReport = () => {
-    modalizeRefReport.current?.open();
+    modalizeRefReport?.current?.open();
+    setOptionSheet(true);
   };
   return (
     <>
+      {/* {getHeader()} */}
+
       {tabIndex === 0 ? (
         <>
           <View
@@ -699,7 +716,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 keyExtractor={(item, index) => item?.postId?.toString()}
                 renderItem={RenderPostData}
                 nestedScrollEnabled
-                ListHeaderComponent={getHeader}
+                ListHeaderComponent={commentaryData.length > 0 && getHeader}
                 // ListEmptyComponent={emptyListComponent}
                 // refreshControl={
                 //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -726,7 +743,7 @@ const ProfileScreen = ({ navigation, route }) => {
                 key={`${numColumns}`} // Change the key when the number of columns changes
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderHightLightData}
-                ListHeaderComponent={getHeader}
+                ListHeaderComponent={hightLightData.length > 0 && getHeader}
                 // ListEmptyComponent={emptyListComponent}
                 // refreshControl={
                 //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -772,7 +789,6 @@ const ProfileScreen = ({ navigation, route }) => {
         image={imageObject}
         setModalVisible={setImageViewModal}
       />
-
       <SetBackgroundSheet
         modalVisible={isbackgroundSheet}
         isLoading={isLoading}
@@ -780,21 +796,21 @@ const ProfileScreen = ({ navigation, route }) => {
         navigation={navigation}
         onCloseModal={() => setIsbackgroundSheet(false)}
       />
-
       <ViewPost
-        onOpen={onOpen}
         viewPostModal={viewPostModal}
         postIndex={postIndex}
         postObject={postObject}
         setViewPostModal={setViewPostModal}
         setSelectPost={setSelectPost}
+        setShowPostPotions={setShowPostPotions}
         ikePost={likePost}
         setLikePost={setLikePost}
         navigation={navigation}
         setShowPost={setShowPost}
         showPost={showPost}
         showPostPotions={showPostPotions}
-        setShowPostPotions={setShowPostPotions}
+        onOpen={onOpen}
+        setOptionSheet={setOptionSheet}
       />
       <PostOptionsSheet
         modalVisible={showPostPotions}
@@ -807,7 +823,9 @@ const ProfileScreen = ({ navigation, route }) => {
         onCopyLink={onCopyPostLink}
         navigation={navigation}
         modalizeRef={modalizeRef}
+        viewPostModal={viewPostModal}
         setOptionSheet={setOptionSheet}
+        setViewPostModal={setViewPostModal}
       />
       <ReportSheet
         modalVisible={showReportPotions}
@@ -819,7 +837,12 @@ const ProfileScreen = ({ navigation, route }) => {
         onDelPost={delPost}
         navigation={navigation}
         setRepost={setRepost}
+        postData={postData}
+        setPostData={setPostData}
+        freeAgent={freeAgent}
         modalizeRefReport={modalizeRefReport}
+        setOptionSheet={setOptionSheet}
+        setViewPostModal={setViewPostModal}
       />
       <MediaView
         setViewMedia={setViewMedia}

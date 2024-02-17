@@ -93,7 +93,7 @@ const ArenaScreen = ({ navigation, route }) => {
   const focused = useIsFocused();
   const CurrentUser = useSelector((state) => state.auth?.currentUser);
   const notiAlert = useSelector((state) => state.auth?.notificationAlert);
-  const postOptionRef = useRef();
+  const postOptionRef = useRef(null);
   // console.log('AlettNoti', notiAlert);
 
   const freeAgent = route?.params?.freeAgent;
@@ -132,6 +132,7 @@ const ArenaScreen = ({ navigation, route }) => {
   const [selectionType, setSelectionType] = useState("");
   const [allUsersData, setAllUsersData] = useState([]);
   const [optionSheet, setOptionSheet] = useState(false);
+  const [showAllPost, setAllShowPosts] = useState(false);
 
   useEffect(() => {
     if (viewPostModal || optionSheet) {
@@ -156,6 +157,7 @@ const ArenaScreen = ({ navigation, route }) => {
       });
     }
   }, [navigation, viewPostModal, optionSheet]);
+
   useEffect(() => {
     if (cityModalVisible === true) {
       setSelectionType("cities");
@@ -182,7 +184,7 @@ const ArenaScreen = ({ navigation, route }) => {
     skill1: "",
     skill2: "",
     skill3: "",
-    freeAgent: false,
+    freeAgent: freeAgent === false ? false : true,
   });
 
   const dataKey = positionSkillValidate(signupId, signupValues);
@@ -258,19 +260,7 @@ const ArenaScreen = ({ navigation, route }) => {
       getAllPost();
     }
   }, [repost]);
-  useEffect(() => {
-    if (
-      freeAgent === undefined ||
-      (freeAgent === true && showFilter === true)
-    ) {
-      if (signupValues?.freeAgent === false) {
-        setSignupValues({
-          ...signupValues,
-          freeAgent: true,
-        });
-      }
-    }
-  }, [freeAgent, showFilter]);
+
   async function requestPermission() {
     try {
       if (Platform.OS === "android") {
@@ -401,8 +391,6 @@ const ArenaScreen = ({ navigation, route }) => {
   };
 
   const onFilterTimeLine = async (values, type) => {
-    console.log("type===>", type);
-
     // if (
     //   (type === "FreeAgentPostScreen" && values !== null) ||
     //   values !== undefined
@@ -481,12 +469,38 @@ const ArenaScreen = ({ navigation, route }) => {
   };
 
   const getFollowingPostData = async () => {
-    setLoading(true);
-    getWatchListPosts(setPostData, CurrentUser.AllFollowing);
+    const postData = [];
+    if (
+      Array.isArray(CurrentUser.AllFollowing) &&
+      CurrentUser.AllFollowing.length > 0
+    ) {
+      setLoading(true);
+      // getWatchListPosts(setPostData, CurrentUser.AllFollowing);
 
-    setTimeout(() => {
-      setLoading(false);
-    }, 1000);
+      try {
+        firestore()
+          .collection("Posts")
+          .orderBy("createAt", "desc")
+          .get()
+          .then((datingSnapshot) => {
+            datingSnapshot.forEach((da) => {
+              CurrentUser.AllFollowing.forEach((id) => {
+                if (id == da.data().userId) {
+                  postData.push(da.data());
+                }
+              });
+            });
+
+            setPostData(postData);
+            setLoading(false);
+          });
+      } catch (error) {
+        setLoading(false);
+        throw error;
+      }
+    }
+
+    setPostData([]);
   };
   const getWatchListPostData = async () => {
     setLoading(true);
@@ -580,6 +594,17 @@ const ArenaScreen = ({ navigation, route }) => {
   };
 
   const onSetValue = (item, data) => {
+    console.log(
+      "onSaveValueee====>",
+      "signupId type:",
+      typeof signupId,
+      "signupId value:",
+      signupId,
+      "item:",
+      item,
+      "data:",
+      data
+    );
     if (signupId == "Account Type") {
       setSignupValues({ ...signupValues, accountType: item });
       setModalVisible(false);
@@ -658,18 +683,16 @@ const ArenaScreen = ({ navigation, route }) => {
           });
           const data = await getSpecificUser(CurrentUser.uid);
           dispatch(authData(data));
-          onCloseModal();
-          setIsLoading(true);
+          modalizeRef?.current?.close();
+          setIsLoading(false);
           setRepost(true);
+          Toast.show("Post deleted successfully!");
         },
-
-        // getMedia();
       },
       {
         text: "No",
         onPress: () => {
-          onCloseModal();
-          // getMedia();
+          modalizeRef?.current?.close();
         },
       },
     ]);
@@ -842,6 +865,7 @@ const ArenaScreen = ({ navigation, route }) => {
                   ? "FreeAgentPostScreen"
                   : "ArenaScreen"
               }
+              freeAgent={freeAgent}
             />
           )}
           <Divider />
@@ -856,6 +880,7 @@ const ArenaScreen = ({ navigation, route }) => {
   };
   const onOpenReport = () => {
     modalizeRefReport.current?.open();
+    setOptionSheet(true);
   };
 
   return (
@@ -869,41 +894,31 @@ const ArenaScreen = ({ navigation, route }) => {
         {loading ? (
           <ArenaLayout />
         ) : (
-          <View>
-            <FlatList
-              showsVerticalScrollIndicator={false}
-              data={postData}
-              contentContainerStyle={{
-                paddingBottom: verticalScale(80),
-              }}
-              keyExtractor={(item, index) => item?.postId?.toString()}
-              renderItem={RenderPostData}
-              refreshControl={
-                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-              }
-              extraData={postData}
-              ListHeaderComponent={getHeader}
-            />
-          </View>
+          <>
+            <View>
+              <FlatList
+                showsVerticalScrollIndicator={false}
+                data={postData}
+                contentContainerStyle={{
+                  paddingBottom: verticalScale(80),
+                }}
+                keyExtractor={(item, index) => item?.postId?.toString()}
+                renderItem={RenderPostData}
+                refreshControl={
+                  <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                  />
+                }
+                extraData={postData}
+                ListHeaderComponent={getHeader}
+              />
+            </View>
+          </>
         )}
         {/* </ScrollView> */}
       </View>
 
-      <ViewPost
-        viewPostModal={viewPostModal}
-        postIndex={postIndex}
-        postObject={postObject}
-        setViewPostModal={setViewPostModal}
-        setSelectPost={setSelectPost}
-        setShowPostPotions={setShowPostPotions}
-        ikePost={likePost}
-        setLikePost={setLikePost}
-        navigation={navigation}
-        setShowPost={setShowPost}
-        showPost={showPost}
-        showPostPotions={showPostPotions}
-        onOpen={onOpen}
-      />
       <AppFounderModal
         modalVisible={appFounderModal}
         handelModal={onHandelModal}
@@ -947,6 +962,22 @@ const ArenaScreen = ({ navigation, route }) => {
         setValue={setHeightValue}
         onCloseModal={() => setHeightModalVisible(false)}
       />
+      <ViewPost
+        viewPostModal={viewPostModal}
+        postIndex={postIndex}
+        postObject={postObject}
+        setViewPostModal={setViewPostModal}
+        setSelectPost={setSelectPost}
+        setShowPostPotions={setShowPostPotions}
+        ikePost={likePost}
+        setLikePost={setLikePost}
+        navigation={navigation}
+        setShowPost={setShowPost}
+        showPost={showPost}
+        showPostPotions={showPostPotions}
+        onOpen={onOpen}
+        setOptionSheet={setOptionSheet}
+      />
       <PostOptionsSheet
         modalVisible={showPostPotions}
         onCloseModal={onCloseModal}
@@ -960,6 +991,7 @@ const ArenaScreen = ({ navigation, route }) => {
         modalizeRef={modalizeRef}
         viewPostModal={viewPostModal}
         setOptionSheet={setOptionSheet}
+        setViewPostModal={setViewPostModal}
       />
       <ReportSheet
         modalVisible={showReportPotions}
@@ -975,6 +1007,8 @@ const ArenaScreen = ({ navigation, route }) => {
         setPostData={setPostData}
         freeAgent={freeAgent}
         modalizeRefReport={modalizeRefReport}
+        setOptionSheet={setOptionSheet}
+        setViewPostModal={setViewPostModal}
       />
       <WelcomeModal
         toggleModal={WelcomeToggleModal}

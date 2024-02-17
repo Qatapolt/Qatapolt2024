@@ -6,6 +6,7 @@ import {
   Platform,
   Animated,
   Image,
+  SafeAreaView,
 } from "react-native";
 import React, { useRef, useState, useEffect } from "react";
 import { colors } from "../../../../utils/Colors";
@@ -90,10 +91,27 @@ const ViewPost = (props) => {
   } else {
     dateFormat = "not";
   }
+  function truncateText(text, maxWords) {
+    const words = text.split(" ");
 
+    if (words.length > maxWords) {
+      const truncatedText = words.slice(0, maxWords).join(" ") + "......";
+
+      return truncatedText;
+    } else {
+      return text;
+    }
+  }
   return (
     props.viewPostModal === true && (
-      <View style={{ height: "100%", width: "100%", overflow: "hidden" }}>
+      <View
+        style={{
+          height: "100%",
+          width: "100%",
+          overflow: "hidden",
+          backgroundColor: "transparent",
+        }}
+      >
         <TouchableOpacity
           activeOpacity={1}
           onPress={() => {
@@ -112,7 +130,10 @@ const ViewPost = (props) => {
               LeftSide={() => (
                 <Animated.View style={{ opacity: fadeAnim }}>
                   <TouchableOpacity
-                    onPress={() => props.setViewPostModal(false)}
+                    onPress={() => {
+                      props.setViewPostModal(false),
+                        props.setOptionSheet(false);
+                    }}
                   >
                     <Ionicons
                       name="chevron-back"
@@ -145,7 +166,7 @@ const ViewPost = (props) => {
               )}
             />
           </PH10>
-          <Spacer height={30} />
+          <Spacer height={10} />
           <View style={{ alignSelf: "center", height: "65%", width: "100%" }}>
             <>
               {!props?.postObject?.uriData?.type?.includes("image") ? (
@@ -176,6 +197,7 @@ const ViewPost = (props) => {
                   <FastImage
                     style={commonStyles.img}
                     source={{ uri: props?.postObject.uriData?.uri }}
+                    resizeMode={FastImage.resizeMode.cover}
                   />
                 </>
               )}
@@ -241,26 +263,28 @@ const ViewPost = (props) => {
                   </View>
                 </View>
               </View>
-              <Spacer height={8} />
+              <Spacer height={10} />
 
               <CustomText
-                numberOfLines={4}
-                label={props?.postObject?.description}
+                numberOfLines={2}
+                label={truncateText(props?.postObject?.description, 30)}
                 fontSize={14}
                 fontFamily={InterFont.medium}
                 color={colors.white}
               />
             </View>
-            <PH10>
-              <PostBottomItem postData={props?.postObject} />
-              {/* <PostItemBottom
+            <View style={{ top: 10 }}>
+              <PH10>
+                <PostBottomItem postData={props?.postObject} />
+                {/* <PostItemBottom
                 postData={props?.postObject}
                 allColor
                 likePost={props.likePost}
                 setLikePost={props.setLikePost}
                 navigation={props.navigation}
               /> */}
-            </PH10>
+              </PH10>
+            </View>
           </Animated.View>
         </TouchableOpacity>
       </View>

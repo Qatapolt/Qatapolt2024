@@ -1,65 +1,81 @@
-import {StyleSheet, Text, View, TouchableOpacity} from 'react-native';
-import React, {useState} from 'react';
-import CustomText from '../../../../components/CustomText';
-import {colors} from '../../../../utils/Colors';
-import {InterFont} from '../../../../utils/Fonts';
-import {moderateScale, scale, verticalScale} from 'react-native-size-matters';
-import {BottomSheet} from 'react-native-btr';
-import {Spacer} from '../../../../components/Spacer';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import AntDesign from 'react-native-vector-icons/AntDesign';
-import {useDispatch, useSelector} from 'react-redux';
-import {setReportUserId} from '../../../../redux/reducers/ReportUserReducer';
-import FastImage from 'react-native-fast-image';
-import {icons} from '../../../../assets/icons';
-import ImagePicker from 'react-native-image-crop-picker';
-import {deleteImage} from '../../../services/PostServices';
-import {uploadImage} from '../../../services/StorageServics';
-import {SaveUser, getSpecificUser} from '../../../services/UserServices';
-import {authData} from '../../../../redux/reducers/authReducer';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Toast from 'react-native-root-toast';
-const SetBackgroundSheet = props => {
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import CustomText from "../../../../components/CustomText";
+import { colors } from "../../../../utils/Colors";
+import { InterFont } from "../../../../utils/Fonts";
+import { moderateScale, scale, verticalScale } from "react-native-size-matters";
+import { BottomSheet } from "react-native-btr";
+import { Spacer } from "../../../../components/Spacer";
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import AntDesign from "react-native-vector-icons/AntDesign";
+import { useDispatch, useSelector } from "react-redux";
+import { setReportUserId } from "../../../../redux/reducers/ReportUserReducer";
+import FastImage from "react-native-fast-image";
+import { icons } from "../../../../assets/icons";
+import ImagePicker from "react-native-image-crop-picker";
+import { deleteImage } from "../../../services/PostServices";
+import { uploadImage } from "../../../services/StorageServics";
+import { SaveUser, getSpecificUser } from "../../../services/UserServices";
+import { authData } from "../../../../redux/reducers/authReducer";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import Toast from "react-native-root-toast";
+import { images } from "../../../../assets/images";
+const SetBackgroundSheet = (props) => {
   const dispatch = useDispatch();
-
-  const CurrentUser = useSelector(state => state.auth?.currentUser);
+  const [backImageType, setBackImagetype] = useState("");
+  const CurrentUser = useSelector((state) => state.auth?.currentUser);
   const onPickImage = async () => {
-    try {
-      const result = await ImagePicker.openPicker({
-        width: 300,
-        height: 400,
-        cropping: true,
-        mediaType: 'photo',
-        multiple: false,
-      });
+    if (backImageType === "new") {
+      try {
+        const result = await ImagePicker.openPicker({
+          width: 300,
+          height: 400,
+          cropping: true,
+          mediaType: "photo",
+          multiple: false,
+        });
 
-      if (!result.cancelled) {
-        props.onCloseModal();
-        const file = {
-          uri: result.path,
-          fileName: result.path,
-          type: result.mime,
-          // duration: res.assets[0]?.duration,
-        };
-        props.setIsLoading(true);
-        if (CurrentUser?.profileBackground) {
-          const response = deleteImage(props?.authUser?.profileBackground);
-          // console.log('resImage', response);
+        if (!result.cancelled) {
+          props.onCloseModal();
+          const file = {
+            uri: result.path,
+            fileName: result.path,
+            type: result.mime,
+            // duration: res.assets[0]?.duration,
+          };
+
+          if (CurrentUser?.profileBackground) {
+            const response = deleteImage(props?.authUser?.profileBackground);
+            // console.log('resImage', response);
+          }
+
+          const linkData = await uploadImage(file.uri, CurrentUser?.uid);
+
+          await SaveUser(CurrentUser?.uid, { profileBackground: linkData });
+
+          const userRes = await getSpecificUser(CurrentUser?.uid);
+
+          dispatch(authData(userRes));
+          Toast.show("Profile Background updated");
         }
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      try {
+        props.onCloseModal();
+        const linkData = await uploadImage(images.background, CurrentUser?.uid);
 
-        const linkData = await uploadImage(file.uri, CurrentUser?.uid);
-
-        await SaveUser(CurrentUser?.uid, {profileBackground: linkData});
+        await SaveUser(CurrentUser?.uid, { profileBackground: linkData });
 
         const userRes = await getSpecificUser(CurrentUser?.uid);
 
         dispatch(authData(userRes));
-        Toast.show('Profile Background updated');
-        props.setIsLoading(false);
+        Toast.show("Profile Background updated");
+      } catch (error) {
+        console.log(error);
       }
-    } catch (error) {
-      console.log(error);
     }
   };
 
@@ -67,34 +83,38 @@ const SetBackgroundSheet = props => {
     <BottomSheet
       visible={props.modalVisible}
       onBackButtonPress={props.onCloseModal}
-      onBackdropPress={props.onCloseModal}>
+      onBackdropPress={props.onCloseModal}
+    >
       <View
-        flexDirection={'column'}
-        backgroundColor={'white'}
+        flexDirection={"column"}
+        backgroundColor={"white"}
         alignSelf="center"
         paddingHorizontal={scale(15)}
-        height={'20%'}
-        width={'100%'}
+        height={"28%"}
+        width={"100%"}
         borderTopLeftRadius={scale(15)}
         borderTopRightRadius={scale(15)}
-        overflow="hidden">
+        overflow="hidden"
+      >
         <Spacer height={5} />
 
         <View style={styles.topLine}></View>
         <Spacer height={10} />
         <View
           style={{
-            backgroundColor: 'row',
-            flexDirection: 'row',
-            width: '100%',
+            backgroundColor: "row",
+            flexDirection: "row",
+            width: "100%",
             marginHorizontal: 10,
-            justifyContent: 'space-between',
-          }}>
+            justifyContent: "space-between",
+          }}
+        >
           <View
             style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <CustomText
               label="Change Profile Background"
               marginLeft={7}
@@ -106,9 +126,10 @@ const SetBackgroundSheet = props => {
               props.onCloseModal();
             }}
             style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <Ionicons
               name="close-outline"
               color={colors.black}
@@ -118,7 +139,13 @@ const SetBackgroundSheet = props => {
         </View>
 
         <Spacer height={10} />
-        <TouchableOpacity onPress={() => onPickImage()} style={styles.box}>
+        <TouchableOpacity
+          onPress={() => {
+            setBackImagetype("new");
+            onPickImage();
+          }}
+          style={styles.box}
+        >
           <View style={styles.innerView}>
             <FastImage
               resizeMode={FastImage.resizeMode.contain}
@@ -130,7 +157,35 @@ const SetBackgroundSheet = props => {
               }}
             />
             <CustomText
-              label={'Change Profile Background'}
+              label={"Change Profile Background"}
+              fontSize={13}
+              marginLeft={15}
+              textAlign="center"
+              fontFamily={InterFont.semiBold}
+              color={colors.black}
+            />
+          </View>
+        </TouchableOpacity>
+        <Spacer height={20} />
+        <TouchableOpacity
+          onPress={() => {
+            setBackImagetype("default");
+            onPickImage();
+          }}
+          style={styles.box}
+        >
+          <View style={styles.innerView}>
+            <FastImage
+              resizeMode={FastImage.resizeMode.contain}
+              source={icons.background}
+              style={{
+                width: scale(25),
+                height: scale(24),
+                tintColor: colors.green,
+              }}
+            />
+            <CustomText
+              label={"Put Back Default Image"}
               fontSize={13}
               marginLeft={15}
               textAlign="center"
@@ -180,44 +235,44 @@ const styles = StyleSheet.create({
   topLine: {
     width: scale(80),
     height: 5,
-    backgroundColor: '#dee2e6',
-    alignSelf: 'center',
+    backgroundColor: "#dee2e6",
+    alignSelf: "center",
     borderRadius: 10,
   },
   optionContainer: {
-    width: '100%',
+    width: "100%",
     padding: scale(10),
     // borderBottomWidth:0.5,
     // borderColor:"#dee2e6",
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   box: {
-    width: '100%',
+    width: "100%",
     height: verticalScale(38),
-    backgroundColor: '#F5F9F8',
+    backgroundColor: "#F5F9F8",
     borderRadius: scale(12),
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: scale(10),
-    justifyContent: 'space-between',
-    shadowColor: Platform.OS == 'ios' ? '#343a40' : colors.black,
+    justifyContent: "space-between",
+    shadowColor: Platform.OS == "ios" ? "#343a40" : colors.black,
     shadowRadius: 2,
     elevation: 5,
     shadowOpacity: 0.2,
-    shadowOffset: {width: -1, height: 2},
+    shadowOffset: { width: -1, height: 2 },
   },
   innerView: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   popupContainer: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'transparent',
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "transparent",
     zIndex: 9999,
   },
 });

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import {
   ActivityIndicator,
   Platform,
@@ -79,6 +79,9 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useFocusEffect } from "@react-navigation/native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 const SearchScreen = ({ navigation, route }) => {
+  const modalizeRef = useRef(null);
+  const modalizeRefReport = useRef(null);
+  const postOptionRef = useRef(null);
   const [likePost, setLikePost] = useState(false);
   const [showPost, setShowPost] = useState(false);
   const dispatch = useDispatch();
@@ -112,20 +115,45 @@ const SearchScreen = ({ navigation, route }) => {
   const [isLoading, setIsLoading] = useState(true);
   const { canStart, start, stop, eventEmitter } = useTourGuideController();
   const [search, setSearch] = useState(false);
-  const [query, setQuery] = useState("");
   const authState = useSelector((state) => state.auth.currentUser);
   const [searchData, setSearchData] = useState([]);
   const [isAppTour, setIsAppTour] = useState(false);
+  const [query, setQuery] = useState("");
   const [userAllData, setUserAllData] = useState([]);
-  const [filter, setFilter] = useState("");
-  const [filterIndex, setFilterIndex] = useState(0);
-  const [searchFocused, setSearchFocused] = useState(false);
   const [isclickOnProfile, setIsClickOnProfile] = useState(false);
   const [comments, setComments] = useState(0);
   const [commentCounts, setCommentCounts] = useState(0);
   const [newComment, setNewComment] = useState(false);
   const [repost, setRepost] = useState(false);
+  const [optionSheet, setOptionSheet] = useState(false);
 
+  const [filter, setFilter] = useState("");
+  const [filterIndex, setFilterIndex] = useState(0);
+  const [searchFocused, setSearchFocused] = useState(false);
+  useEffect(() => {
+    console.log("check=====>", viewPostModal, optionSheet);
+    if (viewPostModal || optionSheet) {
+      navigation.getParent()?.setOptions({
+        tabBarStyle: { display: "none" },
+        tabBarVisible: false,
+      });
+      return () =>
+        navigation
+          .getParent()
+          ?.setOptions({ tabBarStyle: undefined, tabBarVisible: undefined });
+    } else {
+      navigation.getParent()?.setOptions({
+        tabBarStyle: {
+          height: verticalScale(65),
+          paddingTop: 5,
+          backgroundColor: colors.white,
+          display: route.name === "NewPost" ? "none" : "flex",
+          paddingBottom: Platform.OS == "ios" ? 20 : 12,
+        },
+        tabBarVisible: true,
+      });
+    }
+  }, [navigation, viewPostModal, optionSheet]);
   const onSearchFilter = (txt) => {
     setLoading(true);
     setQuery(txt);
@@ -345,6 +373,8 @@ const SearchScreen = ({ navigation, route }) => {
     return (
       <View>
         <PostItem
+          onOpen={onOpen}
+          onOpenReport={onOpenReport}
           navigation={navigation}
           index={index}
           item={item}
@@ -357,8 +387,8 @@ const SearchScreen = ({ navigation, route }) => {
           setShowReportPotions={setShowReportPotions}
           setPostIndex={setPostIndex}
           showPost={showPost}
-          setViewPostModal={setViewPostModal}
           setShowPost={setShowPost}
+          setViewPostModal={setViewPostModal}
           heartPost={heartPost}
           setHeartPost={setHeartPost}
           likePost={likePost}
@@ -374,9 +404,23 @@ const SearchScreen = ({ navigation, route }) => {
           setNewComment={setNewComment}
           repost={repost}
           setRepost={setRepost}
+          internalShare={
+            item?.internalShare === internalShare
+              ? internalShare
+              : item?.internalShare
+          }
+          rePostIds={item?.rePostIds ? item.rePostIds : null}
         />
       </View>
     );
+  };
+  const onOpen = () => {
+    modalizeRef.current?.open();
+    setOptionSheet(true);
+  };
+  const onOpenReport = () => {
+    modalizeRefReport.current?.open();
+    setOptionSheet(true);
   };
   const RenderUser = ({ item, index }) => {
     return (
@@ -605,18 +649,7 @@ const SearchScreen = ({ navigation, route }) => {
           )}
         </View>
       </View>
-      <ViewPost
-        viewPostModal={viewPostModal}
-        postIndex={postIndex}
-        postObject={postObject}
-        // index={index}
-        setViewPostModal={setViewPostModal}
-        ikePost={likePost}
-        setLikePost={setLikePost}
-        navigation={navigation}
-        setShowPost={setShowPost}
-        showPost={showPost}
-      />
+
       <CustomBottomSheet
         modalVisible={modalVisible}
         value={signupId}
@@ -650,15 +683,36 @@ const SearchScreen = ({ navigation, route }) => {
         setValue={setHeightValue}
         onCloseModal={() => setHeightModalVisible(false)}
       />
+      <ViewPost
+        viewPostModal={viewPostModal}
+        postIndex={postIndex}
+        postObject={postObject}
+        setViewPostModal={setViewPostModal}
+        setSelectPost={setSelectPost}
+        setShowPostPotions={setShowPostPotions}
+        ikePost={likePost}
+        setLikePost={setLikePost}
+        navigation={navigation}
+        setShowPost={setShowPost}
+        showPost={showPost}
+        showPostPotions={showPostPotions}
+        onOpen={onOpen}
+        setOptionSheet={setOptionSheet}
+      />
       <PostOptionsSheet
         modalVisible={showPostPotions}
         onCloseModal={onCloseModal}
         selectPost={selectPost}
+        postOptionRef={postOptionRef}
         selectedId={selectPost?.userId}
         authData={CurrentUser}
         onDelPost={delPost}
         onCopyLink={onCopyPostLink}
         navigation={navigation}
+        modalizeRef={modalizeRef}
+        viewPostModal={viewPostModal}
+        setOptionSheet={setOptionSheet}
+        setViewPostModal={setViewPostModal}
       />
       <ReportSheet
         modalVisible={showReportPotions}
@@ -666,9 +720,16 @@ const SearchScreen = ({ navigation, route }) => {
         selectPost={selectPost}
         selectedId={selectPost?.userId}
         authUser={CurrentUser}
+        dispatch={dispatch}
         onDelPost={delPost}
         navigation={navigation}
         setRepost={setRepost}
+        postData={postData}
+        setPostData={setPostData}
+        freeAgent={freeAgent}
+        modalizeRefReport={modalizeRefReport}
+        setOptionSheet={setOptionSheet}
+        setViewPostModal={setViewPostModal}
       />
       <AppTour
         title="Advanced Search"

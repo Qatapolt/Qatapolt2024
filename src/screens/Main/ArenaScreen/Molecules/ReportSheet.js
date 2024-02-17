@@ -36,7 +36,6 @@ const ReportSheet = (props) => {
       Array.isArray(props?.selectPost?.rePostIds) &&
       props?.selectPost?.rePostIds.length > 0 &&
       props?.selectPost.rePostIds.includes(currentUser.uid);
-    console.log("checking", check);
     if (check === true) {
       unReport();
     } else {
@@ -106,29 +105,11 @@ const ReportSheet = (props) => {
 
           if (originalPostSnapshot.exists) {
             const originalPostData = originalPostSnapshot.data();
-
-            // Log initial values
-            console.log(
-              "Before update - rePostIds:",
-              originalPostData.rePostIds
-            );
-            console.log(
-              "Before update - rePostCount:",
-              originalPostData.rePostCount
-            );
-
-            // Update the array manually
             const newRePostIds = [
               ...originalPostData.rePostIds,
               currentUser.uid,
             ];
             const newRePostCount = originalPostData.rePostCount + 1;
-
-            // Log values before updating
-            console.log("newRePostIds:", newRePostIds);
-            console.log("newRePostCount:", newRePostCount);
-
-            // Update the original post data in Firestore
             await originalPostRef.update({
               rePostIds: newRePostIds,
               rePostCount: newRePostCount,
@@ -227,9 +208,13 @@ const ReportSheet = (props) => {
         width: "100%",
       }}
       useNativeDriver
-      modalHeight={150}
+      modalHeight={170}
       handlePosition="inside"
       panGestureComponentProps={{ enabled: true }}
+      onClosed={() => {
+        props.setOptionSheet(false);
+        props.setViewPostModal(false);
+      }}
     >
       <View
         style={{
@@ -237,6 +222,9 @@ const ReportSheet = (props) => {
           alignItems: "center",
           width: "100%",
           paddingHorizontal: scale(15),
+          backgroundColor: "#FFFFFF",
+          borderTopLeftRadius: 20,
+          borderTopRightRadius: 20,
         }}
         // flexDirection={"column"}
         // backgroundColor={"white"}

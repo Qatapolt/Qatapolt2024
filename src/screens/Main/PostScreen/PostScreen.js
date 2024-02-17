@@ -76,8 +76,11 @@ import CustomCamera from "../../../components/CustomCamera";
 import axios from "axios";
 import * as Animatable from "react-native-animatable";
 import FastImage from "react-native-fast-image";
+import CustomSearchLocation from "../../../components/CustomSearchLocation";
+
 const PostScreen = ({ navigation, route }) => {
   const height = Dimensions.get("screen").height;
+  const [modalVisible, setModalVisible] = useState(false);
   const viewref = useRef(null);
   const useTextInput = useRef();
   const currentUser = useSelector((state) => state.auth?.currentUser);
@@ -98,15 +101,14 @@ const PostScreen = ({ navigation, route }) => {
   const handleOpenActionSheet = () => {
     actionSheetRef.current?.show();
   };
-
   useFocusEffect(
     React.useCallback(() => {
       requestPermission();
-      if (route?.params?.selectedLocation === undefined) {
-        setTimeout(() => {
-          handleGetLocation();
-        }, 1000);
-      }
+
+      setTimeout(() => {
+        handleGetLocation();
+      }, 100);
+
       return async () => {
         setPostDescription("");
         setImageFile("");
@@ -130,12 +132,6 @@ const PostScreen = ({ navigation, route }) => {
     }
   }, [postDescription]);
 
-  useEffect(() => {
-    const selectedLocation = route?.params?.selectedLocation;
-    if (route?.params?.selectedLocation !== undefined) {
-      setLocationDetails(selectedLocation);
-    }
-  }, [route?.params]);
   async function requestPermission() {
     try {
       if (Platform.OS === "android") {
@@ -439,7 +435,8 @@ const PostScreen = ({ navigation, route }) => {
       const updatedDescription = postDescription.replace(mentionSymbol, "");
       setPostDescription(`${updatedDescription}${item.username}`);
       setMentionedUsers((prevUsers) => [...prevUsers, item.uid]);
-      console.log("===>", visibleFlatList);
+
+      setVisibleFlatList(false);
       try {
         viewref?.current
           ?.fadeOutUpBig()
@@ -599,6 +596,82 @@ const PostScreen = ({ navigation, route }) => {
     setPostDescription(text);
   };
 
+  // const renderHighlightedText = () => {
+  //   const components = [];
+  //   let currentText = "";
+  //   let lastIndex = 0;
+
+  //   for (let i = 0; i < postDescription.length; i++) {
+  //     if (postDescription[i] === "@") {
+  //       // If there is text before the '@', render it
+  //       if (currentText) {
+  //         components.push(
+  //           <Text
+  //             style={{
+  //               fontSize: verticalScale(12),
+  //               fontFamily: InterFont.regular,
+  //               color: colors.black,
+  //             }}
+  //             key={`text_${lastIndex}`}
+  //           >
+  //             {currentText}
+  //           </Text>
+  //         );
+  //         currentText = ""; // Reset currentText
+  //       }
+
+  //       // Check if the '@' is followed by a valid username
+  //       const usernameStart = i + 1;
+  //       while (
+  //         i + 1 < postDescription.length &&
+  //         postDescription[i + 1].match(/[a-zA-Z0-9_]/)
+  //       ) {
+  //         i++;
+  //       }
+
+  //       const username = postDescription.substring(usernameStart, i + 1);
+
+  //       // Render only if '@' is entered manually
+  //       if (usernameStart !== i + 1) {
+  //         components.push(
+  //           <TouchableOpacity
+  //             disabled={true}
+  //             key={`mention_${lastIndex}`}
+  //             onPress={() => handleUsernamePress(username)}
+  //           >
+  //             <Text style={styles.mention}>{`@${username}`}</Text>
+  //           </TouchableOpacity>
+  //         );
+  //       } else {
+  //         // If '@' is not entered manually, render as regular text
+  //         currentText += "@";
+  //       }
+
+  //       lastIndex = i + 1;
+  //     } else {
+  //       currentText += postDescription[i];
+  //     }
+  //   }
+
+  //   // If there is remaining text after the last '@', render it
+  //   if (currentText) {
+  //     components.push(
+  //       <Text
+  //         style={{
+  //           fontSize: verticalScale(12),
+  //           fontFamily: InterFont.regular,
+  //           color: colors.red,
+  //         }}
+  //         key={`text_${lastIndex}`}
+  //       >
+  //         {currentText}
+  //       </Text>
+  //     );
+  //   }
+
+  //   return components;
+  // };
+
   const renderHighlightedText = () => {
     const components = [];
     let currentText = "";
@@ -613,7 +686,7 @@ const PostScreen = ({ navigation, route }) => {
               style={{
                 fontSize: verticalScale(12),
                 fontFamily: InterFont.regular,
-                color: colors.inputGray,
+                color: colors.black,
               }}
               key={`text_${lastIndex}`}
             >
@@ -633,21 +706,25 @@ const PostScreen = ({ navigation, route }) => {
         }
 
         const username = postDescription.substring(usernameStart, i + 1);
-
-        // Render only if '@' is entered manually
-        if (usernameStart !== i + 1) {
-          components.push(
-            <TouchableOpacity
-              key={`mention_${lastIndex}`}
-              onPress={() => handleUsernamePress(username)}
-            >
-              <Text style={styles.mention}>{`@${username}`}</Text>
-            </TouchableOpacity>
-          );
-        } else {
-          // If '@' is not entered manually, render as regular text
-          currentText += "@";
-        }
+        console.log("username", username);
+        let finalUsername = `@${username}`;
+        // Check if the username exists in userData
+        const userExists = userData.some(
+          (user) => user.username === finalUsername
+        );
+        console.log("userExists", userExists);
+        // Render the '@' and username in green if it exists in userData
+        components.push(
+          <TouchableOpacity
+            disabled={true}
+            key={`mention_${lastIndex}`}
+            onPress={() => handleUsernamePress(username)}
+          >
+            <Text style={{ color: userExists ? colors.green : colors.black }}>
+              {`@${username}`}
+            </Text>
+          </TouchableOpacity>
+        );
 
         lastIndex = i + 1;
       } else {
@@ -662,7 +739,7 @@ const PostScreen = ({ navigation, route }) => {
           style={{
             fontSize: verticalScale(12),
             fontFamily: InterFont.regular,
-            color: colors.inputGray,
+            color: colors.black,
           }}
           key={`text_${lastIndex}`}
         >
@@ -673,10 +750,24 @@ const PostScreen = ({ navigation, route }) => {
 
     return components;
   };
+
   const handleUsernamePress = (username) => {
     // Implement your navigation logic here, e.g., navigate to the user's profile
     console.log(`Navigating to profile of ${username}`);
   };
+  const hideFlatList = () => {
+    try {
+      viewref?.current
+        ?.fadeOutUpBig()
+        .then(
+          () => console.log("visibleFlatList ===>", visibleFlatList),
+          setVisibleFlatList(false)
+        );
+    } catch (error) {
+      console.log("error ==>", error);
+    }
+  };
+  console.log("================================", imageFile.uri);
   return (
     <>
       <KeyboardAvoidingView
@@ -766,6 +857,9 @@ const PostScreen = ({ navigation, route }) => {
                     }}
                     placeholder={"Create Your Own Luck..."}
                     placeholderTextColor={colors.inputGray}
+                    onFocus={() => {
+                      hideFlatList();
+                    }}
                   />
                   <View style={styles.textContainer}>
                     {renderHighlightedText()}
@@ -846,29 +940,49 @@ const PostScreen = ({ navigation, route }) => {
                 ) : (
                   <View>
                     {postDescription.includes("@") ? (
-                      <Animatable.View
-                        animation={"fadeIn"}
-                        ref={viewref}
-                        duration={500}
-                        useNativeDriver
-                        value={100}
-                        style={{
-                          height: 400,
-                          // position: 'absolute',
-                          width: "100%",
-                          top: 0,
-                          zIndex: 9999999999999,
-                          elevation: 5,
-                          overflow: "hidden",
-                          backgroundColor: "rgba(0, 0, 0, 0.1)",
-                        }}
-                      >
-                        <FlatList
-                          data={userData}
-                          keyExtractor={(item) => item.uid.toString()}
-                          renderItem={renderSearchUser}
-                        />
-                      </Animatable.View>
+                      <>
+                        <Animatable.View
+                          animation={"fadeIn"}
+                          ref={viewref}
+                          duration={2000}
+                          useNativeDriver
+                          value={5000}
+                          style={{
+                            height: 400,
+                            // position: 'absolute',
+                            width: "100%",
+                            top: 0,
+                            zIndex: 9999999999999,
+                            elevation: 5,
+                            overflow: "hidden",
+                            backgroundColor: "transparent",
+                          }}
+                        >
+                          {visibleFlatList === true && (
+                            <View
+                              style={{
+                                justifyContent: "flex-end",
+                                alignSelf: "flex-end",
+                                margin: 5,
+                              }}
+                            >
+                              <TouchableOpacity onPress={hideFlatList}>
+                                <Ionicons
+                                  name="close-circle-outline"
+                                  color={colors.red}
+                                  size={moderateScale(30)}
+                                />
+                              </TouchableOpacity>
+                            </View>
+                          )}
+
+                          <FlatList
+                            data={userData}
+                            keyExtractor={(item) => item.uid.toString()}
+                            renderItem={renderSearchUser}
+                          />
+                        </Animatable.View>
+                      </>
                     ) : null}
                   </View>
                 )}
@@ -880,9 +994,13 @@ const PostScreen = ({ navigation, route }) => {
                 onOpenCamera();
               }}
               onPressLocation={() => {
-                navigation.navigate("SearchLocation");
+                setModalVisible(true);
                 // handleGetLocation();
               }}
+              // onPressLocation={() => {
+              //   navigation.navigate("SearchLocation");
+              //   // handleGetLocation();
+              // }}
               onPickGallery={onPostImagevideoSelect}
               navigation={navigation}
               setPostDescription={setPostDescription}
@@ -890,7 +1008,12 @@ const PostScreen = ({ navigation, route }) => {
               handleOpenGallery={onPostImagevideoSelect}
               handleOpenActionSheet={handleOpenActionSheet}
             />
-
+            <CustomSearchLocation
+              modalVisible={modalVisible}
+              navigation={navigation}
+              onCloseModal={() => setModalVisible(false)}
+              setLocationDetails={setLocationDetails}
+            />
             <ActionSheet
               ref={actionSheetRef}
               title={"Add Image"}
