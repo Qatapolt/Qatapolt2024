@@ -21,6 +21,7 @@ import { authData } from "../../../../redux/reducers/authReducer";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Toast from "react-native-root-toast";
 import { images } from "../../../../assets/images";
+import RNFS from "react-native-fs";
 const SetBackgroundSheet = (props) => {
   const dispatch = useDispatch();
   const [backImageType, setBackImagetype] = useState("");
@@ -65,8 +66,12 @@ const SetBackgroundSheet = (props) => {
     } else {
       try {
         props.onCloseModal();
-        const linkData = await uploadImage(images.background, CurrentUser?.uid);
+        console.log("images.background", images.background);
+        // const linkData = await uploadImage(images.background, CurrentUser?.uid);
+        const imagePath = `file://${RNFS.DocumentDirectoryPath}/${images.background}`;
 
+        // Now you can use the imagePath as the URI for uploading to Firebase
+        const linkData = await uploadImage(imagePath, CurrentUser?.uid);
         await SaveUser(CurrentUser?.uid, { profileBackground: linkData });
 
         const userRes = await getSpecificUser(CurrentUser?.uid);

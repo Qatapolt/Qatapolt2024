@@ -1,4 +1,11 @@
-import { StyleSheet, Text, View, TextInput, FlatList } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TextInput,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import { BottomSheet } from "react-native-btr";
 import { moderateScale, scale, verticalScale } from "react-native-size-matters";
@@ -41,21 +48,93 @@ const CustomBottomSheet = (props) => {
 
   const renderItemData = ({ item, index }) => {
     return (
-      <View key={index}>
+      <TouchableOpacity
+        onPress={() => {
+          console.log("pressed", props.signupValues);
+          if (
+            props.type.skill1 == item.value ||
+            props.type.skill2 == item.value ||
+            props.type.skill3 == item.value
+          ) {
+            return;
+          }
+          if (props.value == "Account Type") {
+            props.setSignupValues({
+              ...props.signupValues,
+              accountType: item.value,
+            });
+            props.onCloseModal();
+            return;
+          }
+          if (props.value == "Select Sport") {
+            props.setSignupValues({
+              ...props.signupValues,
+              selectSport: item.value,
+              sportEmoji: data.emoji,
+            });
+            props.onCloseModal();
+            return;
+          }
+          if (props.value == 5 || props.value == 10) {
+            props.setSignupValues({ ...props.signupValues, bio: item.value });
+            props.onCloseModal();
+            return;
+          }
+          if (props.value == "Select Position") {
+            props.setSignupValues({
+              ...props.signupValues,
+              position: item.value,
+            });
+            props.onCloseModal();
+            return;
+          }
+          if (props.value == "Skill #1") {
+            props.setSignupValues({
+              ...props.signupValues,
+              skill1: item.value,
+            });
+            props.onCloseModal();
+            return;
+          }
+          if (props.value == "Strong Hand") {
+            props.setSignupValues({
+              ...props.signupValues,
+              strongHand: item.value,
+            });
+            setModalVisible(false);
+            return;
+          }
+          if (props.value == "Strong Foot") {
+            props.setSignupValues({
+              ...props.signupValues,
+              strongFoot: item.value,
+            });
+            props.onCloseModal();
+            return;
+          }
+          if (props.value == "Skill #2") {
+            props.setSignupValues({
+              ...props.signupValues,
+              skill2: item.value,
+            });
+            props.onCloseModal();
+            return;
+          }
+          if (props.value == "Skill #3") {
+            props.setSignupValues({
+              ...props.signupValues,
+              skill3: item.value,
+            });
+            props.onCloseModal();
+            return;
+          }
+        }}
+        key={index}
+      >
         <Spacer height={10} />
 
         <CustomText
           fontWeight={"500"}
-          onPress={() => {
-            if (
-              props.type.skill1 == item.value ||
-              props.type.skill2 == item.value ||
-              props.type.skill3 == item.value
-            ) {
-              return;
-            }
-            props.onSetValue(item.value, item);
-          }}
           label={item.value}
           color={
             props.type.skill1 == item.value
@@ -68,7 +147,7 @@ const CustomBottomSheet = (props) => {
           }
         />
         <Spacer height={10} />
-      </View>
+      </TouchableOpacity>
     );
   };
 

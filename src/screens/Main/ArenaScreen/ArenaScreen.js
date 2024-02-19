@@ -186,7 +186,6 @@ const ArenaScreen = ({ navigation, route }) => {
     skill3: "",
     freeAgent: freeAgent === false ? false : true,
   });
-
   const dataKey = positionSkillValidate(signupId, signupValues);
   // console.log('ALlPostDataposition', dataKey);
 
@@ -244,7 +243,7 @@ const ArenaScreen = ({ navigation, route }) => {
       getAllPost();
       return;
     }
-    if (indexMain == 1) {
+    if (indexMain == 1 && freeAgent === false) {
       setPostData([]);
       getFollowingPostData();
       return;
@@ -252,6 +251,11 @@ const ArenaScreen = ({ navigation, route }) => {
     if (indexMain == 2) {
       setPostData([]);
       getWatchListPostData();
+      return;
+    }
+    if (indexMain == 3) {
+      setPostData([]);
+
       return;
     }
   }, [route?.params?.freeAgent, indexMain, isLoading, repost, newComment]);
@@ -475,7 +479,6 @@ const ArenaScreen = ({ navigation, route }) => {
       CurrentUser.AllFollowing.length > 0
     ) {
       setLoading(true);
-      // getWatchListPosts(setPostData, CurrentUser.AllFollowing);
 
       try {
         firestore()
@@ -499,16 +502,34 @@ const ArenaScreen = ({ navigation, route }) => {
         throw error;
       }
     }
-
-    setPostData([]);
   };
   const getWatchListPostData = async () => {
     setLoading(true);
-    getWatchListPosts(setPostData, CurrentUser.WatchList);
 
-    setTimeout(() => {
+    const postData = [];
+
+    try {
+      firestore()
+        .collection("Posts")
+        .orderBy("createAt", "desc")
+        .get()
+        .then((datingSnapshot) => {
+          datingSnapshot.forEach((da) => {
+            Array.isArray(CurrentUser.WatchList) &&
+              CurrentUser.WatchList.forEach((id) => {
+                if (id == da.data().userId) {
+                  postData.push(da.data());
+                }
+              });
+          });
+          console.log("getWatchListPostData", postData);
+          setPostData(postData);
+          setLoading(false);
+        });
+    } catch (error) {
       setLoading(false);
-    }, 1000);
+      throw error;
+    }
   };
 
   const getAllPost = () => {
@@ -916,7 +937,6 @@ const ArenaScreen = ({ navigation, route }) => {
             </View>
           </>
         )}
-        {/* </ScrollView> */}
       </View>
 
       <AppFounderModal
@@ -932,6 +952,8 @@ const ArenaScreen = ({ navigation, route }) => {
         modalVisible={modalVisible}
         value={signupId}
         type={signupValues}
+        signupValues={signupValues}
+        setSignupValues={setSignupValues}
         onSetValue={onSetValue}
         setValue={setValue}
         onCloseModal={() => setModalVisible(false)}

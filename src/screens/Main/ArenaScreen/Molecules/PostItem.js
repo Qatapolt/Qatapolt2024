@@ -41,6 +41,7 @@ import Toast from "react-native-root-toast";
 import UserNameLayout from "../../../../utils/Layouts/UserNameLayout";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 const PostItem = (props) => {
+  const [userData, setUserData] = useState([]);
   const currentUser = useSelector((state) => state?.auth?.currentUser);
   const videoRef = useRef(null);
   const [isPaused, setPaused] = useState(true);
@@ -71,6 +72,9 @@ const PostItem = (props) => {
     return defaultImageSource;
   });
   const [postComments, setPostComments] = useState(props.comments);
+  useEffect(() => {
+    getAllUSers(setUserData, currentUser.uid);
+  }, [props]);
   useEffect(() => {
     console.log("running ===>", newCommentAdd, postID);
     if (newCommentAdd === true && postID !== "") {
@@ -240,52 +244,99 @@ const PostItem = (props) => {
     });
   };
 
+  // const renderPostDescription = () => {
+  //   let mentiondUser;
+  //   const mentionedUsers = props?.item?.mentionedUsers || [];
+  //   const mentionRegex = /@(\w+)/g;
+  //   const parts = (props?.item?.description ?? "").split(mentionRegex);
+
+  //   const processedParts = parts.map((part, index) => {
+  //     if (index % 2 === 1) {
+  //       const username = part.trim();
+  //       for (let i = 0; i < mentionedUsers.length; i++) {
+  //         const mentiondUserID = mentionedUsers[i];
+  //         if (mentiondUserID !== undefined) {
+  //           mentiondUser = userAllData.find((user) => {
+  //             return user?.uid === mentiondUserID;
+  //           });
+  //         }
+  //       }
+
+  //       return (
+  //         <TouchableOpacity
+  //           // onLongPress={() => {
+  //           //   let userNameWith = `@${username}`;
+  //           //   copyToClipboard(userNameWith);
+  //           // }}
+  //           key={index}
+  //           onPress={() => handleUsernamePress(mentiondUser)}
+  //         >
+  //           <Text
+  //             selectable={true}
+  //             style={{
+  //               color: colors.green,
+  //             }}
+  //           >
+  //             @{username}
+  //           </Text>
+  //         </TouchableOpacity>
+  //       );
+  //     } else {
+  //       return (
+  //         <Text selectable={true} style={{ color: colors.black }} key={index}>
+  //           {part}
+  //         </Text>
+  //       );
+  //     }
+  //   });
+
+  //   return (
+  //     <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
+  //       {processedParts}
+  //     </View>
+  //   );
+  // };
   const renderPostDescription = () => {
-    let mentiondUser;
     const mentionedUsers = props?.item?.mentionedUsers || [];
+    let mentiondUser;
     const mentionRegex = /@(\w+)/g;
     const parts = (props?.item?.description ?? "").split(mentionRegex);
-
+    for (let i = 0; i < mentionedUsers.length; i++) {
+      const mentiondUserID = mentionedUsers[i];
+      if (mentiondUserID !== undefined) {
+        mentiondUser = userAllData.find((user) => {
+          return user?.uid === mentiondUserID;
+        });
+      }
+    }
     const processedParts = parts.map((part, index) => {
       if (index % 2 === 1) {
         const username = part.trim();
-        for (let i = 0; i < mentionedUsers.length; i++) {
-          const mentiondUserID = mentionedUsers[i];
-          if (mentiondUserID !== undefined) {
-            mentiondUser = userAllData.find((user) => {
-              return user?.uid === mentiondUserID;
-            });
-          }
-        }
+        const finalUsername = `@${username}`;
+        const userExists = userData.some(
+          (user) => user.username === finalUsername
+        );
 
         return (
           <TouchableOpacity
-            // onLongPress={() => {
-            //   let userNameWith = `@${username}`;
-            //   copyToClipboard(userNameWith);
-            // }}
             key={index}
             onPress={() => handleUsernamePress(mentiondUser)}
           >
             <Text
               selectable={true}
               style={{
-                color: colors.green,
+                color: userExists ? colors.green : colors.black,
               }}
             >
-              @{username}
+              {finalUsername}
             </Text>
           </TouchableOpacity>
         );
       } else {
         return (
-          // <TouchableWithoutFeedback
-          // onLongPress={() => copyToClipboard(part)}
-          // >
           <Text selectable={true} style={{ color: colors.black }} key={index}>
             {part}
           </Text>
-          // </TouchableWithoutFeedback>
         );
       }
     });
@@ -571,7 +622,13 @@ const PostItem = (props) => {
             viewCount={viewCount}
           /> */}
 
-            <View style={{ ...commonStyles.rowJustify, paddingVertical: 10 }}>
+            <View
+              style={{
+                ...commonStyles.rowJustify,
+                paddingVertical: 10,
+                justifyContent: "space-between",
+              }}
+            >
               <TouchableOpacity
                 onLongPress={() => {
                   props.navigation.navigate("AllViewBy", {
@@ -594,7 +651,7 @@ const PostItem = (props) => {
                   flexDirection: "row",
                   // width: 33,
                   alignItems: "center",
-                  top: 2,
+                  top: 4,
                 }}
               >
                 <Image
@@ -621,7 +678,7 @@ const PostItem = (props) => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  top: 3,
+                  top: 4,
                 }}
               >
                 <Image
@@ -656,7 +713,7 @@ const PostItem = (props) => {
                 style={{
                   flexDirection: "row",
                   alignItems: "center",
-                  top: 3,
+                  top: 4,
                 }}
               >
                 <Image

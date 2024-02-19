@@ -25,6 +25,8 @@ const PostFilter = ({
   setHeightModalVisible,
   type,
   freeAgent,
+  signupValues,
+  setSignupValues,
 }) => {
   const [minAge, setMinAge] = useState(null);
   const [maxAge, setMaxAge] = useState(null);
@@ -32,22 +34,7 @@ const PostFilter = ({
   const [minHeight, setMinHeight] = useState(null);
   const [maxHeight, setMaxHeight] = useState(null);
   const [finalHeight, setFinalHeight] = useState(null);
-  const [signupValues, setSignupValues] = useState({
-    selectSport: "",
-    accountType: "",
-    position: "",
-    country: "",
-    city: "",
-    height: "",
-    age: "",
-    gender: "",
-    strongHand: "",
-    strongFoot: "",
-    skill1: "",
-    skill2: "",
-    skill3: "",
-    freeAgent: freeAgent === false ? false : true,
-  });
+
   const dispatch = useDispatch();
 
   const FilterData = [
@@ -367,7 +354,6 @@ const PostFilter = ({
                 data={Array.from({ length: 60 }, (_, i) => i + 10)}
                 onSelect={(selectedItem, index) => {
                   setMinAge(selectedItem);
-                  console.log("selectedValue: " + selectedItem);
                 }}
                 defaultButtonText={"Min Age"}
                 buttonTextAfterSelection={(selectedItem, index) => {
@@ -677,6 +663,9 @@ const PostFilter = ({
             fontWeight={"500"}
             backgroundColor={colors.green}
             // marginHorizontal={10}
+            disabled={Object.values(signupValues).every(
+              (value) => value === "" || value === false
+            )}
           />
         </View>
       </View>

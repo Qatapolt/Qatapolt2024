@@ -767,7 +767,7 @@ const PostScreen = ({ navigation, route }) => {
       console.log("error ==>", error);
     }
   };
-  console.log("================================", imageFile.uri);
+
   return (
     <>
       <KeyboardAvoidingView

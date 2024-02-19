@@ -63,7 +63,7 @@ const GanderConatiner = ({
       }}
     >
       <CustomText
-        label={isFreeAgent ? "FreeAgent" : "Gender"}
+        label={isFreeAgent ? "Free Agent" : "Gender"}
         color={
           isFreeAgent && signupValues?.freeAgent
             ? colors.green
