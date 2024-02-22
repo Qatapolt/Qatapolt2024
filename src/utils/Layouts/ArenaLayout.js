@@ -1,22 +1,23 @@
-import {StyleSheet, Text, View} from 'react-native';
-import React from 'react';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {Spacer} from '../../components/Spacer';
+import { StyleSheet, Text, View } from "react-native";
+import React from "react";
+import SkeletonPlaceholder from "react-native-skeleton-placeholder";
+import { scale, verticalScale } from "react-native-size-matters";
+import { Spacer } from "../../components/Spacer";
 
 const ArenaLayout = () => {
   return (
     <>
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          width: '100%',
+          flexDirection: "row",
+          alignItems: "center",
+          width: "100%",
           padding: scale(10),
-        }}>
+        }}
+      >
         <SkeletonPlaceholder>
           <View
-            style={{width: scale(50), height: scale(50), borderRadius: 100}}
+            style={{ width: scale(50), height: scale(50), borderRadius: 100 }}
           />
         </SkeletonPlaceholder>
         <Spacer height={10} />
@@ -43,19 +44,20 @@ const ArenaLayout = () => {
       </View>
 
       <SkeletonPlaceholder>
-        <View style={{width: '100%', height: verticalScale(250)}} />
+        <View style={{ width: "100%", height: verticalScale(250) }} />
       </SkeletonPlaceholder>
 
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          width: '100%',
+          flexDirection: "row",
+          alignItems: "center",
+          width: "100%",
           padding: scale(10),
-        }}>
+        }}
+      >
         <SkeletonPlaceholder>
           <View
-            style={{width: scale(50), height: scale(50), borderRadius: 100}}
+            style={{ width: scale(50), height: scale(50), borderRadius: 100 }}
           />
         </SkeletonPlaceholder>
         <Spacer height={10} />
@@ -82,19 +84,20 @@ const ArenaLayout = () => {
       </View>
 
       <SkeletonPlaceholder>
-        <View style={{width: '100%', height: verticalScale(250)}} />
+        <View style={{ width: "100%", height: verticalScale(250) }} />
       </SkeletonPlaceholder>
 
       <View
         style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          width: '100%',
+          flexDirection: "row",
+          alignItems: "center",
+          width: "100%",
           padding: scale(10),
-        }}>
+        }}
+      >
         <SkeletonPlaceholder>
           <View
-            style={{width: scale(50), height: scale(50), borderRadius: 100}}
+            style={{ width: scale(50), height: scale(50), borderRadius: 100 }}
           />
         </SkeletonPlaceholder>
         <Spacer height={10} />
@@ -121,7 +124,7 @@ const ArenaLayout = () => {
       </View>
 
       <SkeletonPlaceholder>
-        <View style={{width: '100%', height: verticalScale(250)}} />
+        <View style={{ width: "100%", height: verticalScale(250) }} />
       </SkeletonPlaceholder>
     </>
   );

@@ -55,6 +55,7 @@ import ViewPost from "../ArenaScreen/Molecules/ViewPost";
 import Clipboard from "@react-native-clipboard/clipboard";
 import firestore from "@react-native-firebase/firestore";
 import { firebase } from "@react-native-firebase/firestore";
+import ProfileLayout from "../../../utils/Layouts/ProfileLayout";
 const UserProfile = ({ navigation, route }) => {
   const CurrentUser = useSelector((state) => state.auth?.currentUser);
   const userData = useSelector((state) => state.user?.userData);
@@ -162,7 +163,9 @@ const UserProfile = ({ navigation, route }) => {
         } catch (error) {
           console.error("Error during focus effect:", error);
         } finally {
-          setIsLoading(false);
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 6000);
         }
         setUserEvent(route?.params?.event);
       };
@@ -685,7 +688,7 @@ const UserProfile = ({ navigation, route }) => {
             }}
           >
             {isLoading ? (
-              <Loading />
+              <ProfileLayout />
             ) : (
               <FlatList
                 data={commentaryData}
@@ -711,7 +714,7 @@ const UserProfile = ({ navigation, route }) => {
             }}
           >
             {isLoading ? (
-              <Loading />
+              <ProfileLayout />
             ) : (
               <FlatList
                 data={hightLightData}
@@ -738,7 +741,7 @@ const UserProfile = ({ navigation, route }) => {
             }}
           >
             {isLoading ? (
-              <Loading />
+              <ProfileLayout />
             ) : (
               <FlatList
                 data={statsArray}

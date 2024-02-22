@@ -53,6 +53,8 @@ import { firebase } from "@react-native-firebase/firestore";
 import moment from "moment";
 import { authData } from "../../../redux/reducers/authReducer";
 
+import ProfileLayout from "../../../utils/Layouts/ProfileLayout";
+
 const ProfileScreen = ({ navigation, route }) => {
   const freeAgent = route?.params?.freeAgent;
   const CurrentUser = useSelector((state) => state.auth?.currentUser);
@@ -163,7 +165,9 @@ const ProfileScreen = ({ navigation, route }) => {
     } catch (error) {
       console.error("Error during focus effect:", error);
     } finally {
-      setIsLoading(false);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 6000);
     }
   };
   useFocusEffect(
@@ -186,7 +190,9 @@ const ProfileScreen = ({ navigation, route }) => {
         } catch (error) {
           console.error("Error during focus effect:", error);
         } finally {
-          setIsLoading(false);
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 6000);
         }
       };
 
@@ -668,17 +674,7 @@ const ProfileScreen = ({ navigation, route }) => {
   };
   const Loading = () => {
     return (
-      <View
-        style={{
-          backgroundColor: "transparent",
-          flex: 1,
-          justifyContent: "center",
-          alignItems: "center",
-          zIndex: 999999999999,
-          height: "100%",
-          width: "100%",
-        }}
-      >
+      <View>
         <SimpleLoader file={loaderAnimation} />
       </View>
     );
@@ -708,7 +704,7 @@ const ProfileScreen = ({ navigation, route }) => {
             }}
           >
             {isLoading ? (
-              <Loading />
+              <ProfileLayout />
             ) : (
               <FlatList
                 data={commentaryData}
@@ -734,7 +730,7 @@ const ProfileScreen = ({ navigation, route }) => {
             }}
           >
             {isLoading ? (
-              <Loading />
+              <ProfileLayout />
             ) : (
               <FlatList
                 data={hightLightData}
@@ -761,7 +757,7 @@ const ProfileScreen = ({ navigation, route }) => {
             }}
           >
             {isLoading ? (
-              <Loading />
+              <ProfileLayout />
             ) : (
               <FlatList
                 data={statsArray}

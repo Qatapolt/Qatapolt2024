@@ -165,7 +165,9 @@ const OtherUserProfile = ({ navigation, route }) => {
         } catch (error) {
           console.error("Error during focus effect:", error);
         } finally {
-          setIsLoading(false);
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 6000);
         }
 
         setUserEvent(route?.params?.event);
