@@ -1,13 +1,13 @@
 // PhoneNumberInput.js
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { View, TextInput } from "react-native";
 import PhoneInput from "react-native-phone-number-input";
 import { verticalScale } from "react-native-size-matters";
 import { colors } from "../utils/Colors";
 import { InterFont } from "../utils/Fonts";
 import CustomText from "./CustomText";
-
+import { useIsFocused, useFocusEffect } from "@react-navigation/native";
 const PhoneNumberInput = ({
   value,
   onChangeText,
@@ -15,12 +15,23 @@ const PhoneNumberInput = ({
   signupValues,
   setSignupValues,
 }) => {
+  const isFocused = useIsFocused();
   const phoneNumberInput = useRef(null);
-  const [formattedValue, setFormattedValue] = useState(signupValues.phone);
-
-  const [valid, setValid] = useState(false);
-  const [showMessage, setShowMessage] = useState(false);
-
+  const [formattedValue, setFormattedValue] = useState(
+    signupValues.phone.slice(3)
+  );
+  const [countryCode, setCountryCode] = useState("");
+  useEffect(() => {
+    const extractedCountryCode = signupValues.phone.substring(0, 3);
+    console.log("extractedCountryCode", extractedCountryCode);
+    if (extractedCountryCode) {
+      setCountryCode(extractedCountryCode);
+      const nationalNumber = signupValues.phone.slice(3);
+      setFormattedValue(nationalNumber);
+    } else {
+      setCountryCode("US");
+    }
+  }, [isFocused, signupValues.phone]);
   const handleOnChangeText = (text) => {
     const countryCode = phoneNumberInput.current?.state?.code;
 
@@ -37,7 +48,6 @@ const PhoneNumberInput = ({
       phone: formattedPhoneNumber,
     });
   };
-
   return (
     <View
       style={{
@@ -48,7 +58,7 @@ const PhoneNumberInput = ({
       <PhoneInput
         ref={phoneNumberInput}
         defaultValue={formattedValue}
-        defaultCode="US"
+        defaultCode={countryCode}
         layout="first"
         onChangeText={handleOnChangeText}
         withShadow

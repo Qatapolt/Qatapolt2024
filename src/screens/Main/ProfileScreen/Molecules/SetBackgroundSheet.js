@@ -22,12 +22,15 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import Toast from "react-native-root-toast";
 import { images } from "../../../../assets/images";
 import RNFS from "react-native-fs";
+import firestore from "@react-native-firebase/firestore";
 const SetBackgroundSheet = (props) => {
   const dispatch = useDispatch();
   const [backImageType, setBackImagetype] = useState("");
   const CurrentUser = useSelector((state) => state.auth?.currentUser);
-  const onPickImage = async () => {
-    if (backImageType === "new") {
+
+  const onPickImage = async (key) => {
+    console.log("=======>", key);
+    if (key === "new") {
       try {
         const result = await ImagePicker.openPicker({
           width: 300,
@@ -50,7 +53,7 @@ const SetBackgroundSheet = (props) => {
             const response = deleteImage(props?.authUser?.profileBackground);
             // console.log('resImage', response);
           }
-
+          props.setIsLoading(true);
           const linkData = await uploadImage(file.uri, CurrentUser?.uid);
 
           await SaveUser(CurrentUser?.uid, { profileBackground: linkData });
@@ -59,26 +62,25 @@ const SetBackgroundSheet = (props) => {
 
           dispatch(authData(userRes));
           Toast.show("Profile Background updated");
+          props.setIsLoading(true);
         }
       } catch (error) {
         console.log(error);
+        props.setIsLoading(true);
       }
     } else {
       try {
+        props.setIsLoading(true);
         props.onCloseModal();
-        console.log("images.background", images.background);
-        // const linkData = await uploadImage(images.background, CurrentUser?.uid);
-        const imagePath = `file://${RNFS.DocumentDirectoryPath}/${images.background}`;
 
-        // Now you can use the imagePath as the URI for uploading to Firebase
-        const linkData = await uploadImage(imagePath, CurrentUser?.uid);
-        await SaveUser(CurrentUser?.uid, { profileBackground: linkData });
+        await SaveUser(CurrentUser?.uid, { profileBackground: "" });
 
         const userRes = await getSpecificUser(CurrentUser?.uid);
-
         dispatch(authData(userRes));
         Toast.show("Profile Background updated");
+        props.setIsLoading(true);
       } catch (error) {
+        props.setIsLoading(true);
         console.log(error);
       }
     }
@@ -146,8 +148,7 @@ const SetBackgroundSheet = (props) => {
         <Spacer height={10} />
         <TouchableOpacity
           onPress={() => {
-            setBackImagetype("new");
-            onPickImage();
+            onPickImage("new");
           }}
           style={styles.box}
         >
@@ -174,8 +175,7 @@ const SetBackgroundSheet = (props) => {
         <Spacer height={20} />
         <TouchableOpacity
           onPress={() => {
-            setBackImagetype("default");
-            onPickImage();
+            onPickImage("default");
           }}
           style={styles.box}
         >

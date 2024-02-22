@@ -167,7 +167,7 @@ const ProfileScreen = ({ navigation, route }) => {
     } finally {
       setTimeout(() => {
         setIsLoading(false);
-      }, 6000);
+      }, 3000);
     }
   };
   useFocusEffect(
@@ -192,7 +192,7 @@ const ProfileScreen = ({ navigation, route }) => {
         } finally {
           setTimeout(() => {
             setIsLoading(false);
-          }, 6000);
+          }, 3000);
         }
       };
 
@@ -492,7 +492,7 @@ const ProfileScreen = ({ navigation, route }) => {
             <TouchableOpacity
               onLongPress={() => setIsbackgroundSheet(true)}
               activeOpacity={0.7}
-              disabled={!userData?.profileBackground ? true : false}
+              // disabled={!userData?.profileBackground ? true : false}
               style={{ width: "100%", height: 250 }}
               onPress={() => {
                 setImageObject(

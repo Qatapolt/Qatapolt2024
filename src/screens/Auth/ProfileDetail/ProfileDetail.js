@@ -6,25 +6,25 @@ import {
   View,
   ScrollView,
   Dimensions,
-} from 'react-native';
-import React, {useState, useRef, useEffect} from 'react';
-import commonStyles, {PH20, PH10} from '../../../utils/CommonStyles';
-import {Spacer} from '../../../components/Spacer';
-import SignupTop from '../Signup/molecules/SignupTop';
-import {styles} from '../Signup/styles';
-import CustomText from '../../../components/CustomText';
-import {colors} from '../../../utils/Colors';
-import CustomTextInput from '../../../components/CustomTextInput';
-import SignupBottom from '../Signup/molecules/SignupBottom';
-import CustomBottomSheet from '../../../components/CustomBottomSheet';
-import {scale, verticalScale} from 'react-native-size-matters';
-import {icons} from '../../../assets/icons';
-import {images} from '../../../assets/images';
-import ProfileTop from './molecules/ProfileTop';
-import ProfilePhoto from '../../../components/ProfilePhoto';
-import AgeRange from './molecules/AgeRange';
-import Toast from 'react-native-root-toast';
-import {locations} from '../../../utils/locations';
+} from "react-native";
+import React, { useState, useRef, useEffect } from "react";
+import commonStyles, { PH20, PH10 } from "../../../utils/CommonStyles";
+import { Spacer } from "../../../components/Spacer";
+import SignupTop from "../Signup/molecules/SignupTop";
+import { styles } from "../Signup/styles";
+import CustomText from "../../../components/CustomText";
+import { colors } from "../../../utils/Colors";
+import CustomTextInput from "../../../components/CustomTextInput";
+import SignupBottom from "../Signup/molecules/SignupBottom";
+import CustomBottomSheet from "../../../components/CustomBottomSheet";
+import { scale, verticalScale } from "react-native-size-matters";
+import { icons } from "../../../assets/icons";
+import { images } from "../../../assets/images";
+import ProfileTop from "./molecules/ProfileTop";
+import ProfilePhoto from "../../../components/ProfilePhoto";
+import AgeRange from "./molecules/AgeRange";
+import Toast from "react-native-root-toast";
+import { locations } from "../../../utils/locations";
 import {
   skill,
   position2,
@@ -32,30 +32,30 @@ import {
   EsportsSkills,
   accountType,
   EsportsSport,
-} from '../../../utils/Data';
-import auth from '@react-native-firebase/auth';
-import GanderConatiner from './molecules/GanderConatiner';
-import GradientButton from '../../../components/GradientButton';
-import HeigthBottomSheet from './molecules/HeigthBottomSheet';
-import CustomAlert from '../../../components/CustomAlert';
-import {UseProfileDetail} from './molecules/UseProfileDetail';
-import {useSelector} from 'react-redux';
+} from "../../../utils/Data";
+import auth from "@react-native-firebase/auth";
+import GanderConatiner from "./molecules/GanderConatiner";
+import GradientButton from "../../../components/GradientButton";
+import HeigthBottomSheet from "./molecules/HeigthBottomSheet";
+import CustomAlert from "../../../components/CustomAlert";
+import { UseProfileDetail } from "./molecules/UseProfileDetail";
+import { useSelector } from "react-redux";
 import {
   authData,
   authSelector,
   setPositionsAndSkills,
-} from '../../../redux/reducers/authReducer';
-import {SaveUser} from '../../services/UserServices';
-import {useDispatch} from 'react-redux';
-import {uploadImage} from '../../services/StorageServics';
-import CustomLocationBottomSheet from '../../../components/CustomLocationBottomSheet';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+} from "../../../redux/reducers/authReducer";
+import { SaveUser } from "../../services/UserServices";
+import { useDispatch } from "react-redux";
+import { uploadImage } from "../../services/StorageServics";
+import CustomLocationBottomSheet from "../../../components/CustomLocationBottomSheet";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-import moment from 'moment';
-import {positionSkillValidate} from '../../../utils/Commons';
-import PhoneNumberInput from '../../../components/PhoneNumberInput';
-const ProfileDetail = ({navigation, route}) => {
-  const [phoneNumber, setPhoneNumber] = useState('');
+import moment from "moment";
+import { positionSkillValidate } from "../../../utils/Commons";
+import PhoneNumberInput from "../../../components/PhoneNumberInput";
+const ProfileDetail = ({ navigation, route }) => {
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
@@ -63,55 +63,55 @@ const ProfileDetail = ({navigation, route}) => {
   const [cityModalVisible, setCityModalVisible] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
-  const currentUser = useSelector(state => state?.auth);
+  const currentUser = useSelector((state) => state?.auth);
 
   const [heightModalVisible, setHeightModalVisible] = useState(false);
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState("");
   const [imageUrl, setImageUrl] = useState(null);
   const dispatch = useDispatch();
   const [alertlVisible, setAlertVisible] = useState(false);
-  const [selectionType, setSelectionType] = useState('');
-  const [heightValue, setHeightValue] = useState('');
+  const [selectionType, setSelectionType] = useState("");
+  const [heightValue, setHeightValue] = useState("");
 
-  const [signupId, setSignupId] = useState('');
+  const [signupId, setSignupId] = useState("");
   // console.log('CurrentUser', currentUser);
 
   const [stateError, setStateError] = useState({
-    errorHeader: '',
-    errorBody: '',
+    errorHeader: "",
+    errorBody: "",
   });
   const [signupValues, setSignupValues] = useState({
-    accountType: '',
-    country: '',
-    age: '',
-    gender: '',
-    city: '',
-    height: '',
-    selectSport: '',
-    sportEmoji: '',
-    position: '',
-    strongHand: '',
-    strongFoot: '',
-    skill1: '',
-    skill2: '',
-    skill3: '',
-    bio: '',
-    stats: '',
+    accountType: "",
+    country: "",
+    age: "",
+    gender: "",
+    city: "",
+    height: "",
+    selectSport: "",
+    sportEmoji: "",
+    position: "",
+    strongHand: "",
+    strongFoot: "",
+    skill1: "",
+    skill2: "",
+    skill3: "",
+    bio: "",
+    stats: "",
   });
 
   useEffect(() => {
     if (cityModalVisible === true) {
-      setSelectionType('cities');
+      setSelectionType("cities");
     } else if (countryModalVisible === true) {
-      setSelectionType('country');
+      setSelectionType("country");
     } else {
     }
   }, [countryModalVisible, cityModalVisible]);
   const SignupData = [
     {
       id: 2,
-      withLabel: 'Country',
-      placeholder: 'Select Country',
+      withLabel: "Country",
+      placeholder: "Select Country",
       iconHeight: verticalScale(11),
       iconWidth: scale(11),
       value: signupValues.country,
@@ -126,8 +126,8 @@ const ProfileDetail = ({navigation, route}) => {
     },
     {
       id: 3,
-      withLabel: 'City / Town',
-      placeholder: 'Select City / Town',
+      withLabel: "City / Town",
+      placeholder: "Select City / Town",
       iconHeight: verticalScale(11),
       iconWidth: scale(11),
       value: signupValues.city,
@@ -142,9 +142,9 @@ const ProfileDetail = ({navigation, route}) => {
     },
     {
       id: 4,
-      withLabel: 'Select Sport',
+      withLabel: "Select Sport",
       compulsory: true,
-      placeholder: 'Sport',
+      placeholder: "Sport",
       iconHeight: verticalScale(11),
       iconWidth: scale(11),
       value: signupValues.selectSport,
@@ -159,8 +159,8 @@ const ProfileDetail = ({navigation, route}) => {
     },
     {
       id: 6,
-      withLabel: 'Select Position',
-      placeholder: 'Position',
+      withLabel: "Select Position",
+      placeholder: "Position",
       compulsory: true,
       iconHeight: verticalScale(11),
       iconWidth: scale(11),
@@ -177,8 +177,8 @@ const ProfileDetail = ({navigation, route}) => {
 
     {
       id: 12,
-      withLabel: 'Strong Hand',
-      placeholder: 'Strong Hand',
+      withLabel: "Strong Hand",
+      placeholder: "Strong Hand",
       iconHeight: verticalScale(11),
       iconWidth: scale(11),
       value: signupValues.strongHand,
@@ -193,8 +193,8 @@ const ProfileDetail = ({navigation, route}) => {
     },
     {
       id: 13,
-      withLabel: 'Strong Foot',
-      placeholder: 'Strong Foot',
+      withLabel: "Strong Foot",
+      placeholder: "Strong Foot",
       iconHeight: verticalScale(11),
       iconWidth: scale(11),
       value: signupValues.strongFoot,
@@ -210,8 +210,8 @@ const ProfileDetail = ({navigation, route}) => {
 
     {
       id: 7,
-      withLabel: 'Skill #1',
-      placeholder: 'Choose Your Skill',
+      withLabel: "Skill #1",
+      placeholder: "Choose Your Skill",
       iconHeight: verticalScale(11),
       iconWidth: scale(11),
       value: signupValues.skill1,
@@ -226,8 +226,8 @@ const ProfileDetail = ({navigation, route}) => {
     },
     {
       id: 8,
-      withLabel: 'Skill #2',
-      placeholder: 'Choose Your Skill',
+      withLabel: "Skill #2",
+      placeholder: "Choose Your Skill",
       iconHeight: verticalScale(11),
       iconWidth: scale(11),
       value: signupValues.skill2,
@@ -242,8 +242,8 @@ const ProfileDetail = ({navigation, route}) => {
     },
     {
       id: 9,
-      withLabel: 'Skill #3',
-      placeholder: 'Choose Your Skill',
+      withLabel: "Skill #3",
+      placeholder: "Choose Your Skill",
       iconHeight: verticalScale(11),
       iconWidth: scale(11),
       value: signupValues.skill3,
@@ -258,34 +258,34 @@ const ProfileDetail = ({navigation, route}) => {
     },
     {
       id: 10,
-      withLabel: 'Bio',
-      placeholder: 'Enter Bio',
+      withLabel: "Bio",
+      placeholder: "Enter Bio",
       height: verticalScale(80),
       value: signupValues.bio,
       maxLength: 100,
       multiline: false,
-      onChangeText: txt => {
-        setSignupValues({...signupValues, bio: txt});
+      onChangeText: (txt) => {
+        setSignupValues({ ...signupValues, bio: txt });
       },
     },
     {
       id: 11,
-      withLabel: 'Stats',
-      placeholder: 'Enter Stats',
+      withLabel: "Stats",
+      placeholder: "Enter Stats",
       height: verticalScale(80),
       multiline: false,
       maxLength: 100,
       value: signupValues.stats,
-      onChangeText: txt => {
-        setSignupValues({...signupValues, stats: txt});
+      onChangeText: (txt) => {
+        setSignupValues({ ...signupValues, stats: txt });
       },
     },
   ];
   const SignupData2 = [
     {
       id: 2,
-      withLabel: 'Country',
-      placeholder: 'Select Country',
+      withLabel: "Country",
+      placeholder: "Select Country",
       iconHeight: verticalScale(11),
       iconWidth: scale(11),
       value: signupValues.country,
@@ -300,8 +300,8 @@ const ProfileDetail = ({navigation, route}) => {
     },
     {
       id: 3,
-      withLabel: 'City / Town',
-      placeholder: 'Select City / Town',
+      withLabel: "City / Town",
+      placeholder: "Select City / Town",
       iconHeight: verticalScale(11),
       iconWidth: scale(11),
       value: signupValues.city,
@@ -316,8 +316,8 @@ const ProfileDetail = ({navigation, route}) => {
     },
     {
       id: 4,
-      withLabel: 'Select Sport',
-      placeholder: 'Sport',
+      withLabel: "Select Sport",
+      placeholder: "Sport",
       compulsory: true,
       iconHeight: verticalScale(11),
       iconWidth: scale(11),
@@ -333,28 +333,28 @@ const ProfileDetail = ({navigation, route}) => {
     },
     {
       id: 5,
-      withLabel: 'Bio',
-      placeholder: 'Enter Bio',
+      withLabel: "Bio",
+      placeholder: "Enter Bio",
       value: signupValues.bio,
       height: verticalScale(80),
       multiline: true,
       maxLength: 100,
-      onChangeText: txt => {
-        setSignupValues({...signupValues, bio: txt});
+      onChangeText: (txt) => {
+        setSignupValues({ ...signupValues, bio: txt });
       },
       // inputHeight: verticalScale(50),
     },
   ];
 
-  const onSetHeightValue = item => {
-    setSignupValues({...signupValues, height: `${item} cm`});
+  const onSetHeightValue = (item) => {
+    setSignupValues({ ...signupValues, height: `${item} cm` });
     setHeightModalVisible(false);
   };
 
   const onSetValue = (item, data) => {
     // console.log('Ibkbcd');
-    if (signupId == 'Account Type') {
-      setSignupValues({...signupValues, accountType: item});
+    if (signupId == "Account Type") {
+      setSignupValues({ ...signupValues, accountType: item });
       setModalVisible(false);
 
       return;
@@ -371,7 +371,7 @@ const ProfileDetail = ({navigation, route}) => {
 
     //   return;
     // }
-    if (signupId == 'Select Sport') {
+    if (signupId == "Select Sport") {
       // console.log('empjoData', data?.emoji);
       // setSportEmoji(data.emoji)
       setSignupValues({
@@ -384,68 +384,71 @@ const ProfileDetail = ({navigation, route}) => {
       return;
     }
     if (signupId == 5 || signupId == 10) {
-      setSignupValues({...signupValues, bio: item});
+      setSignupValues({ ...signupValues, bio: item });
       setModalVisible(false);
       return;
     }
-    if (signupId == 'Select Position') {
-      setSignupValues({...signupValues, position: item});
+    if (signupId == "Select Position") {
+      setSignupValues({ ...signupValues, position: item });
       setModalVisible(false);
       return;
     }
 
-    if (signupId == 'Skill #1') {
-      setSignupValues({...signupValues, skill1: item});
+    if (signupId == "Skill #1") {
+      setSignupValues({ ...signupValues, skill1: item });
       setModalVisible(false);
       return;
     }
-    if (signupId == 'Strong Hand') {
-      setSignupValues({...signupValues, strongHand: item});
+    if (signupId == "Strong Hand") {
+      setSignupValues({ ...signupValues, strongHand: item });
       setModalVisible(false);
       return;
     }
-    if (signupId == 'Strong Foot') {
-      setSignupValues({...signupValues, strongFoot: item});
+    if (signupId == "Strong Foot") {
+      setSignupValues({ ...signupValues, strongFoot: item });
       setModalVisible(false);
       return;
     }
-    if (signupId == 'Skill #2') {
-      setSignupValues({...signupValues, skill2: item});
+    if (signupId == "Skill #2") {
+      setSignupValues({ ...signupValues, skill2: item });
       setModalVisible(false);
       return;
     }
-    if (signupId == 'Skill #3') {
-      setSignupValues({...signupValues, skill3: item});
+    if (signupId == "Skill #3") {
+      setSignupValues({ ...signupValues, skill3: item });
       setModalVisible(false);
       return;
     }
     setModalVisible(false);
   };
   const onProfileDetail = async () => {
-    const birthDate = moment(signupValues.age, 'YYYY-MM-DD');
+    const birthDate = moment(signupValues.age, "YYYY-MM-DD");
     const currentDate = moment();
 
-    const ageInYears = currentDate.diff(birthDate, 'years');
+    const ageInYears = currentDate.diff(birthDate, "years");
 
     if (
-      signupValues.accountType == 'Athlete' ||
-      signupValues.accountType == 'Esports' ||
-      signupValues.accountType == 'Others'
+      signupValues.accountType == "Athlete" ||
+      signupValues.accountType == "Esports" ||
+      signupValues.accountType == "Others"
     ) {
       const validateResponse = UseProfileDetail(
         signupValues,
         setSignupValues,
         setStateError,
         stateError,
-        setAlertVisible,
+        setAlertVisible
       );
 
       if (validateResponse) {
-        if (phoneNumber.length == 0) {
+        if (
+          (phoneNumber.length == 0 && signupValues.accountType == "Athlete") ||
+          signupValues.accountType == "Esports"
+        ) {
           setStateError({
             ...stateError,
-            errorHeader: 'Missing Phone Number',
-            errorBody: 'Please Enter Phone Number To Proceed',
+            errorHeader: "Missing Phone Number",
+            errorBody: "Please Enter Phone Number To Proceed",
           });
           setAlertVisible(true);
 
@@ -454,8 +457,8 @@ const ProfileDetail = ({navigation, route}) => {
         if (ageInYears < 5) {
           setStateError({
             ...stateError,
-            errorHeader: 'Invalid Age',
-            errorBody: 'Please Select Correct D.O.B To Proceed',
+            errorHeader: "Invalid Age",
+            errorBody: "Please Select Correct D.O.B To Proceed",
           });
           setAlertVisible(true);
 
@@ -469,8 +472,8 @@ const ProfileDetail = ({navigation, route}) => {
       if (!signupValues.accountType) {
         setStateError({
           ...stateError,
-          errorHeader: 'Missing Account Type',
-          errorBody: 'Please Select Account Type To Proceed',
+          errorHeader: "Missing Account Type",
+          errorBody: "Please Select Account Type To Proceed",
         });
 
         setAlertVisible(true);
@@ -481,8 +484,8 @@ const ProfileDetail = ({navigation, route}) => {
       if (!signupValues.selectSport) {
         setStateError({
           ...stateError,
-          errorHeader: 'Missing Sport',
-          errorBody: 'Please Select Sport To Proceed',
+          errorHeader: "Missing Sport",
+          errorBody: "Please Select Sport To Proceed",
         });
 
         setAlertVisible(true);
@@ -493,8 +496,8 @@ const ProfileDetail = ({navigation, route}) => {
       if (!signupValues.phone) {
         setStateError({
           ...stateError,
-          errorHeader: 'Missing Phone Number',
-          errorBody: 'Please Enter Phone Number To Proceed',
+          errorHeader: "Missing Phone Number",
+          errorBody: "Please Enter Phone Number To Proceed",
         });
 
         setAlertVisible(true);
@@ -507,10 +510,10 @@ const ProfileDetail = ({navigation, route}) => {
     }
   };
   const SaveUserProfile = async () => {
-    const imageData = '';
+    const imageData = "";
     var a = moment();
-    var b = moment(signupValues.age, 'YYYY');
-    var age = a.diff(b, 'years');
+    var b = moment(signupValues.age, "YYYY");
+    var age = a.diff(b, "years");
     const profileData = {
       email: currentUser?.currentUser.email,
       name: currentUser?.currentUser.name,
@@ -518,24 +521,24 @@ const ProfileDetail = ({navigation, route}) => {
       uid: currentUser?.currentUser.uid,
       firstLogin: currentUser.currentUser.firstLogin,
       accountType: signupValues.accountType,
-      country: signupValues.country ? signupValues.country : '',
+      country: signupValues.country ? signupValues.country : "",
       age: age,
       gender: signupValues.gender,
-      city: signupValues.city ? signupValues.city : '',
-      height: signupValues.height ? signupValues.height : '',
-      profileImage: '',
+      city: signupValues.city ? signupValues.city : "",
+      height: signupValues.height ? signupValues.height : "",
+      profileImage: "",
       selectSport: signupValues.selectSport,
-      position: signupValues.position ? signupValues.position : '',
-      strongHand: signupValues.strongHand ? signupValues.strongHand : '',
-      strongFoot: signupValues.strongFoot ? signupValues.strongFoot : '',
-      skill1: signupValues.skill1 ? signupValues.skill1 : '',
-      skill2: signupValues.skill2 ? signupValues.skill2 : '',
-      skill3: signupValues.skill3 ? signupValues.skill3 : '',
-      bio: signupValues.bio ? signupValues.bio : '',
-      stats: signupValues.stats ? signupValues.stats : '',
+      position: signupValues.position ? signupValues.position : "",
+      strongHand: signupValues.strongHand ? signupValues.strongHand : "",
+      strongFoot: signupValues.strongFoot ? signupValues.strongFoot : "",
+      skill1: signupValues.skill1 ? signupValues.skill1 : "",
+      skill2: signupValues.skill2 ? signupValues.skill2 : "",
+      skill3: signupValues.skill3 ? signupValues.skill3 : "",
+      bio: signupValues.bio ? signupValues.bio : "",
+      stats: signupValues.stats ? signupValues.stats : "",
       followers: 0,
       following: 0,
-      sportEmoji: signupValues.sportEmoji ? signupValues.sportEmoji : '',
+      sportEmoji: signupValues.sportEmoji ? signupValues.sportEmoji : "",
       isLogin: true,
       isProfileComplete: true,
     };
@@ -543,9 +546,9 @@ const ProfileDetail = ({navigation, route}) => {
     if (imageUrl) {
       const linkData = await uploadImage(
         imageUrl,
-        currentUser?.currentUser.uid,
+        currentUser?.currentUser.uid
       );
-      profileData['profileImage'] = linkData;
+      profileData["profileImage"] = linkData;
     }
     // console.log('AllProfileData', profileData);
     await SaveUser(currentUser?.currentUser.uid, profileData);
@@ -553,18 +556,19 @@ const ProfileDetail = ({navigation, route}) => {
     setIsLoading(false);
     auth().currentUser.sendEmailVerification();
 
-    Toast.show('Profile is saved successfully');
-    navigation.navigate('EmailVerification');
+    Toast.show("Profile is saved successfully");
+    navigation.navigate("EmailVerification");
   };
 
   return (
     <>
       <View style={commonStyles.main}>
         <ImageBackground
-          style={{width: '101%', height: '100%'}}
-          source={images.background}>
+          style={{ width: "101%", height: "100%" }}
+          source={images.background}
+        >
           <KeyboardAwareScrollView>
-            <Spacer height={Platform.OS == 'ios' ? 30 : 10} />
+            <Spacer height={Platform.OS == "ios" ? 30 : 10} />
             <PH10>
               <ProfileTop
                 navigation={navigation}
@@ -578,7 +582,8 @@ const ProfileDetail = ({navigation, route}) => {
               <View
                 style={{
                   flex: 1,
-                }}>
+                }}
+              >
                 <ProfilePhoto
                   addPhoto
                   width={scale(80)}
@@ -587,12 +592,12 @@ const ProfileDetail = ({navigation, route}) => {
                   setImageUrl={setImageUrl}
                   mainStyle={{
                     shadowColor:
-                      Platform.OS == 'ios' ? '#343a40' : colors.black,
+                      Platform.OS == "ios" ? "#343a40" : colors.black,
                     shadowRadius: 2,
                     elevation: 5,
                     shadowOpacity: 0.4,
                     // inputMarginTop:-20,
-                    shadowOffset: {width: -1, height: 3},
+                    shadowOffset: { width: -1, height: 3 },
                   }}
                 />
 
@@ -602,14 +607,14 @@ const ProfileDetail = ({navigation, route}) => {
                 <CustomTextInput
                   inputStyle={{
                     shadowColor:
-                      Platform.OS == 'ios' ? colors.inputGray : colors.black,
+                      Platform.OS == "ios" ? colors.inputGray : colors.black,
                     shadowRadius: 5,
                     elevation: 5,
                     shadowOpacity: 0.5,
 
-                    shadowOffset: {width: 1, height: 1},
+                    shadowOffset: { width: 1, height: 1 },
                   }}
-                  withLabel={'Account Type'}
+                  withLabel={"Account Type"}
                   value={signupValues.accountType}
                   editable={false}
                   iconWidth={scale(11)}
@@ -617,30 +622,30 @@ const ProfileDetail = ({navigation, route}) => {
                   iconHeight={verticalScale(10)}
                   rigthIcon={icons.dropdown}
                   onPress={() => {
-                    setSignupId('Account Type');
+                    setSignupId("Account Type");
                     const data = positionSkillValidate(
-                      'Account Type',
-                      signupValues,
+                      "Account Type",
+                      signupValues
                     );
                     dispatch(setPositionsAndSkills(data));
                     setModalVisible(true);
                   }}
                   onRightPress={() => {
-                    setSignupId('Account Type');
+                    setSignupId("Account Type");
                     const data = positionSkillValidate(
-                      'Account Type',
-                      signupValues,
+                      "Account Type",
+                      signupValues
                     );
                     dispatch(setPositionsAndSkills(data));
 
                     setModalVisible(true);
                   }}
-                  placeholder={'Select Type'}
+                  placeholder={"Select Type"}
                 />
-                {signupValues.accountType == 'Athlete' ||
+                {signupValues.accountType == "Athlete" ||
                 !signupValues.accountType ||
-                signupValues.accountType == 'Esports' ||
-                signupValues.accountType == 'Others' ? (
+                signupValues.accountType == "Esports" ||
+                signupValues.accountType == "Others" ? (
                   <>
                     <View>
                       <View>
@@ -672,16 +677,16 @@ const ProfileDetail = ({navigation, route}) => {
                       <CustomTextInput
                         inputStyle={{
                           shadowColor:
-                            Platform.OS == 'ios'
+                            Platform.OS == "ios"
                               ? colors.inputGray
                               : colors.black,
                           shadowRadius: 5,
                           elevation: 5,
                           shadowOpacity: 0.5,
 
-                          shadowOffset: {width: 1, height: 1},
+                          shadowOffset: { width: 1, height: 1 },
                         }}
-                        inputMarginTop={Platform.OS == 'ios' ? 5 : -7}
+                        inputMarginTop={Platform.OS == "ios" ? 5 : -7}
                         withLabel="Height"
                         placeholder="Select Height"
                         iconHeight={verticalScale(11)}
@@ -702,10 +707,10 @@ const ProfileDetail = ({navigation, route}) => {
 
                 <Spacer height={15} />
 
-                {signupValues.accountType == 'Athlete' ||
+                {signupValues.accountType == "Athlete" ||
                 !signupValues.accountType ||
-                signupValues.accountType == 'Esports' ||
-                signupValues.accountType == 'Others' ? (
+                signupValues.accountType == "Esports" ||
+                signupValues.accountType == "Others" ? (
                   <View>
                     {SignupData.map((item, index) => {
                       return (
@@ -714,16 +719,16 @@ const ProfileDetail = ({navigation, route}) => {
                             <CustomTextInput
                               inputStyle={{
                                 shadowColor:
-                                  Platform.OS == 'ios'
+                                  Platform.OS == "ios"
                                     ? colors.inputGray
                                     : colors.black,
                                 shadowRadius: 5,
                                 elevation: 5,
                                 shadowOpacity: 0.5,
 
-                                shadowOffset: {width: 1, height: 1},
+                                shadowOffset: { width: 1, height: 1 },
                               }}
-                              inputMarginTop={Platform.OS == 'ios' ? 5 : -7}
+                              inputMarginTop={Platform.OS == "ios" ? 5 : -7}
                               withLabel={item.withLabel}
                               value={item.value}
                               compulsory={item.compulsory}
@@ -744,7 +749,7 @@ const ProfileDetail = ({navigation, route}) => {
                                 setSignupId(item?.withLabel);
                                 const data = positionSkillValidate(
                                   item?.withLabel,
-                                  signupValues,
+                                  signupValues
                                 );
                                 dispatch(setPositionsAndSkills(data));
                                 setModalVisible(true);
@@ -770,7 +775,7 @@ const ProfileDetail = ({navigation, route}) => {
                                 setSignupId(item?.withLabel);
                                 const data = positionSkillValidate(
                                   item?.withLabel,
-                                  signupValues,
+                                  signupValues
                                 );
                                 dispatch(setPositionsAndSkills(data));
                                 setModalVisible(true);
@@ -786,20 +791,20 @@ const ProfileDetail = ({navigation, route}) => {
                   </View>
                 ) : (
                   <View>
-                    {SignupData2.map(item => {
+                    {SignupData2.map((item) => {
                       return (
                         <>
                           <CustomTextInput
                             inputStyle={{
                               shadowColor:
-                                Platform.OS == 'ios'
+                                Platform.OS == "ios"
                                   ? colors.inputGray
                                   : colors.black,
                               shadowRadius: 5,
                               elevation: 5,
                               shadowOpacity: 0.5,
 
-                              shadowOffset: {width: 1, height: 1},
+                              shadowOffset: { width: 1, height: 1 },
                             }}
                             maxLength={item.maxLength}
                             withLabel={item.withLabel}
@@ -821,7 +826,7 @@ const ProfileDetail = ({navigation, route}) => {
                               setSignupId(item?.withLabel);
                               const data = positionSkillValidate(
                                 item?.withLabel,
-                                signupValues,
+                                signupValues
                               );
                               dispatch(setPositionsAndSkills(data));
                               setModalVisible(true);
@@ -868,7 +873,7 @@ const ProfileDetail = ({navigation, route}) => {
                 <GradientButton
                   onPress={onProfileDetail}
                   loading={isLoading}
-                  title={'Next'}
+                  title={"Next"}
                 />
                 <Spacer height={20} />
 
@@ -890,8 +895,8 @@ const ProfileDetail = ({navigation, route}) => {
 
       <CustomLocationBottomSheet
         modalVisible={countryModalVisible}
-        onLocationPress={data => {
-          setSignupValues({...signupValues, country: data});
+        onLocationPress={(data) => {
+          setSignupValues({ ...signupValues, country: data });
           setCountryModalVisible(false);
         }}
         // onSetValue={onSetValue}
@@ -901,8 +906,8 @@ const ProfileDetail = ({navigation, route}) => {
       />
       <CustomLocationBottomSheet
         modalVisible={cityModalVisible}
-        onLocationPress={data => {
-          setSignupValues({...signupValues, city: data});
+        onLocationPress={(data) => {
+          setSignupValues({ ...signupValues, city: data });
           setCityModalVisible(false);
         }}
         // onSetValue={onSetValue}

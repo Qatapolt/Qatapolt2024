@@ -459,6 +459,7 @@ const EditProfile = ({ navigation, route }) => {
   };
 
   const onProfileDetail = async () => {
+    console.log("signupValues.phone", signupValues.phone);
     const birthDate = moment(signupValues.age, "YYYY-MM-DD");
     const currentDate = moment();
 
@@ -478,7 +479,10 @@ const EditProfile = ({ navigation, route }) => {
       );
 
       if (validateResponse) {
-        if (phoneNumber.length == 0) {
+        if (
+          (phoneNumber.length == 0 && signupValues.accountType == "Athlete") ||
+          signupValues.accountType == "Esports"
+        ) {
           setStateError({
             ...stateError,
             errorHeader: "Missing Phone Number",
@@ -566,7 +570,7 @@ const EditProfile = ({ navigation, route }) => {
       accountType: signupValues.accountType,
       country: signupValues.country,
       age: age,
-      phoneNumber: phoneNumber,
+      phoneNumber: signupValues.phone,
       gender: signupValues.gender,
       city: signupValues.city,
       height: signupValues.height,
@@ -584,6 +588,7 @@ const EditProfile = ({ navigation, route }) => {
       username: signupValues?.username,
       sportEmoji: signupValues.sportEmoji ? signupValues.sportEmoji : "",
     };
+
     if (imageUrl) {
       const deleRes = deleteImage(currentUser?.currentUser.profileImage);
       if (deleRes) {

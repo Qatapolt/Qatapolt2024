@@ -167,7 +167,7 @@ const OtherUserProfile = ({ navigation, route }) => {
         } finally {
           setTimeout(() => {
             setIsLoading(false);
-          }, 6000);
+          }, 3000);
         }
 
         setUserEvent(route?.params?.event);
