@@ -388,6 +388,23 @@ const UserProfileMainTop = ({
             source={icons.trophyIcon}
           />
         )}
+        {CurrentUser?.bio ? (
+          <>
+            <Spacer height={5} />
+
+            <CustomText
+              label={CurrentUser?.bio}
+              fontSize={11}
+              width={scale(300)}
+              numberOfLines={2}
+              alignSelf="center"
+              marginLeft={5}
+              textAlign="center"
+              color={colors.inputGray}
+              fontFamily={InterFont.semiBold}
+            />
+          </>
+        ) : null}
       </View>
 
       <Spacer height={10} />

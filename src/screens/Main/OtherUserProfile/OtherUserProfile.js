@@ -46,7 +46,7 @@ import { InterFont } from "../../../utils/Fonts";
 import PostItem from "../ArenaScreen/Molecules/PostItem";
 
 import { useFocusEffect } from "@react-navigation/native";
-import UserHightLightContainer from "../UserProfile/Molecules/UserHightLightContainer";
+
 import MediaView from "../../../components/MediaView";
 import ReportSheet from "../ArenaScreen/Molecules/ReportSheet";
 import PostOptionsSheet from "../ArenaScreen/Molecules/PostOptionsSheet";
@@ -56,6 +56,7 @@ import firestore from "@react-native-firebase/firestore";
 import { firebase } from "@react-native-firebase/firestore";
 import OtherUserProfileTop from "./Molecules/OtherUserProfileTop";
 import OtherUserProfileMainTop from "./Molecules/OtherUserProfileMainTop";
+import OtherUserHightLightContainer from "./Molecules/OtherUserHightLightContainer";
 const OtherUserProfile = ({ navigation, route }) => {
   const authUser = useSelector((state) => state.auth?.currentUser);
   const userData = useSelector((state) => state.user?.userData);
@@ -385,7 +386,7 @@ const OtherUserProfile = ({ navigation, route }) => {
   };
   const renderHightLightData = ({ item, index }) => {
     return (
-      <UserHightLightContainer
+      <OtherUserHightLightContainer
         index={index}
         setViewMedia={setViewMedia}
         setImageIndex={setImageIndex}
