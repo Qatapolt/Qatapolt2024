@@ -46,8 +46,6 @@ import { InterFont } from "../../../utils/Fonts";
 import PostItem from "../ArenaScreen/Molecules/PostItem";
 
 import { useFocusEffect } from "@react-navigation/native";
-import UserProfileTop from "../UserProfile/Molecules/UserProfileTop";
-import UserProfileMainTop from "../UserProfile/Molecules/UserProfileMainTop";
 import UserHightLightContainer from "../UserProfile/Molecules/UserHightLightContainer";
 import MediaView from "../../../components/MediaView";
 import ReportSheet from "../ArenaScreen/Molecules/ReportSheet";
@@ -56,6 +54,8 @@ import ViewPost from "../ArenaScreen/Molecules/ViewPost";
 import Clipboard from "@react-native-clipboard/clipboard";
 import firestore from "@react-native-firebase/firestore";
 import { firebase } from "@react-native-firebase/firestore";
+import OtherUserProfileTop from "./Molecules/OtherUserProfileTop";
+import OtherUserProfileMainTop from "./Molecules/OtherUserProfileMainTop";
 const OtherUserProfile = ({ navigation, route }) => {
   const authUser = useSelector((state) => state.auth?.currentUser);
   const userData = useSelector((state) => state.user?.userData);
@@ -471,7 +471,7 @@ const OtherUserProfile = ({ navigation, route }) => {
 
               <Spacer height={Platform.OS == "ios" ? 50 : 20} />
               <View style={{ position: "absolute", top: 50, width: "100%" }}>
-                <UserProfileTop
+                <OtherUserProfileTop
                   onBlockUser={BlockUser}
                   setSheetVisible={setShowActionPotions}
                   onReportUser={reportUser}
@@ -518,7 +518,7 @@ const OtherUserProfile = ({ navigation, route }) => {
               />
             </View>
 
-            <UserProfileMainTop
+            <OtherUserProfileMainTop
               navigation={navigation}
               CurrentUser={userData}
               authId={authUser.uid}
