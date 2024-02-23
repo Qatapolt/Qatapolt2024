@@ -767,7 +767,7 @@ const PostScreen = ({ navigation, route }) => {
       console.log("error ==>", error);
     }
   };
-
+  console.log("imageFile?.type", imageFile?.type, imageFile.uri);
   return (
     <>
       <KeyboardAvoidingView
@@ -897,7 +897,8 @@ const PostScreen = ({ navigation, route }) => {
                     {imageFile?.type?.includes("image") ? (
                       <FastImage
                         resizeMode={FastImage.resizeMode.cover}
-                        containerStyle={{
+                        // source={images.babarAzam}
+                        style={{
                           width: "100%",
                           height: "100%",
                           borderRadius: scale(10),

@@ -390,6 +390,8 @@ const OtherUserProfileMainTop = ({
 
           // <CustomText label="🏆" fontSize={10} marginTop={19} />
         )}
+      </View>
+      <View style={{ justifyContent: "center", alignItems: "center" }}>
         {CurrentUser?.bio ? (
           <>
             <Spacer height={5} />
@@ -408,7 +410,6 @@ const OtherUserProfileMainTop = ({
           </>
         ) : null}
       </View>
-
       <Spacer height={10} />
       <Tab />
 

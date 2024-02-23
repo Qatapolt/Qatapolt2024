@@ -356,6 +356,7 @@ const UserProfileMainTop = ({
       </TouchableOpacity>
     );
   };
+
   return (
     <View>
       <Spacer height={10} />
@@ -388,6 +389,8 @@ const UserProfileMainTop = ({
             source={icons.trophyIcon}
           />
         )}
+      </View>
+      <View style={{ justifyContent: "center", alignItems: "center" }}>
         {CurrentUser?.bio ? (
           <>
             <Spacer height={5} />
