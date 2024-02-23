@@ -904,7 +904,11 @@ const ArenaScreen = ({ navigation, route }) => {
     modalizeRefReport.current?.open();
     setOptionSheet(true);
   };
-
+  console.log(
+    "condition",
+    indexMain !== 0 && indexMain !== 3 && postData.length < 0,
+    indexMain
+  );
   return (
     <>
       <View style={styles.container}>
@@ -917,25 +921,55 @@ const ArenaScreen = ({ navigation, route }) => {
           <ArenaLayout />
         ) : (
           <>
-            <View>
-              <FlatList
-                showsVerticalScrollIndicator={false}
-                data={postData}
-                contentContainerStyle={{
-                  paddingBottom: verticalScale(80),
-                }}
-                keyExtractor={(item, index) => item?.postId?.toString()}
-                renderItem={RenderPostData}
-                refreshControl={
-                  <RefreshControl
-                    refreshing={refreshing}
-                    onRefresh={onRefresh}
-                  />
-                }
-                extraData={postData}
-                ListHeaderComponent={getHeader}
-              />
-            </View>
+            {(indexMain !== 0 && indexMain == 2) ||
+            (indexMain == 3 && postData.length < 0) ? (
+              <>
+                <View
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    flex: 1,
+                  }}
+                >
+                  <View
+                    style={{ justifyContent: "center", alignItems: "center" }}
+                  >
+                    <CustomText
+                      fontSize={12}
+                      label={
+                        indexMain === 1
+                          ? "No Following Record Found"
+                          : indexMain == 2
+                          ? "No Watch List Record Found"
+                          : ""
+                      }
+                      fontFamily={InterFont.semiBold}
+                      color={"black"}
+                    />
+                  </View>
+                </View>
+              </>
+            ) : (
+              <View>
+                <FlatList
+                  showsVerticalScrollIndicator={false}
+                  data={postData}
+                  contentContainerStyle={{
+                    paddingBottom: verticalScale(80),
+                  }}
+                  keyExtractor={(item, index) => item?.postId?.toString()}
+                  renderItem={RenderPostData}
+                  refreshControl={
+                    <RefreshControl
+                      refreshing={refreshing}
+                      onRefresh={onRefresh}
+                    />
+                  }
+                  extraData={postData}
+                  ListHeaderComponent={getHeader}
+                />
+              </View>
+            )}
           </>
         )}
       </View>
