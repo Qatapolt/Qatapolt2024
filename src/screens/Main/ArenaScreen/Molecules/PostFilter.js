@@ -16,6 +16,7 @@ import CustomText from "../../../../components/CustomText";
 import Icon from "react-native-vector-icons/FontAwesome";
 import CustomPicker from "../../../../components/CustomPicker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
 const PostFilter = ({
   setModalVisible,
   setCityModalVisible,
@@ -283,15 +284,24 @@ const PostFilter = ({
       }
     }
   };
+
   const onSelectFinalAge = (selectedItem, index) => {
     setMaxAge(selectedItem);
     const age = parseInt((minAge + selectedItem) / 2);
+
     setFinalAge(age);
-    setSignupValues({
-      ...signupValues,
-      age: age,
-    });
+    // setFinalAge(age);
+    // setSignupValues({
+    //   ...signupValues,
+    //   age: age + "years",
+    // });
   };
+  const onSelectFinalHeight = (selectedItem, index) => {
+    setMaxHeight(selectedItem);
+    const height = parseInt((minHeight + selectedItem) / 2);
+    setFinalHeight(height);
+  };
+
   return (
     <View style={{ padding: 10 }}>
       <CustomTextInput
@@ -389,6 +399,13 @@ const PostFilter = ({
                   { length: 60 - minAge + 1 },
                   (_, i) => minAge + i
                 )}
+                // onSelect={(selectedItem, index) => {
+                //   setMaxAge(selectedItem);
+                //   const age = parseInt((minAge + selectedItem) / 2);
+                //   finalAgee = age;
+
+                //   selectedItem + "  years";
+                // }}
                 onSelect={onSelectFinalAge}
                 defaultButtonText={"Max Age"}
                 buttonTextAfterSelection={(selectedItem, index) => {
@@ -485,24 +502,7 @@ const PostFilter = ({
                   { length: 235 - minHeight + 1 },
                   (_, i) => minHeight + i
                 )}
-                onSelect={(selectedItem, index) => {
-                  setMaxHeight(selectedItem);
-                  try {
-                    if (minHeight !== undefined && selectedItem !== undefined) {
-                      const height = parseInt((minHeight + selectedItem) / 2);
-
-                      setFinalHeight(height);
-                      setSignupValues({
-                        ...signupValues,
-                        height: `${height} cm`,
-                      });
-
-                      console.log("selectedValue: " + selectedItem);
-                    }
-                  } catch (error) {
-                    console.log("error", error);
-                  }
-                }}
+                onSelect={onSelectFinalHeight}
                 defaultButtonText={"Max Height"}
                 buttonTextAfterSelection={(selectedItem, index) => {
                   return selectedItem + "  cm";
@@ -656,6 +656,20 @@ const PostFilter = ({
             width={"20%"}
             height={40}
             onPress={() => {
+              console.log("====>", finalAge, finalHeight);
+              if (finalAge !== null) {
+                setSignupValues({
+                  ...signupValues,
+                  age: finalAge + " years",
+                });
+              }
+              if (finalHeight !== null) {
+                setSignupValues({
+                  ...signupValues,
+                  height: finalHeight + " cm",
+                });
+              }
+
               onFilterTimeLine(signupValues, type);
             }}
             color={colors.white}

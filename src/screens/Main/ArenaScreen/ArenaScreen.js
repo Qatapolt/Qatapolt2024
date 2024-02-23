@@ -395,6 +395,7 @@ const ArenaScreen = ({ navigation, route }) => {
   };
 
   const onFilterTimeLine = async (values, type) => {
+    console.log("onFilterTimeLine", values);
     // if (
     //   (type === "FreeAgentPostScreen" && values !== null) ||
     //   values !== undefined

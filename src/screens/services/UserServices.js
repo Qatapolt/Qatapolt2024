@@ -190,7 +190,6 @@ export const filterCustomTimeLine = (setCustomTimeLineIds, values) => {
     try {
       query.get().then((snapshot) => {
         snapshot.forEach((doc) => {
-          console.log("🚀 ~ file: UserServices.js:193 ~ query.get ~ doc:", doc);
           postData.push(doc.data().uid);
         });
         setCustomTimeLineIds(postData);
