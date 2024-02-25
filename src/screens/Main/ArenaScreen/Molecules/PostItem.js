@@ -73,7 +73,11 @@ const PostItem = (props) => {
   });
   const [postComments, setPostComments] = useState(props.comments);
   useEffect(() => {
-    getAllUSers(setUserData, currentUser.uid);
+    if(currentUser.uid){
+      getAllUSers(setUserData, currentUser.uid);
+
+
+    }
   }, [props]);
   useEffect(() => {
     console.log("running ===>", newCommentAdd, postID);
@@ -142,9 +146,13 @@ const PostItem = (props) => {
   }, [props?.repost]);
 
   useEffect(() => {
+    if(currentUser.uid){
+      getFilterUser();
+      renderPostDescription();
+
+    }
     // getUserData();
-    getFilterUser();
-    renderPostDescription();
+   
   }, [props]);
 
   useEffect(() => {
