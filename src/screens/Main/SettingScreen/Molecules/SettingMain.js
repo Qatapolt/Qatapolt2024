@@ -79,7 +79,6 @@ const SettingMain = (props) => {
       setIsNotification(true);
     }
   }, [props]);
-
   const deleteUserAndData = async () => {
     setIsLoading(true);
     try {
@@ -87,7 +86,7 @@ const SettingMain = (props) => {
 
       if (!user) {
         console.error("No authenticated user found.");
-        setIsLoading(true);
+        setIsLoading(false); // Set loading state to false when no user is found
         return;
       }
 
@@ -99,67 +98,58 @@ const SettingMain = (props) => {
         .where("participantsData.participantId", "==", uid)
         .get();
 
-      const groupRequestBatch = firestore().batch();
-      groupRequestQuerySnapshot.forEach((doc) => {
-        groupRequestBatch.delete(doc.ref);
-      });
+      if (!groupRequestQuerySnapshot.empty) {
+        const groupRequestBatch = firestore().batch();
+        groupRequestQuerySnapshot.forEach((doc) => {
+          groupRequestBatch.delete(doc.ref);
+        });
+        await groupRequestBatch.commit();
+      }
 
-      await groupRequestBatch.commit();
-
-      // Delete user posts
+      // Delete user data from the Posts collection
       const postsQuerySnapshot = await firestore()
         .collection("Posts")
         .where("userId", "==", uid)
         .get();
 
-      const postsBatch = firestore().batch();
-      postsQuerySnapshot.forEach((doc) => {
-        postsBatch.delete(doc.ref);
-      });
+      if (!postsQuerySnapshot.empty) {
+        const postsBatch = firestore().batch();
+        postsQuerySnapshot.forEach((doc) => {
+          postsBatch.delete(doc.ref);
+        });
+        await postsBatch.commit();
+      }
 
-      await postsBatch.commit();
-
-      // Delete user news
-      // const newsQuerySnapshot = await firestore()
-      //   .collection('News')
-      //   .where('user.id', '==', uid)
-      //   .get();
-
-      // const newsBatch = firestore().batch();
-      // newsQuerySnapshot.forEach(doc => {
-      //   newsBatch.delete(doc.ref);
-      // });
-
-      // await newsBatch.commit();
-
-      // Delete user notifications
-      const notificationsQuerySnapshot = firestore()
+      // Delete user data from the notifications collection
+      const notificationsQuerySnapshot = await firestore()
         .collection("notifications")
-        .where("receiverId", "==", uid || "senderId", "==", uid)
+        .where("receiverId", "==", uid)
         .get();
 
-      const notificationsBatch = firestore().batch();
-      notificationsQuerySnapshot.forEach((doc) => {
-        notificationsBatch.delete(doc.ref);
-      });
+      if (!notificationsQuerySnapshot.empty) {
+        const notificationsBatch = firestore().batch();
+        notificationsQuerySnapshot.forEach((doc) => {
+          notificationsBatch.delete(doc.ref);
+        });
+        await notificationsBatch.commit();
+      }
 
-      await notificationsBatch.commit();
-
-      // Delete user from the Users collection
+      // Delete the user from the Users collection
       await firestore().collection("users").doc(uid).delete();
 
       // Finally, delete the user account
       await user.delete();
-      // await SaveUser(props.authUser?.uid, {isLogin: false});
-      // await auth().signOut();
 
+      // Dispatch logout action and update loading state
       dispatch(setLogOut());
-      setIsLoading(true);
+      setIsLoading(false); // Set loading state to false after successful deletion
       console.log("User data deleted successfully.");
     } catch (error) {
       console.error("Error deleting user data:", error.message || error);
+      setIsLoading(false); // Set loading state to false if an error occurs
     }
   };
+
   const handelBioMetric = async () => {
     setIsLoading(true);
     try {

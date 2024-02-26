@@ -97,6 +97,7 @@ const ProfileDetail = ({ navigation, route }) => {
     skill3: "",
     bio: "",
     stats: "",
+    phone: "",
   });
 
   useEffect(() => {
@@ -888,6 +889,8 @@ const ProfileDetail = ({ navigation, route }) => {
         modalVisible={modalVisible}
         value={signupId}
         type={signupValues}
+        signupValues={signupValues}
+        setSignupValues={setSignupValues}
         onSetValue={onSetValue}
         setValue={setValue}
         onCloseModal={() => setModalVisible(false)}

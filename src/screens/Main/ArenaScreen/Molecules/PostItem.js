@@ -7,6 +7,7 @@ import {
   Platform,
   Image,
   TouchableWithoutFeedback,
+  Alert,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import commonStyles, { PH10 } from "../../../../utils/CommonStyles";
@@ -73,14 +74,11 @@ const PostItem = (props) => {
   });
   const [postComments, setPostComments] = useState(props.comments);
   useEffect(() => {
-    if(currentUser.uid){
+    if (currentUser.uid) {
       getAllUSers(setUserData, currentUser.uid);
-
-
     }
   }, [props]);
   useEffect(() => {
-    console.log("running ===>", newCommentAdd, postID);
     if (newCommentAdd === true && postID !== "") {
       firebase
         .firestore()
@@ -146,13 +144,11 @@ const PostItem = (props) => {
   }, [props?.repost]);
 
   useEffect(() => {
-    if(currentUser.uid){
+    if (currentUser.uid) {
       getFilterUser();
       renderPostDescription();
-
     }
     // getUserData();
-   
   }, [props]);
 
   useEffect(() => {
@@ -312,6 +308,7 @@ const PostItem = (props) => {
     for (let i = 0; i < mentionedUsers.length; i++) {
       const mentiondUserID = mentionedUsers[i];
       if (mentiondUserID !== undefined) {
+        // console.log("mentiondUserID", mentiondUserID);
         mentiondUser = userAllData.find((user) => {
           return user?.uid === mentiondUserID;
         });
@@ -320,11 +317,12 @@ const PostItem = (props) => {
     const processedParts = parts.map((part, index) => {
       if (index % 2 === 1) {
         const username = part.trim();
+
         const finalUsername = `@${username}`;
         const userExists = userData.some(
           (user) => user.username === finalUsername
         );
-
+        // console.log("userExists==>", userExists, finalUsername);
         return (
           <TouchableOpacity
             key={index}
@@ -357,20 +355,24 @@ const PostItem = (props) => {
   };
 
   const handleUsernamePress = (mentiondUser) => {
-    console.log("User with ID", mentiondUser?.uid, "was pressed.");
-    if (currentUser?.BlockUsers?.includes(mentiondUser?.uid)) {
-      props.navigation.navigate("BlockScreen");
-      return;
-    }
-    if (mentiondUser?.uid === currentUser?.uid) {
-      props?.navigation.navigate("Profile", {
-        event: mentiondUser?.uid,
+    if (mentiondUser) {
+      console.log("User with ID", mentiondUser, "was pressed.");
+      if (currentUser?.BlockUsers?.includes(mentiondUser)) {
+        props.navigation.navigate("BlockScreen");
+        return;
+      }
+      if (mentiondUser === currentUser?.uid) {
+        props?.navigation.navigate("Profile", {
+          event: mentiondUser,
+        });
+        return;
+      }
+      props?.navigation.navigate("UserProfile", {
+        event: mentiondUser,
       });
-      return;
+    } else {
+      Alert.alert("User with name not found");
     }
-    props?.navigation.navigate("UserProfile", {
-      event: mentiondUser?.uid,
-    });
   };
 
   return (
@@ -680,8 +682,7 @@ const PostItem = (props) => {
               </TouchableOpacity>
               <TouchableOpacity
                 onPress={() => {
-                  setViewComments(!viewComments);
-                  setNewCommentAdd(true);
+                  handleCommentOpen();
                 }}
                 style={{
                   flexDirection: "row",

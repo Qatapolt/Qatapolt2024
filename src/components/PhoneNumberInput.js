@@ -15,19 +15,22 @@ const PhoneNumberInput = ({
   signupValues,
   setSignupValues,
 }) => {
+  console.log("signupValues.phone", signupValues.phone);
+  const phoneNo = signupValues.phone !== "" ? signupValues.phone.slice(3) : "";
   const isFocused = useIsFocused();
   const phoneNumberInput = useRef(null);
-  const [formattedValue, setFormattedValue] = useState(
-    signupValues.phone.slice(3)
-  );
+  const [formattedValue, setFormattedValue] = useState(phoneNo);
   const [countryCode, setCountryCode] = useState("");
   useEffect(() => {
-    const extractedCountryCode = signupValues.phone.substring(0, 3);
-    console.log("extractedCountryCode", extractedCountryCode);
-    if (extractedCountryCode) {
-      setCountryCode(extractedCountryCode);
-      const nationalNumber = signupValues.phone.slice(3);
-      setFormattedValue(nationalNumber);
+    if (signupValues.phone !== "") {
+      const extractedCountryCode = signupValues.phone.substring(0, 3);
+      if (extractedCountryCode) {
+        setCountryCode(extractedCountryCode);
+        const nationalNumber = signupValues.phone.slice(3);
+        setFormattedValue(nationalNumber);
+      } else {
+        setCountryCode("US");
+      }
     } else {
       setCountryCode("US");
     }

@@ -4,20 +4,20 @@ import {
   TouchableOpacity,
   View,
   Dimensions,
-} from 'react-native';
-import React from 'react';
-import Modal from 'react-native-modal';
-import {colors} from '../utils/Colors';
-import {scale, verticalScale} from 'react-native-size-matters';
-import CustomText from './CustomText';
-import {InterFont} from '../utils/Fonts';
-import {Spacer} from './Spacer';
-import SepratorLine from './SepratorLine';
-import {Avatar, Divider, Image, ListItem} from 'react-native-elements';
-import {icons} from '../assets/icons';
-import {PH10} from '../utils/CommonStyles';
-import CustomButton from './CustomButton';
-import CustomImage from './CustomImage';
+} from "react-native";
+import React from "react";
+import Modal from "react-native-modal";
+import { colors } from "../utils/Colors";
+import { scale, verticalScale } from "react-native-size-matters";
+import CustomText from "./CustomText";
+import { InterFont } from "../utils/Fonts";
+import { Spacer } from "./Spacer";
+import SepratorLine from "./SepratorLine";
+import { Avatar, Divider, Image, ListItem } from "react-native-elements";
+import { icons } from "../assets/icons";
+import { PH10 } from "../utils/CommonStyles";
+import CustomButton from "./CustomButton";
+import CustomImage from "./CustomImage";
 import {
   getSpecificUser,
   NotificationSender,
@@ -25,14 +25,14 @@ import {
   UpdateFollower,
   UpdateFollowing,
   UpdateFollowRequest,
-} from '../screens/services/UserServices';
-import {authData} from '../redux/reducers/authReducer';
-import {useDispatch} from 'react-redux';
-import uuid from 'react-native-uuid';
-import {postNotification} from '../screens/services/NotificationServices';
+} from "../screens/services/UserServices";
+import { authData } from "../redux/reducers/authReducer";
+import { useDispatch } from "react-redux";
+import uuid from "react-native-uuid";
+import { postNotification } from "../screens/services/NotificationServices";
 
-const height = Dimensions.get('window').height;
-const width = Dimensions.get('window').width;
+const height = Dimensions.get("window").height;
+const width = Dimensions.get("window").width;
 const AppFounderModal = ({
   modalVisible,
   setModalVisible,
@@ -45,7 +45,7 @@ const AppFounderModal = ({
   const onUserFollower = async () => {
     if (appFounderData?.AllFollowers?.includes(authUser.uid)) {
       let filterUserFollowerList = appFounderData?.AllFollowers.filter(
-        data => data != authUser?.uid,
+        (data) => data != authUser?.uid
       );
       await SaveUser(appFounderData?.uid, {
         AllFollowers: filterUserFollowerList,
@@ -53,7 +53,7 @@ const AppFounderModal = ({
 
       if (appFounderData?.AllFollowers?.includes(authUser.uid)) {
         let filterFollowingList = authUser?.AllFollowing.filter(
-          data => data != appFounderData?.uid,
+          (data) => data != appFounderData?.uid
         );
         await SaveUser(authUser?.uid, {
           AllFollowing: filterFollowingList,
@@ -77,7 +77,7 @@ const AppFounderModal = ({
 
         // filter user followers
         let filterUserFollowRequest = appFounderData?.RequestIds.filter(
-          data => data != authUser?.uid,
+          (data) => data != authUser?.uid
         );
         await SaveUser(appFounderData?.uid, {
           RequestIds: filterUserFollowRequest,
@@ -85,7 +85,7 @@ const AppFounderModal = ({
       } else {
         const id = uuid.v4();
         await UpdateFollowRequest(appFounderData.uid, authUser?.uid, id);
-        sendFollowerNotification('Follow Request', 'FOLLOW__REQUEST', id);
+        sendFollowerNotification("Follow Request", "FOLLOW__REQUEST", id);
         setModalVisible(false);
       }
       return;
@@ -111,13 +111,13 @@ const AppFounderModal = ({
       // sendNotification(authUser,  CurrentUser, authUser?.profileImage?authUser?.profileImage:undefined, "Follow You", "Follow You")
 
       sendFollowerNotification(
-        'Follow You',
-        'FOLLOW',
+        "Follow You",
+        "FOLLOW",
         uuid.v4(),
-        appFounderData,
+        appFounderData
       );
     } catch (error) {
-      console.log('ErrorHai', error);
+      console.log("ErrorHai", error);
     }
   };
 
@@ -130,7 +130,7 @@ const AppFounderModal = ({
       message: message,
       thumbnail: appFounderData?.profileImage
         ? appFounderData?.profileImage
-        : '',
+        : "",
       senderName: authUser?.name,
       senderId: authUser?.uid,
       senderUsername: authUser?.username,
@@ -138,7 +138,7 @@ const AppFounderModal = ({
       id: id,
       receiverId: appFounderData?.uid,
       createdAt: new Date(),
-      senderImage: authUser?.profileImage ? authUser?.profileImage : '',
+      senderImage: authUser?.profileImage ? authUser?.profileImage : "",
     };
 
     await postNotification(senderData);
@@ -150,14 +150,15 @@ const AppFounderModal = ({
         style={{
           height: height / 7,
           width: width / 1.5,
-          alignSelf: 'center',
+          alignSelf: "center",
           backgroundColor: colors.white,
           borderRadius: scale(7),
-        }}>
+        }}
+      >
         <Spacer height={5} />
 
         <CustomText
-          label={'Recommended Follow'}
+          label={"Recommended Follow"}
           fontSize={14}
           alignSelf="center"
           fontFamily={InterFont.semiBold}
@@ -185,14 +186,16 @@ const AppFounderModal = ({
         /> */}
           <ListItem.Content>
             <ListItem.Title
-              style={{fontWeight: 'bold', fontSize: verticalScale(10)}}>
-              {'The Founder of Qatapolt'}
+              style={{ fontWeight: "bold", fontSize: verticalScale(10) }}
+            >
+              {"The Founder of Qatapolt"}
             </ListItem.Title>
             <Spacer height={3} />
             <ListItem.Subtitle
-              style={{color: colors.primary}}
+              style={{ color: colors.primary }}
               numberOfLines={1}
-              ellipsizeMode="tail">
+              ellipsizeMode="tail"
+            >
               {`${appFounderData?.username}`}
             </ListItem.Subtitle>
           </ListItem.Content>
@@ -204,8 +207,8 @@ const AppFounderModal = ({
             backgroundColor={colors.green}
             color={colors.white}
             fontSize={10}
-            title={'Follow'}
-            width={'27%'}
+            title={"Follow"}
+            width={"27%"}
           />
         </ListItem>
         {/* <Avatar

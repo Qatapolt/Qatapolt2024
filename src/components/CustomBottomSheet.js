@@ -70,7 +70,7 @@ const CustomBottomSheet = (props) => {
             props.setSignupValues({
               ...props.signupValues,
               selectSport: item.value,
-              sportEmoji: data.emoji,
+              sportEmoji: item.emoji,
             });
             props.onCloseModal();
             return;
@@ -101,7 +101,7 @@ const CustomBottomSheet = (props) => {
               ...props.signupValues,
               strongHand: item.value,
             });
-            setModalVisible(false);
+            props.onCloseModal();
             return;
           }
           if (props.value == "Strong Foot") {
