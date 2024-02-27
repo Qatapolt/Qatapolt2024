@@ -355,8 +355,8 @@ const PostItem = (props) => {
   };
 
   const handleUsernamePress = (mentiondUser) => {
+    console.log("User with ID", mentiondUser, "was pressed.");
     if (mentiondUser) {
-      console.log("User with ID", mentiondUser, "was pressed.");
       if (currentUser?.BlockUsers?.includes(mentiondUser)) {
         props.navigation.navigate("BlockScreen");
         return;
