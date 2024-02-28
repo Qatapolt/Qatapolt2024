@@ -23,10 +23,9 @@ const CommentMessageContainer = ({
   item,
   likeComment,
   setNewComment,
-  postCompleteData,
+
   setPostID,
 }) => {
-  console.log("postCompleteData", postCompleteData);
   const [likeCount, setLikeCount] = useState(item.medals);
   const currentUser = useSelector((state) => state.auth?.currentUser);
   const [imageSource, setImageSource] = useState(

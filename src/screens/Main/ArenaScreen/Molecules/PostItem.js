@@ -41,7 +41,9 @@ import Clipboard from "@react-native-clipboard/clipboard";
 import Toast from "react-native-root-toast";
 import UserNameLayout from "../../../../utils/Layouts/UserNameLayout";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { useIsFocused } from "@react-navigation/native";
 const PostItem = (props) => {
+  const focused = useIsFocused();
   const [userData, setUserData] = useState([]);
   const currentUser = useSelector((state) => state?.auth?.currentUser);
   const videoRef = useRef(null);
@@ -148,28 +150,7 @@ const PostItem = (props) => {
       getFilterUser();
       renderPostDescription();
     }
-    // getUserData();
-  }, [props]);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchData = async () => {
-      try {
-        const userData = await getSpecificUser(props?.item?.userId);
-        if (isMounted) {
-          setUserProfileData(userData);
-        }
-      } catch (error) {
-        console.log("error userData:", error);
-      }
-    };
-
-    fetchData();
-
-    return () => {
-      isMounted = false; // Set to false when the component is unmounted
-    };
+    getUserData();
   }, [props]);
 
   const handleSingleTap = () => {
@@ -214,6 +195,7 @@ const PostItem = (props) => {
   }
 
   const onNavigate = () => {
+    console.log("onNavigate", userProfileData?.uid, currentUser?.uid);
     if (currentUser?.BlockUsers?.includes(userProfileData?.uid)) {
       props.navigation.navigate("BlockScreen");
 
@@ -225,11 +207,11 @@ const PostItem = (props) => {
         event: userProfileData?.uid,
       });
       return;
+    } else {
+      props.navigation.navigate("UserProfile", {
+        event: userProfileData?.uid,
+      });
     }
-
-    props.navigation.navigate("UserProfile", {
-      event: userProfileData?.uid,
-    });
   };
 
   const onRepostedNavigate = () => {

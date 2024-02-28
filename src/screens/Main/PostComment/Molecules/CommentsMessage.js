@@ -8,21 +8,9 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { scale, ScaledSheet, verticalScale } from "react-native-size-matters";
 import { colors } from "../../../../utils/Colors";
-import CustomText from "../../../../components/CustomText";
-import { InterFont } from "../../../../utils/Fonts";
-import commonStyles from "../../../../utils/CommonStyles";
-import { Spacer } from "../../../../components/Spacer";
-import { Avatar, Divider, ListItem } from "react-native-elements";
-import { icons } from "../../../../assets/icons";
-import { images } from "../../../../assets/images";
-import { firebase } from "@react-native-firebase/firestore";
-import moment from "moment";
-import { handleCommentLikePress } from "../../../services/PostServices";
-import { useSelector } from "react-redux";
-import CustomImage from "../../../../components/CustomImage";
 import CommentMessageContainer from "./CommentMessageContainer";
 const CommentsMessage = (props) => {
   const RenderComments = ({ item, index }) => {

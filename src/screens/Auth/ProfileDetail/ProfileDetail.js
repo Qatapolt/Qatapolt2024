@@ -442,10 +442,7 @@ const ProfileDetail = ({ navigation, route }) => {
       );
 
       if (validateResponse) {
-        if (
-          (phoneNumber.length == 0 && signupValues.accountType == "Athlete") ||
-          signupValues.accountType == "Esports"
-        ) {
+        if (phoneNumber.length == 0) {
           setStateError({
             ...stateError,
             errorHeader: "Missing Phone Number",
@@ -487,18 +484,6 @@ const ProfileDetail = ({ navigation, route }) => {
           ...stateError,
           errorHeader: "Missing Sport",
           errorBody: "Please Select Sport To Proceed",
-        });
-
-        setAlertVisible(true);
-
-        return;
-      }
-
-      if (!signupValues.phone) {
-        setStateError({
-          ...stateError,
-          errorHeader: "Missing Phone Number",
-          errorBody: "Please Enter Phone Number To Proceed",
         });
 
         setAlertVisible(true);

@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import moment from "moment";
 import React, { useState, useEffect, useRef } from "react";
@@ -589,23 +590,6 @@ const UserProfile = ({ navigation, route }) => {
       </>
     );
   };
-  const emptyListComponent = () => {
-    return (
-      <>
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <CustomText
-            label={isLoading ? "Fetching Posts" : "no Recods Found"}
-            fontSize={12}
-            textAlign="center"
-            color={colors.black}
-            fontFamily={InterFont.semiBold}
-          />
-        </View>
-      </>
-    );
-  };
 
   const onNavigate = (item) => {
     if (userData?.BlockUsers?.includes(item?.uid)) {
@@ -676,7 +660,49 @@ const UserProfile = ({ navigation, route }) => {
       </View>
     );
   };
-
+  const emptyListComponent = () => {
+    return isLoading ? (
+      <>
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginVertical: 10,
+            height: 500,
+          }}
+        >
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <ActivityIndicator size="small" color={"black"} />
+          </View>
+        </View>
+      </>
+    ) : (
+      <>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginVertical: 10,
+          }}
+        >
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text>no record found</Text>
+          </View>
+        </View>
+      </>
+    );
+  };
   return (
     <>
       {tabIndex === 0 ? (
@@ -697,10 +723,7 @@ const UserProfile = ({ navigation, route }) => {
                 renderItem={RenderPostData}
                 nestedScrollEnabled
                 ListHeaderComponent={getHeader}
-                // ListEmptyComponent={emptyListComponent}
-                // refreshControl={
-                //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                // }
+                ListEmptyComponent={emptyListComponent}
               />
             )}
           </View>
@@ -721,13 +744,10 @@ const UserProfile = ({ navigation, route }) => {
                 showsHorizontalScrollIndicator={false}
                 numColumns={numColumns}
                 key={`${numColumns}`} // Change the key when the number of columns changes
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={(item, index) => item.postId.toString()}
                 renderItem={renderHightLightData}
                 ListHeaderComponent={getHeader}
-                // ListEmptyComponent={emptyListComponent}
-                // refreshControl={
-                //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                // }
+                ListEmptyComponent={emptyListComponent}
               />
             )}
           </View>
@@ -749,7 +769,6 @@ const UserProfile = ({ navigation, route }) => {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderStats}
                 ListHeaderComponent={getHeader}
-                // ListEmptyComponent={emptyListComponent}
               />
             )}
           </View>

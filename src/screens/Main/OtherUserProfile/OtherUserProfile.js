@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import moment from "moment";
 import React, { useState, useEffect, useRef } from "react";
@@ -586,18 +587,44 @@ const OtherUserProfile = ({ navigation, route }) => {
     );
   };
   const emptyListComponent = () => {
-    return (
+    return isLoading ? (
       <>
         <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginVertical: 10,
+            height: 500,
+          }}
         >
-          <CustomText
-            label={isLoading ? "Fetching Posts" : "no Recods Found"}
-            fontSize={12}
-            textAlign="center"
-            color={colors.black}
-            fontFamily={InterFont.semiBold}
-          />
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <ActivityIndicator size="small" color={"black"} />
+          </View>
+        </View>
+      </>
+    ) : (
+      <>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginVertical: 10,
+          }}
+        >
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text>no record found</Text>
+          </View>
         </View>
       </>
     );
@@ -720,7 +747,7 @@ const OtherUserProfile = ({ navigation, route }) => {
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderHightLightData}
                 ListHeaderComponent={getHeader}
-                // ListEmptyComponent={emptyListComponent}
+                ListEmptyComponent={emptyListComponent}
                 // refreshControl={
                 //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
                 // }

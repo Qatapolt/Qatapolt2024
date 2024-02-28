@@ -48,36 +48,41 @@ const SendMessageContainer = ({
   const sendComment = () => {
     if (comment) {
       const commentId = firebase.firestore().collection("Posts").doc().id;
+
       const newComment = {
         id: commentId,
         postId: postId,
         senderId: senderId,
         content: comment,
         name: currentUser.name,
-        img:
-          currentUser.profileImage == undefined ? "" : currentUser.profileImage,
+        img: currentUser.profileImage || "",
         createAt: new Date(),
-        verified: currentUser.trophy,
+        verified: currentUser.trophy || "",
         medals: 0,
         medalsId: [],
       };
-      firebase
-        .firestore()
-        .collection("Posts")
-        .doc(postId)
-        .update({
-          comments: firebase.firestore.FieldValue.arrayUnion(newComment),
-          comment_Count: firebase.firestore.FieldValue.increment(1),
-        })
-        .then(() => {
-          // console.log('Comment saved successfully!');
-          setNewComment(true);
-          setComment("");
-        })
-        .catch((error) => {
-          console.error("Error saving comment:", error);
-        });
-      setComment("");
+
+      try {
+        firebase
+          .firestore()
+          .collection("Posts")
+          .doc(postId)
+          .update({
+            comments: firebase.firestore.FieldValue.arrayUnion(newComment),
+            comment_Count: firebase.firestore.FieldValue.increment(1),
+          })
+          .then(() => {
+            // console.log('Comment saved successfully!');
+            setNewComment(true);
+            setComment("");
+          })
+          .catch((error) => {
+            console.error("Error saving comment:", error);
+          });
+        setComment("");
+      } catch (error) {
+        console.log("error", error);
+      }
     }
   };
 
@@ -132,7 +137,7 @@ const SendMessageContainer = ({
         <TouchableOpacity
           activeOpacity={0.6}
           style={[styles.send, { marginRight: scale(7) }]}
-          onPress={sendComment}
+          onPress={() => sendComment()}
         >
           <Image
             source={icons.send}

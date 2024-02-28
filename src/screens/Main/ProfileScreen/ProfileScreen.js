@@ -10,6 +10,7 @@ import {
   FlatList,
   RefreshControl,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import commonStyles, { PH10, PH20 } from "../../../utils/CommonStyles";
@@ -234,9 +235,10 @@ const ProfileScreen = ({ navigation, route }) => {
 
         // Sort squadData based on the number of followers each user has
         squadData.sort((a, b) => (b.followers || 0) - (a.followers || 0));
+        setSquadData(squadData);
+      } else {
+        setSquadData([]);
       }
-
-      setSquadData(squadData);
     } catch (error) {
       console.error("fetchSquad error", error);
     }
@@ -672,13 +674,7 @@ const ProfileScreen = ({ navigation, route }) => {
       </TouchableOpacity>
     );
   };
-  const Loading = () => {
-    return (
-      <View>
-        <SimpleLoader file={loaderAnimation} />
-      </View>
-    );
-  };
+
   const onOpen = () => {
     modalizeRef.current?.open();
     setOptionSheet(true);
@@ -691,84 +687,119 @@ const ProfileScreen = ({ navigation, route }) => {
     modalizeRefReport?.current?.open();
     setOptionSheet(true);
   };
-  return (
-    <>
-      {/* {getHeader()} */}
-
-      {tabIndex === 0 ? (
-        <>
+  const emptyListComponent = () => {
+    return isLoading ? (
+      <>
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginVertical: 10,
+            height: 500,
+          }}
+        >
           <View
             style={{
-              flex: 1,
-              backgroundColor: colors.white,
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            {isLoading ? (
-              <ProfileLayout />
-            ) : (
+            <ActivityIndicator size="small" color={"black"} />
+          </View>
+        </View>
+      </>
+    ) : (
+      <>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            marginVertical: 10,
+          }}
+        >
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Text>no record found</Text>
+          </View>
+        </View>
+      </>
+    );
+  };
+  return (
+    <>
+      {tabIndex === 0 ? (
+        <>
+          {isLoading ? (
+            <ProfileLayout />
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: colors.white,
+              }}
+            >
               <FlatList
                 data={commentaryData}
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={(item, index) => item?.postId?.toString()}
                 renderItem={RenderPostData}
                 nestedScrollEnabled
-                ListHeaderComponent={commentaryData.length > 0 && getHeader}
-                // ListEmptyComponent={emptyListComponent}
-                // refreshControl={
-                //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                // }
+                ListHeaderComponent={getHeader}
+                ListEmptyComponent={emptyListComponent}
               />
-            )}
-          </View>
+            </View>
+          )}
         </>
       ) : tabIndex === 1 ? (
         <>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: colors.white,
-            }}
-          >
-            {isLoading ? (
-              <ProfileLayout />
-            ) : (
+          {isLoading ? (
+            <ProfileLayout />
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: colors.white,
+              }}
+            >
               <FlatList
                 data={hightLightData}
                 showsHorizontalScrollIndicator={false}
                 numColumns={numColumns}
                 key={`${numColumns}`} // Change the key when the number of columns changes
-                keyExtractor={(item, index) => index.toString()}
+                keyExtractor={(item, index) => item.postId.toString()}
                 renderItem={renderHightLightData}
-                ListHeaderComponent={hightLightData.length > 0 && getHeader}
-                // ListEmptyComponent={emptyListComponent}
-                // refreshControl={
-                //   <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-                // }
+                ListHeaderComponent={getHeader}
+                ListEmptyComponent={emptyListComponent}
               />
-            )}
-          </View>
+            </View>
+          )}
         </>
       ) : (
         <>
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: colors.white,
-            }}
-          >
-            {isLoading ? (
-              <ProfileLayout />
-            ) : (
+          {isLoading ? (
+            <ProfileLayout />
+          ) : (
+            <View
+              style={{
+                flex: 1,
+                backgroundColor: colors.white,
+              }}
+            >
               <FlatList
                 data={statsArray}
                 showsHorizontalScrollIndicator={false}
                 keyExtractor={(item, index) => index.toString()}
                 renderItem={renderStats}
                 ListHeaderComponent={getHeader}
-                // ListEmptyComponent={emptyListComponent}
+                ListEmptyComponent={emptyListComponent}
               />
-            )}
-          </View>
+            </View>
+          )}
         </>
       )}
       <AppTour
