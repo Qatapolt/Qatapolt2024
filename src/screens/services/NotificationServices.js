@@ -2,34 +2,71 @@ import axios from "axios";
 import firestore from "@react-native-firebase/firestore";
 import { firebase } from "@react-native-firebase/firestore";
 import uuid from "react-native-uuid";
+// export const NotificationSender = (fcmToken, title, message) => {
+//   // console.log('userIdfcmToken', fcmToken);
+//   const NotificationData = {
+//     method: "POST",
+//     url: "https://fcm.googleapis.com/fcm/send",
+//     headers: {
+//       Authorization:
+//         "key=AAAAIgAoddI:APA91bH7CeM1lHY3mq_4KoWaWHH-1okwjHFg6sUV0f3joouDy-yvpIl3scHonC2cdMNNBBE55PNiA178i_OT4VAmT8HIHovkoaYt_4j6_tQwWxmC0GELbQRulNIUeVlO2ozjnvgerrDk",
+//       "Content-Type": "application/json",
+//     },
+//     data: {
+//       registration_ids: [fcmToken],
+//       notification: { body: message, title: title },
+//     },
+//   };
+
+//   try {
+//     axios
+//       .request(NotificationData)
+//       .then(function (response) {
+//         console.log("response", response?.data);
+//       })
+//       .catch(function (error) {
+//         console.error(error);
+//       });
+//   } catch (error) {
+//     console.log("NotificationError", error);
+//   }
+// };
 export const NotificationSender = (fcmToken, title, message) => {
-  // console.log('userIdfcmToken', fcmToken);
-  const NotificationData = {
+  // Construct the request body
+  const requestBody = JSON.stringify({
+    registration_ids: [fcmToken],
+    notification: { body: message, title: title },
+  });
+
+  // Define the request options
+  const requestOptions = {
     method: "POST",
-    url: "https://fcm.googleapis.com/fcm/send",
     headers: {
       Authorization:
         "key=AAAAIgAoddI:APA91bH7CeM1lHY3mq_4KoWaWHH-1okwjHFg6sUV0f3joouDy-yvpIl3scHonC2cdMNNBBE55PNiA178i_OT4VAmT8HIHovkoaYt_4j6_tQwWxmC0GELbQRulNIUeVlO2ozjnvgerrDk",
       "Content-Type": "application/json",
     },
-    data: {
-      registration_ids: [fcmToken],
-      notification: { body: message, title: title },
-    },
+    body: requestBody,
   };
 
-  try {
-    axios
-      .request(NotificationData)
-      .then(function (response) {
-        console.log("response", response?.data);
-      })
-      .catch(function (error) {
-        console.error(error);
-      });
-  } catch (error) {
-    console.log("NotificationError", error);
-  }
+  // Make the fetch request
+  fetch("https://fcm.googleapis.com/fcm/send", requestOptions)
+    .then((response) => {
+      // Check if the response is successful
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      // Parse the JSON response
+      return response.json();
+    })
+    .then((data) => {
+      // Handle the response data
+      console.log("response", data);
+    })
+    .catch((error) => {
+      // Handle errors
+      console.error("Error:", error);
+    });
 };
 
 export const postNotification = async (data) => {
